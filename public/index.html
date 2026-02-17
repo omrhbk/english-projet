@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="İnteraktif İngilizce öğrenme uygulaması. Kelime kartları, gramer dersleri ve dinleme egzersizleriyle İngilizce öğren." />
+    <meta name="theme-color" content="#4a90e2" />
+    <title>English Master - İngilizce Öğreniyorum</title>
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="stylesheet" href="/src/styles/style.css" />
+    <!-- Google Fonts: Poppins for modern look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="logo">🇬🇧 English Master</div>
+
+      <ul class="nav-links">
+        <li class="active" data-target="dashboard">Ana Sayfa</li>
+        <li data-target="vocabulary">Kelime Bilgisi</li>
+        <li data-target="listening">Duyduğunu Anlama</li>
+        <li data-target="grammar">Gramer</li>
+      </ul>
+
+      <div class="nav-controls">
+        <button id="theme-toggle" class="btn-icon" aria-label="Karanlık Modu Aç/Kapat">🌙</button>
+        <div class="hamburger" aria-label="Menüyü Aç" role="button" tabindex="0">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </nav>
+
+    <main id="app" class="container">
+      <!-- İçerik JavaScript ile buraya yüklenir -->
+    </main>
+
+    <!-- app.js, data.js'i kendi içinde import eder — ayrıca yüklemeye gerek yok -->
+    <script type="module" src="/src/core/app.js"></script>
+
+    <!-- PWA Service Worker kaydı -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(() => {
+            // SW kaydı başarısız — sessizce devam et
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

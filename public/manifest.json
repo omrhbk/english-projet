@@ -1,0 +1,22 @@
+{
+  "name": "English Master",
+  "short_name": "EnglishMaster",
+  "description": "İnteraktif İngilizce öğrenme uygulaması",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f7f6",
+  "theme_color": "#4a90e2",
+  "lang": "tr",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
