@@ -1,9 +1,13 @@
 import { initFlashcards, initMatchingGame, initPuzzleGame, initVocabSearch } from "../components/vocab.js";
-import { initTimedChallenge } from "../components/challenge.js";
+import { initDictionary } from "../components/dictionary.js";
+import { initTimedChallenge, cleanupChallenge } from "../components/challenge.js";
+import { initSentenceOrder } from "../components/sentence-order.js";
 import { initListeningModule } from "../components/listening.js";
 import { initGrammarModule } from "../components/grammar.js";
 import { initReadingModule } from "../components/reading.js";
 import { progressManager, setAchievementManager } from "./progress.js";
+import { renderWeeklyChart, renderStreakHeatmap } from "../features/progress-chart.js";
+import { initAuth, isLoggedIn, showAuthModal } from "./auth.js";
 import { achievementManager, achievements } from "../features/achievements.js";
 import { showXPGain, celebrateLevelUp } from "../features/animations.js";
 import { errorAnalytics } from "../features/analytics.js";
@@ -34,12 +38,16 @@ function init() {
     setupUIControls();
     setupHashRouter();          // MED-1: hash router
     navigateTo(_currentView);   // İlk render
+    initAuth();                 // Auth durumunu kontrol et ve navbar'ı güncelle
 }
 
 // ── Hash Router (MED-1) ─────────────────────────────────────────────────────
 let _currentView = "dashboard";
 
 function navigateTo(view) {
+    // Sayfa değişiminde aktif modülleri temizle
+    cleanupChallenge();
+
     _currentView = view;
     window.location.hash = view;
 
@@ -48,11 +56,12 @@ function navigateTo(view) {
     if (activeLink) activeLink.classList.add("active");
 
     switch (view) {
-        case "vocabulary": renderVocabulary(); break;
-        case "listening":  renderListening();  break;
-        case "grammar":    renderGrammar();    break;
-        case "reading":    renderReading();    break;
-        default:           renderDashboard();  break;
+        case "vocabulary":  renderVocabulary(); break;
+        case "listening":   renderListening();  break;
+        case "grammar":     renderGrammar();    break;
+        case "reading":     renderReading();    break;
+        case "dictionary":  initDictionary();   break;
+        default:            renderDashboard();  break;
     }
 }
 
@@ -165,6 +174,8 @@ function renderDashboard() {
 
         ${renderWeakWordsPanel()}
         ${renderBadgesPanel()}
+        ${renderWeeklyChart()}
+        ${renderStreakHeatmap()}
     `;
 
     document.getElementById('dash-vocab').addEventListener('click',     () => navigateTo('vocabulary'));
@@ -252,6 +263,11 @@ function renderVocabulary() {
                     <h3>60s Hız Testi</h3>
                     <p>60 saniyede ne kadar doğru?</p>
                 </div>
+                <div class="card" id="btn-sentence">
+                    <div class="card-icon">📝</div>
+                    <h3>Cümle Sıralama</h3>
+                    <p>Kelimeleri sürükle, cümleyi oluştur.</p>
+                </div>
             </div>
         </div>
     `;
@@ -261,6 +277,7 @@ function renderVocabulary() {
     document.getElementById('btn-puzzle').addEventListener('click', initPuzzleGame);
     document.getElementById('btn-search').addEventListener('click', initVocabSearch);
     document.getElementById('btn-challenge').addEventListener('click', initTimedChallenge);
+    document.getElementById('btn-sentence').addEventListener('click', initSentenceOrder);
 }
 
 function renderListening() {

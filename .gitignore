@@ -1,0 +1,15 @@
+# Hassas yapılandırma — asla commit etme
+.env
+.env.local
+.env.*.local
+
+# Veritabanı dosyası
+*.db
+*.sqlite
+
+# Node.js bağımlılıkları
+node_modules/
+
+# Geliştirme araçları
+.DS_Store
+Thumbs.db

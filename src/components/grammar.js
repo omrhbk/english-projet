@@ -1,5 +1,33 @@
 import { grammarData, cefrLevels } from '../core/data.js';
 
+const GRAMMAR_PROGRESS_KEY = 'grammar_completed';
+
+/** Tamamlanan grammar konularını yükle */
+function loadCompletedTopics() {
+    try {
+        return JSON.parse(localStorage.getItem(GRAMMAR_PROGRESS_KEY) || '[]');
+    } catch { return []; }
+}
+
+/** Bir konuyu tamamlandı olarak işaretle */
+function markTopicCompleted(topicId) {
+    const completed = loadCompletedTopics();
+    if (!completed.includes(topicId)) {
+        completed.push(topicId);
+        localStorage.setItem(GRAMMAR_PROGRESS_KEY, JSON.stringify(completed));
+    }
+}
+
+/** Tüm egzersizler doğru yapıldı mı kontrol et */
+function checkTopicCompletion(topicId, exercises) {
+    const feedbacks = document.querySelectorAll('.ex-feedback.success');
+    if (feedbacks.length >= exercises.length) {
+        markTopicCompleted(topicId);
+        return true;
+    }
+    return false;
+}
+
 export function initGrammarModule() {
     renderGrammarTopics();
 }
@@ -25,21 +53,33 @@ function renderGrammarTopics(activeLevel = 'all') {
     // Her seviye için badge rengi
     const levelColors = Object.fromEntries(cefrLevels.map(l => [l.id, l.color]));
 
-    const topicsHtml = filtered.map(topic => `
-        <div class="card grammar-card" data-id="${topic.id}">
-            <div class="cefr-badge" style="background:${levelColors[topic.level] || '#999'}">
-                ${topic.level}
+    // Tamamlanan konular
+    const completedTopics = loadCompletedTopics();
+    const completedCount = grammarData.filter(t => completedTopics.includes(t.id)).length;
+
+    const topicsHtml = filtered.map(topic => {
+        const isDone = completedTopics.includes(topic.id);
+        return `
+        <div class="card grammar-card ${isDone ? 'grammar-completed' : ''}" data-id="${topic.id}">
+            <div class="grammar-card-header">
+                <div class="cefr-badge" style="background:${levelColors[topic.level] || '#999'}">
+                    ${topic.level}
+                </div>
+                ${isDone ? '<div class="grammar-done-badge">✅ Tamamlandı</div>' : ''}
             </div>
             <div class="card-icon">📚</div>
             <h3>${topic.title}</h3>
             <p>${topic.description}</p>
-            <button class="btn">Derse Başla</button>
+            <button class="btn">${isDone ? '🔄 Tekrar Et' : 'Derse Başla'}</button>
         </div>
-    `).join('') || '<p class="no-results">Bu seviyede henüz ders eklenmedi.</p>';
+    `}).join('') || '<p class="no-results">Bu seviyede henüz ders eklenmedi.</p>';
 
     container.innerHTML = `
         <h2>📚 Gramer Dersleri</h2>
-        <p>Seviyenizi seçin ve konuya başlayın.</p>
+        <div class="grammar-progress-row">
+            <p>Seviyenizi seçin ve konuya başlayın.</p>
+            <span class="grammar-progress-badge">${completedCount}/${grammarData.length} konu tamamlandı</span>
+        </div>
 
         <div class="cefr-filter-bar">
             <button class="cefr-filter-btn ${activeLevel === 'all' ? 'active' : ''}" data-level="all">
@@ -98,11 +138,11 @@ function openGrammarLesson(topicId) {
     `;
 
     document.getElementById('back-to-grammar').addEventListener('click', () => renderGrammarTopics());
-    renderExercises(topic.exercises);
+    renderExercises(topic.id, topic.exercises);
 }
 
 // ── Alıştırmalar ─────────────────────────────────────────────────────────────
-function renderExercises(exercises) {
+function renderExercises(topicId, exercises) {
     const area = document.getElementById('exercise-area');
     area.innerHTML = '';
 
@@ -125,13 +165,13 @@ function renderExercises(exercises) {
             input.className = 'ex-input';
             input.placeholder = 'Cevabınızı yazın...';
             input.addEventListener('keydown', e => {
-                if (e.key === 'Enter') checkGenericAnswer(input.value, ex.answer, index, ex.hint);
+                if (e.key === 'Enter') checkGenericAnswer(input.value, ex.answer, index, ex.hint, topicId, exercises);
             });
 
             const btn = document.createElement('button');
             btn.className = 'btn small';
             btn.textContent = 'Kontrol Et';
-            btn.addEventListener('click', () => checkGenericAnswer(input.value, ex.answer, index, ex.hint));
+            btn.addEventListener('click', () => checkGenericAnswer(input.value, ex.answer, index, ex.hint, topicId, exercises));
 
             interactionDiv.appendChild(input);
             interactionDiv.appendChild(btn);
@@ -141,7 +181,7 @@ function renderExercises(exercises) {
                 const btn = document.createElement('button');
                 btn.className = 'btn secondary small opt-btn';
                 btn.textContent = opt;
-                btn.addEventListener('click', () => checkGenericAnswer(opt, ex.answer, index, ex.hint));
+                btn.addEventListener('click', () => checkGenericAnswer(opt, ex.answer, index, ex.hint, topicId, exercises));
                 interactionDiv.appendChild(btn);
             });
 
@@ -153,7 +193,7 @@ function renderExercises(exercises) {
             const btn = document.createElement('button');
             btn.className = 'btn small';
             btn.textContent = 'Kontrol Et';
-            btn.addEventListener('click', () => checkWritingAnswer(input.value, ex.keywords, index));
+            btn.addEventListener('click', () => checkWritingAnswer(input.value, ex.keywords, index, topicId, exercises));
 
             interactionDiv.appendChild(input);
             interactionDiv.appendChild(btn);
@@ -162,7 +202,7 @@ function renderExercises(exercises) {
 }
 
 // ── Cevap Kontrol ─────────────────────────────────────────────────────────────
-function checkGenericAnswer(userVal, correctVal, index, hint) {
+function checkGenericAnswer(userVal, correctVal, index, hint, topicId, exercises) {
     const feedback = document.getElementById(`feedback-${index}`);
 
     if (userVal.trim().toLowerCase() === correctVal.toLowerCase()) {
@@ -173,6 +213,8 @@ function checkGenericAnswer(userVal, correctVal, index, hint) {
             window.progressManager.addXP(10);
             if (window.showXPGain) window.showXPGain(10);
         }
+        // Konu tamamlandı mı kontrol et
+        tryCompleteLesson(topicId, exercises);
     } else {
         feedback.textContent = `❌ Yanlış. İpucu: ${hint || 'Tekrar dene.'}`;
         feedback.className = 'ex-feedback error';
@@ -180,7 +222,7 @@ function checkGenericAnswer(userVal, correctVal, index, hint) {
     }
 }
 
-function checkWritingAnswer(userText, keywords, index) {
+function checkWritingAnswer(userText, keywords, index, topicId, exercises) {
     const feedback = document.getElementById(`feedback-${index}`);
     const missing = keywords.filter(kw => !userText.toLowerCase().includes(kw.toLowerCase()));
 
@@ -192,6 +234,8 @@ function checkWritingAnswer(userText, keywords, index) {
             window.progressManager.addXP(10);
             if (window.showXPGain) window.showXPGain(10);
         }
+        // Konu tamamlandı mı kontrol et
+        tryCompleteLesson(topicId, exercises);
     } else {
         const hint = missing.length > 0
             ? `Şunları içerdiğinden emin ol: ${missing.join(', ')}`
@@ -200,4 +244,40 @@ function checkWritingAnswer(userText, keywords, index) {
         feedback.className = 'ex-feedback warning';
         if (window.audioManager) window.audioManager.playWrong();
     }
+}
+
+/** Dersin tüm egzersizleri tamamlandıysa kutla */
+function tryCompleteLesson(topicId, exercises) {
+    if (!topicId || !exercises) return;
+    // setTimeout ile DOM güncellenmesini bekle
+    setTimeout(() => {
+        const successCount = document.querySelectorAll('.ex-feedback.success').length;
+        if (successCount >= exercises.length) {
+            markTopicCompleted(topicId);
+            showLessonCompleteBanner();
+        }
+    }, 100);
+}
+
+function showLessonCompleteBanner() {
+    // Zaten gösteriliyorsa tekrar gösterme
+    if (document.getElementById('lesson-complete-banner')) return;
+
+    const banner = document.createElement('div');
+    banner.id = 'lesson-complete-banner';
+    banner.className = 'lesson-complete-banner';
+    banner.innerHTML = `
+        🎉 <strong>Tebrikler!</strong> Bu konuyu tamamladın! +50 XP
+        <button id="close-banner" style="margin-left:1rem; background:transparent; border:none; cursor:pointer; font-size:1rem;">✕</button>
+    `;
+    document.querySelector('.grammar-lesson-container')?.appendChild(banner);
+
+    if (window.progressManager) window.progressManager.addXP(50);
+    if (window.showXPGain) window.showXPGain(50);
+    if (window.celebrateLevelUp) window.celebrateLevelUp();
+
+    document.getElementById('close-banner')?.addEventListener('click', () => banner.remove());
+
+    // 5 saniye sonra otomatik kapat
+    setTimeout(() => banner.remove(), 5000);
 }

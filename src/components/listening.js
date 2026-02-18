@@ -147,15 +147,20 @@ function checkAnswer(selected, correct, btnElement) {
 
     if (selected === correct) {
         btnElement.classList.add('correct');
-        feedback.textContent = "Doğru Cevap! 🎉";
+        feedback.textContent = "Doğru Cevap! 🎉 +10 XP";
         feedback.className = 'feedback-msg success';
         continueBtn.classList.remove('hidden');
-        
+
+        // XP kazandır
+        if (window.progressManager) window.progressManager.addXP(10);
+        if (window.showXPGain) window.showXPGain(10);
+        if (window.audioManager) window.audioManager.playCorrect();
+
         continueBtn.onclick = () => {
             document.getElementById('question-overlay').classList.add('hidden');
             document.getElementById('learning-video').play();
         };
-        
+
         // Auto continue on Enter
         const enterHandler = (e) => {
              if(e.key === 'Enter' && !continueBtn.classList.contains('hidden')) {
@@ -169,6 +174,7 @@ function checkAnswer(selected, correct, btnElement) {
         btnElement.classList.add('wrong');
         feedback.textContent = "Yanlış Cevap. Tekrar dene.";
         feedback.className = 'feedback-msg error';
+        if (window.audioManager) window.audioManager.playWrong();
         
         // Add Replay Button if not exists
         if (!document.getElementById('replay-btn')) {

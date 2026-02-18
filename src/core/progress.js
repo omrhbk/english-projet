@@ -1,4 +1,5 @@
 // Progress Management Module
+import { logDailyXP } from '../features/progress-chart.js';
 
 const STORAGE_KEY = 'english_app_progress';
 
@@ -96,6 +97,7 @@ export const progressManager = {
 
     addXP(amount) {
         this.state.xp += amount;
+        logDailyXP(amount); // Günlük XP log'una ekle (grafik için)
         this.checkLevelUp();
         this.save();
     },

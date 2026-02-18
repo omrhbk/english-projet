@@ -5,7 +5,7 @@
 //  • Unsplash API         — ücretsiz, key config.js'de
 // ─────────────────────────────────────────────────────────
 
-import { UNSPLASH_ACCESS_KEY } from './config.js';
+import { getUnsplashKey } from './config.js';
 
 // ── 1. Free Dictionary API ───────────────────────────────
 // Endpoint: https://api.dictionaryapi.dev/api/v2/entries/en/<word>
@@ -122,7 +122,8 @@ const UNSPLASH_CACHE = new Map();
  * @returns {Promise<string|null>}  — img src URL veya null
  */
 export async function fetchUnsplashImage(word) {
-    if (!UNSPLASH_ACCESS_KEY || UNSPLASH_ACCESS_KEY === 'YOUR_UNSPLASH_ACCESS_KEY') {
+    const UNSPLASH_ACCESS_KEY = await getUnsplashKey();
+    if (!UNSPLASH_ACCESS_KEY) {
         return null;   // Key tanımlı değilse atla
     }
 

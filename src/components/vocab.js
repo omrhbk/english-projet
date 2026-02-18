@@ -1,8 +1,13 @@
 import { vocabData } from '../core/data.js';
 import { fetchDictionary, playPronunciation, fetchUnsplashImage } from '../core/services.js';
+import { reviewWord, getDueWords, getSRSStats, getCardData } from '../features/srs.js';
 
 let currentIndex = 0;
 let isFlipped = false;
+
+// SRS modu
+let srsQueue = [];     // gözden geçirilecek kelime ID listesi
+let srsMode = false;   // SRS modu aktif mi
 
 // --- Vocab Search / Browse ---
 
@@ -13,12 +18,21 @@ export function initVocabSearch() {
             <div class="search-bar-row">
                 <input type="text" id="vocab-search-input" placeholder="Kelime veya anlam ara..." class="search-input" autocomplete="off" />
                 <select id="vocab-type-filter" class="search-filter">
-                    <option value="all">Tümü</option>
+                    <option value="all">Tüm Türler</option>
                     <option value="noun">İsim (noun)</option>
                     <option value="verb">Fiil (verb)</option>
                     <option value="adjective">Sıfat (adjective)</option>
+                    <option value="other">Diğer</option>
+                </select>
+                <select id="vocab-level-filter" class="search-filter">
+                    <option value="all">Tüm Seviyeler</option>
+                    <option value="A1">A1 - Başlangıç</option>
+                    <option value="A2">A2 - Temel</option>
+                    <option value="B1">B1 - Orta</option>
+                    <option value="B2">B2 - Üst Orta</option>
                 </select>
             </div>
+            <div id="vocab-filter-info" class="vocab-filter-info"></div>
             <div id="vocab-results" class="vocab-results-grid"></div>
         </div>
     `;
@@ -27,11 +41,13 @@ export function initVocabSearch() {
 
     document.getElementById('vocab-search-input').addEventListener('input', filterVocab);
     document.getElementById('vocab-type-filter').addEventListener('change', filterVocab);
+    document.getElementById('vocab-level-filter').addEventListener('change', filterVocab);
 }
 
 function filterVocab() {
     const query = document.getElementById('vocab-search-input').value.toLowerCase().trim();
     const type = document.getElementById('vocab-type-filter').value;
+    const level = document.getElementById('vocab-level-filter').value;
 
     const filtered = vocabData.filter(word => {
         const matchesText = !query ||
@@ -39,8 +55,18 @@ function filterVocab() {
             word.meaning.toLowerCase().includes(query) ||
             word.synonyms.some(s => s.toLowerCase().includes(query));
         const matchesType = type === 'all' || word.type === type;
-        return matchesText && matchesType;
+        const matchesLevel = level === 'all' || word.level === level;
+        return matchesText && matchesType && matchesLevel;
     });
+
+    // Filtrelenmiş sonuç bilgisi
+    const infoEl = document.getElementById('vocab-filter-info');
+    if (infoEl) {
+        const total = vocabData.length;
+        infoEl.textContent = filtered.length < total
+            ? `${filtered.length} kelime gösteriliyor (toplam ${total})`
+            : `${total} kelime`;
+    }
 
     renderVocabResults(filtered);
 }
@@ -55,7 +81,10 @@ function renderVocabResults(words) {
 
     container.innerHTML = words.map(w => `
         <div class="vocab-result-card">
-            <span class="badge">${w.type}</span>
+            <div class="vocab-card-badges">
+                <span class="badge">${w.type}</span>
+                ${w.level ? `<span class="badge badge-level badge-level-${w.level}">${w.level}</span>` : ''}
+            </div>
             <h3 class="vocab-result-word">${w.word}</h3>
             <p class="vocab-result-meaning">${w.meaning}</p>
             <div class="tags">${w.synonyms.map(s => `<span class="tag">${s}</span>`).join('')}</div>
@@ -63,11 +92,33 @@ function renderVocabResults(words) {
     `).join('');
 }
 
-export function initFlashcards() {
-    currentIndex = 0; // Reset state when (re)entering the module
+export function initFlashcards(useSRS = false) {
+    currentIndex = 0;
+    srsMode = useSRS;
+
+    // SRS modunda bugün tekrar edilmesi gereken kelimeleri al
+    if (srsMode) {
+        const allIds = vocabData.map(w => w.id);
+        const dueIds = getDueWords(allIds);
+        srsQueue = dueIds.length > 0 ? [...dueIds] : allIds.slice(0, 20);
+    }
+
+    const stats = getSRSStats(vocabData.map(w => w.id));
+    const totalCards = srsMode ? srsQueue.length : vocabData.length;
+
     const container = document.getElementById('vocab-content');
     container.innerHTML = `
         <div class="flashcard-container">
+            ${srsMode ? `
+            <div class="srs-header">
+                <span class="srs-badge srs-due">📅 Bugün: ${stats.due}</span>
+                <span class="srs-badge srs-learning">📖 Öğreniliyor: ${stats.learning}</span>
+                <span class="srs-badge srs-mastered">✅ Öğrenildi: ${stats.mastered}</span>
+            </div>` : `
+            <div class="srs-mode-toggle">
+                <button id="srs-mode-btn" class="btn secondary small">🧠 Akıllı Tekrar (SRS) Modu</button>
+            </div>`}
+
             <div class="flashcard" id="flashcard">
                 <div class="flashcard-front">
                     <img id="card-image" class="card-image" src="" alt="" style="display:none" />
@@ -84,21 +135,36 @@ export function initFlashcards() {
                 <div class="flashcard-back">
                     <h2 id="card-meaning">Yükleniyor...</h2>
                     <div id="card-synonyms"></div>
+                    ${srsMode ? `
+                    <div class="srs-rating" id="srs-rating">
+                        <p class="srs-rating-label">Bu kelimeyi ne kadar bildin?</p>
+                        <div class="srs-buttons">
+                            <button class="srs-btn srs-hard" data-quality="1">😓 Zor</button>
+                            <button class="srs-btn srs-ok" data-quality="3">🙂 Tamam</button>
+                            <button class="srs-btn srs-easy" data-quality="5">😎 Kolay</button>
+                        </div>
+                    </div>` : ''}
                 </div>
             </div>
 
             <div class="controls">
-                <button id="prev-btn" class="btn secondary">❮ Önceki</button>
+                ${srsMode ? '' : '<button id="prev-btn" class="btn secondary">❮ Önceki</button>'}
                 <div class="progress">
-                    <span id="current-card">1</span> / <span id="total-cards">0</span>
+                    <span id="current-card">1</span> / <span id="total-cards">${totalCards}</span>
                 </div>
-                <button id="next-btn" class="btn">Sonraki ❯</button>
+                ${srsMode ? '<button id="next-btn" class="btn">Atla ❯</button>' : '<button id="next-btn" class="btn">Sonraki ❯</button>'}
             </div>
         </div>
     `;
 
     setupEventListeners();
     loadCard(0);
+
+    // SRS modu geçiş butonu
+    const srsModeBtn = document.getElementById('srs-mode-btn');
+    if (srsModeBtn) {
+        srsModeBtn.addEventListener('click', () => initFlashcards(true));
+    }
 }
 
 function setupEventListeners() {
@@ -107,22 +173,82 @@ function setupEventListeners() {
     const nextBtn = document.getElementById('next-btn');
 
     flashcard.addEventListener('click', flipCard);
-    
-    prevBtn.addEventListener('click', () => {
-        if(currentIndex > 0) {
-            currentIndex--;
-            resetCard();
-            loadCard(currentIndex);
-        }
-    });
 
-    nextBtn.addEventListener('click', () => {
-        if(currentIndex < vocabData.length - 1) {
-            currentIndex++;
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            if(currentIndex > 0) {
+                currentIndex--;
+                resetCard();
+                loadCard(currentIndex);
+            }
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            if (srsMode) {
+                // SRS modunda sıradaki kelimeye geç
+                currentIndex++;
+                if (currentIndex >= srsQueue.length) {
+                    showSRSComplete();
+                } else {
+                    resetCard();
+                    loadCard(currentIndex);
+                }
+            } else {
+                if(currentIndex < vocabData.length - 1) {
+                    currentIndex++;
+                    resetCard();
+                    loadCard(currentIndex);
+                }
+            }
+        });
+    }
+
+    // SRS değerlendirme butonları (kart çevrildikten sonra görünür)
+    document.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('srs-btn')) return;
+        const quality = parseInt(e.target.dataset.quality);
+        const wordData = srsMode ? vocabData.find(w => w.id === srsQueue[currentIndex]) : null;
+        if (!wordData) return;
+
+        const updated = reviewWord(wordData.id, quality);
+
+        // XP: kolay=15, tamam=10, zor=5
+        const xpMap = { 1: 5, 3: 10, 5: 15 };
+        const xp = xpMap[quality] || 10;
+        if (window.progressManager) window.progressManager.addXP(xp);
+        if (window.showXPGain) window.showXPGain(xp);
+        if (window.audioManager) {
+            quality >= 3 ? window.audioManager.playCorrect() : window.audioManager.playWrong();
+        }
+
+        // Sonraki kart
+        currentIndex++;
+        if (currentIndex >= srsQueue.length) {
+            showSRSComplete();
+        } else {
             resetCard();
             loadCard(currentIndex);
         }
     });
+}
+
+function showSRSComplete() {
+    const container = document.getElementById('vocab-content');
+    container.innerHTML = `
+        <div class="srs-complete">
+            <div style="font-size:3rem; margin-bottom:1rem;">🎉</div>
+            <h2>Bugünlük Bitti!</h2>
+            <p>Tüm tekrar edilmesi gereken kelimeleri gözden geçirdin.</p>
+            <div style="margin-top:1.5rem; display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
+                <button id="srs-again-btn" class="btn">Tekrar Başla</button>
+                <button id="srs-normal-btn" class="btn secondary">Normal Mod</button>
+            </div>
+        </div>
+    `;
+    document.getElementById('srs-again-btn').addEventListener('click', () => initFlashcards(true));
+    document.getElementById('srs-normal-btn').addEventListener('click', () => initFlashcards(false));
 }
 
 function flipCard() {
@@ -141,19 +267,31 @@ function resetCard() {
 }
 
 function loadCard(index) {
-    const wordData = vocabData[index];
+    // SRS modunda sıradaki kelimeyi ID'den bul, normal modda index kullan
+    const wordData = srsMode
+        ? vocabData.find(w => w.id === srsQueue[index])
+        : vocabData[index];
+
+    if (!wordData) return;
 
     document.getElementById('card-word').textContent = wordData.word;
     document.getElementById('card-type').textContent = wordData.type;
     document.getElementById('card-meaning').textContent = wordData.meaning;
 
     // İlerleme göstergesi
+    const total = srsMode ? srsQueue.length : vocabData.length;
     document.getElementById('current-card').textContent = index + 1;
-    document.getElementById('total-cards').textContent = vocabData.length;
+    document.getElementById('total-cards').textContent = total;
 
-    // Buton durumları
-    document.getElementById('prev-btn').disabled = index === 0;
-    document.getElementById('next-btn').disabled = index === vocabData.length - 1;
+    // Buton durumları (SRS modunda prev-btn yoktur)
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    if (prevBtn) prevBtn.disabled = index === 0;
+    if (nextBtn) {
+        nextBtn.disabled = srsMode
+            ? index >= srsQueue.length - 1
+            : index === vocabData.length - 1;
+    }
 
     // Fonetik placeholder — API gelene kadar boş
     const phoneticEl = document.getElementById('card-phonetic');

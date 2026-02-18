@@ -6,6 +6,14 @@ const OPTIONS_COUNT = 4;
 
 let timerInterval = null;
 
+/** Sayfa değişiminde dışarıdan çağrılır — aktif timer'ı durdurur */
+export function cleanupChallenge() {
+    if (timerInterval !== null) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+}
+
 export function initTimedChallenge() {
     const container = document.getElementById('vocab-content');
     container.innerHTML = `

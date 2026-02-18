@@ -1,7 +1,7 @@
 // Service Worker — English Master PWA
 // Strateji: Network-first, localStorage fallback
 
-const CACHE_NAME = 'english-master-v1';
+const CACHE_NAME = 'english-master-v2';
 
 // Offline'da sunulacak temel kaynaklar
 const PRECACHE_URLS = [
@@ -10,15 +10,21 @@ const PRECACHE_URLS = [
     '/src/core/app.js',
     '/src/core/data.js',
     '/src/core/progress.js',
+    '/src/core/config.js',
+    '/src/core/services.js',
+    '/src/core/auth.js',
     '/src/components/vocab.js',
     '/src/components/grammar.js',
     '/src/components/listening.js',
     '/src/components/reading.js',
     '/src/components/challenge.js',
+    '/src/components/sentence-order.js',
     '/src/features/achievements.js',
     '/src/features/analytics.js',
     '/src/features/animations.js',
     '/src/features/audio.js',
+    '/src/features/srs.js',
+    '/src/features/progress-chart.js',
     'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap'
 ];
 

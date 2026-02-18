@@ -1,13 +1,49 @@
 // ─────────────────────────────────────────────────────────
 //  API Yapılandırması
-//  Unsplash developer kaydı: https://unsplash.com/developers
-//  Ücretsiz plan: 50 istek/saat
+//  API key'leri artık .env dosyasında tutulmakta,
+//  server üzerinden /api/config endpoint'i ile alınmaktadır.
+//  Kaynak kod içinde hiçbir key bulunmamaktadır.
 // ─────────────────────────────────────────────────────────
 
-// Unsplash Access Key — kendi key'ini buraya yaz
-// Key'in yoksa görseller Unsplash yerine kaldırılmış olur (site çalışmaya devam eder)
-export const UNSPLASH_ACCESS_KEY = 'YOUR_UNSPLASH_ACCESS_KEY';
+let _config = null;
 
-// Google Cloud TTS (opsiyonel, ücretli — ayda 4M karakter ücretsiz)
-// Kullanmak için: https://console.cloud.google.com/apis/library/texttospeech.googleapis.com
-// export const GCP_TTS_KEY = 'YOUR_GCP_TTS_KEY';
+/**
+ * Server'dan config değerlerini çeker (bir kez çeker, önbelleğe alır).
+ * @returns {Promise<{unsplashAccessKey: string, geminiApiKey: string}>}
+ */
+export async function getConfig() {
+    if (_config) return _config;
+
+    try {
+        const res = await fetch('/api/config');
+        if (!res.ok) throw new Error('Config alınamadı');
+        _config = await res.json();
+    } catch {
+        // Server'a ulaşılamazsa boş döndür — uygulama yine de çalışır
+        _config = { unsplashAccessKey: '', geminiApiKey: '' };
+    }
+
+    return _config;
+}
+
+/**
+ * Unsplash Access Key'i döndürür.
+ * @returns {Promise<string>}
+ */
+export async function getUnsplashKey() {
+    const cfg = await getConfig();
+    return cfg.unsplashAccessKey || '';
+}
+
+/**
+ * Gemini API Key'i döndürür.
+ * @returns {Promise<string>}
+ */
+export async function getGeminiKey() {
+    const cfg = await getConfig();
+    return cfg.geminiApiKey || '';
+}
+
+// Geriye dönük uyumluluk için — eski UNSPLASH_ACCESS_KEY referanslarını kırmamak adına
+// Ama artık bu değişkeni doğrudan kullanma; getUnsplashKey() kullan.
+export const UNSPLASH_ACCESS_KEY = '';
