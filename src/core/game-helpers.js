@@ -70,7 +70,9 @@ export function renderCEFRFilter(containerId, levels, onFilter) {
 const ALL_GAME_KEYS = [
     'word_chain_leaderboard', 'crossword_leaderboard', 'hangman_leaderboard',
     'memory_cards_leaderboard', 'speed_quiz_leaderboard', 'mini_quiz_leaderboard',
-    'daily_challenge_leaderboard', 'sentence_builder_leaderboard'
+    'daily_challenge_leaderboard', 'sentence_builder_leaderboard',
+    'word_scramble_leaderboard', 'word_search_leaderboard',
+    'true_false_leaderboard', 'emoji_quiz_leaderboard'
 ];
 
 export function getGlobalScores() {

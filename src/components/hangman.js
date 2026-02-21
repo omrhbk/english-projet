@@ -12,6 +12,8 @@ let guessedLetters = [];
 let mistakes = 0;
 let score = 0;
 let wordsCompleted = 0;
+let hintsUsed = 0;
+let maxHints = 0;
 
 export function cleanupHangman() { /* no timers */ }
 
@@ -40,6 +42,8 @@ function startNewRound() {
     currentWord = words[Math.floor(Math.random() * words.length)];
     guessedLetters = [];
     mistakes = 0;
+    hintsUsed = 0;
+    maxHints = currentWord.word.length;
     renderGame();
 }
 
@@ -77,12 +81,45 @@ function renderGame() {
             ${wordDisplay}
         </div>
         <div class="hm-keyboard">${keyboard}</div>
-        <p style="text-align:center;margin-top:1rem;color:var(--text-light);">Kalan hak: ${MAX_MISTAKES - mistakes}</p>
+        <div style="display:flex;justify-content:center;align-items:center;gap:1.5rem;margin-top:1rem;">
+            <p style="margin:0;color:var(--text-light);">Kalan hak: ${MAX_MISTAKES - mistakes}</p>
+            <button id="hm-hint-btn" class="btn secondary" style="padding:0.4rem 1rem;font-size:0.85rem;" ${hintsUsed >= maxHints ? 'disabled' : ''}>
+                &#128161; Ipucu (${maxHints - hintsUsed}/${maxHints})
+            </button>
+        </div>
     `;
 
     area.querySelectorAll('.hm-key:not([disabled])').forEach(btn => {
         btn.addEventListener('click', () => handleGuess(btn.dataset.letter));
     });
+
+    const hintBtn = document.getElementById('hm-hint-btn');
+    if (hintBtn && !hintBtn.disabled) {
+        hintBtn.addEventListener('click', handleHint);
+    }
+}
+
+function handleHint() {
+    if (hintsUsed >= maxHints) return;
+    const unrevealed = currentWord.word.split('').filter(l => !guessedLetters.includes(l));
+    if (unrevealed.length === 0) return;
+    const letter = unrevealed[Math.floor(Math.random() * unrevealed.length)];
+    guessedLetters.push(letter);
+    hintsUsed++;
+    showToast('Bir harf aldiniz!', 'info', 500);
+
+    const allRevealed = currentWord.word.split('').every(l => guessedLetters.includes(l));
+    if (allRevealed) {
+        wordsCompleted++;
+        const wordScore = (MAX_MISTAKES - mistakes) * 10 + 20;
+        score += wordScore;
+        document.getElementById('hm-score').textContent = `Skor: ${score}`;
+        window.progressManager?.addXP?.(15);
+        showToast(`Dogru! +${wordScore} puan`, 'success');
+        setTimeout(startNewRound, 1500);
+        return;
+    }
+    renderGame();
 }
 
 function handleGuess(letter) {

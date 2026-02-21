@@ -30,6 +30,10 @@ import { initLeaderboard, cleanupLeaderboard } from "../components/leaderboard.j
 import { initBookmarks, cleanupBookmarks } from "../components/bookmarks.js";
 import { initNotes, cleanupNotes } from "../components/notes.js";
 import { initExportProgress, cleanupExportProgress } from "../components/export-progress.js";
+import { initWordScramble, cleanupWordScramble } from "../components/word-scramble.js";
+import { initWordSearch, cleanupWordSearch } from "../components/word-search.js";
+import { initTrueFalse, cleanupTrueFalse } from "../components/true-false.js";
+import { initEmojiQuiz, cleanupEmojiQuiz } from "../components/emoji-quiz.js";
 import { renderWordOfTheDay, setupWordOfTheDayEvents } from "../features/word-of-the-day.js";
 import { progressManager, setAchievementManager } from "./progress.js";
 import { renderWeeklyChart, renderStreakHeatmap } from "../features/progress-chart.js";
@@ -75,6 +79,10 @@ function navigateTo(view) {
     // Sayfa değişiminde aktif modülleri temizle
     cleanupChallenge();
     cleanupSpeedQuiz();
+    cleanupWordScramble();
+    cleanupWordSearch();
+    cleanupTrueFalse();
+    cleanupEmojiQuiz();
 
     _currentView = view;
     window.location.hash = view;
@@ -114,6 +122,10 @@ function navigateTo(view) {
         case "bookmarks":         initBookmarks();          break;
         case "notes":             initNotes();              break;
         case "export-progress":   initExportProgress();     break;
+        case "word-scramble":     initWordScramble();       break;
+        case "word-search":       initWordSearch();         break;
+        case "true-false":        initTrueFalse();          break;
+        case "emoji-quiz":        initEmojiQuiz();          break;
         default:                  renderDashboard();        break;
     }
 }
@@ -366,6 +378,26 @@ function renderDashboard() {
                     <h3>Hız Testi</h3>
                     <p>Zamanlı 4 şıklı quiz</p>
                 </div>
+                <div class="card card-games" id="dash-word-scramble">
+                    <div class="card-icon">🔀</div>
+                    <h3>Harf Karıştırma</h3>
+                    <p>Karışık harfleri düzelt</p>
+                </div>
+                <div class="card card-games" id="dash-word-search">
+                    <div class="card-icon">🔍</div>
+                    <h3>Kelime Avı</h3>
+                    <p>Izgarada gizli kelimeleri bul</p>
+                </div>
+                <div class="card card-games" id="dash-true-false">
+                    <div class="card-icon">✅</div>
+                    <h3>Doğru / Yanlış</h3>
+                    <p>Çeviri doğru mu yanlış mı?</p>
+                </div>
+                <div class="card card-games" id="dash-emoji-quiz">
+                    <div class="card-icon">😀</div>
+                    <h3>Emoji Quiz</h3>
+                    <p>Emoji'den kelime tahmin et</p>
+                </div>
             </div>
         </div>
 
@@ -452,6 +484,10 @@ function renderDashboard() {
     document.getElementById('dash-hangman').addEventListener('click',         () => navigateTo('hangman'));
     document.getElementById('dash-memory-cards').addEventListener('click',    () => navigateTo('memory-cards'));
     document.getElementById('dash-speed-quiz').addEventListener('click',      () => navigateTo('speed-quiz'));
+    document.getElementById('dash-word-scramble').addEventListener('click',  () => navigateTo('word-scramble'));
+    document.getElementById('dash-word-search').addEventListener('click',    () => navigateTo('word-search'));
+    document.getElementById('dash-true-false').addEventListener('click',     () => navigateTo('true-false'));
+    document.getElementById('dash-emoji-quiz').addEventListener('click',     () => navigateTo('emoji-quiz'));
     document.getElementById('dash-mini-quiz').addEventListener('click',       () => navigateTo('mini-quiz'));
     document.getElementById('dash-daily-challenge').addEventListener('click', () => navigateTo('daily-challenge'));
     document.getElementById('dash-leaderboard').addEventListener('click',     () => navigateTo('leaderboard'));
