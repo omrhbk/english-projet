@@ -1,5 +1,5 @@
 // Writing Practice Module — CEFR seviyeli yazma alistirmalari, kelime sayaci, anahtar kelime kontrolu
-import { getCEFRBadgeHTML, attachEnglishValidation } from '../core/utils.js';
+import { getCEFRBadgeHTML } from '../core/utils.js';
 import { showToast } from '../features/toast.js';
 
 // ── Yazma Alishtirmalari — CEFR seviyeli ─────────────────────────
@@ -324,10 +324,11 @@ function renderWritingSession(exerciseId) {
             <div style="position:relative;">
                 <textarea
                     id="writing-textarea"
-                    class="ex-input full-width"
                     rows="8"
-                    placeholder="Ingilizce yazmaya basla..."
-                    style="width:100%;padding:1rem;font-size:0.95rem;border-radius:8px;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-color);resize:vertical;font-family:'Poppins',sans-serif;line-height:1.6;"
+                    placeholder="Start writing in English..."
+                    style="width:100%;padding:1rem;font-size:1rem;border-radius:10px;border:2px solid var(--border-color);background:var(--card-bg);color:var(--text-color);resize:vertical;font-family:'Poppins',sans-serif;line-height:1.7;outline:none;transition:border-color 0.3s;box-sizing:border-box;"
+                    onfocus="this.style.borderColor='var(--primary-color)'"
+                    onblur="this.style.borderColor='var(--border-color)'"
                 ></textarea>
             </div>
 
@@ -360,8 +361,8 @@ function renderWritingSession(exerciseId) {
     const wordCountBar = document.getElementById('word-count-bar');
     const submitBtn = document.getElementById('writing-submit-btn');
 
-    // Attach English validation
-    attachEnglishValidation(textarea);
+    // Focus textarea immediately so user can start typing
+    setTimeout(() => textarea.focus(), 100);
 
     // Live word counter
     textarea.addEventListener('input', () => {

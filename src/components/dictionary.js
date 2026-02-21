@@ -6,7 +6,7 @@
 
 import { fetchDictionary, playPronunciation } from '../core/services.js';
 import { vocabData } from '../core/data.js';
-import { attachEnglishValidation, getTypeBadgeHTML, getCEFRBadgeHTML } from '../core/utils.js';
+import { getTypeBadgeHTML, getCEFRBadgeHTML } from '../core/utils.js';
 import { showToast } from '../features/toast.js';
 
 const HISTORY_KEY = 'dict_search_history';
@@ -96,9 +96,6 @@ export function initDictionary() {
             ` : ''}
         </div>
     `;
-
-    // Input validation
-    attachEnglishValidation(document.getElementById("dict-input"));
 
     document.getElementById("dict-search-btn").addEventListener("click", handleSearch);
     document.getElementById("dict-input").addEventListener("keydown", (e) => {

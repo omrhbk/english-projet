@@ -5,7 +5,7 @@
  * XP: Her dogru cevap +10 XP
  */
 
-import { getCEFRBadgeHTML, fisherYatesShuffle, attachEnglishValidation } from '../core/utils.js';
+import { getCEFRBadgeHTML, fisherYatesShuffle } from '../core/utils.js';
 import { showToast } from '../features/toast.js';
 
 // ── Yardimci: 3. tekil sahis (he/she/it) -s/-es/-ies kurallari ──────────────
@@ -920,7 +920,6 @@ function renderDrillQuestion() {
     `;
 
     const input = document.getElementById('vc-drill-input');
-    attachEnglishValidation(input);
     input.focus();
 
     input.addEventListener('keydown', (e) => {

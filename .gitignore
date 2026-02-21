@@ -10,6 +10,9 @@
 # Node.js bağımlılıkları
 node_modules/
 
+# Claude Code yerel ayarları
+.claude/settings.local.json
+
 # Geliştirme araçları
 .DS_Store
 Thumbs.db

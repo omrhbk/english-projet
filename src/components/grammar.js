@@ -1,5 +1,4 @@
 import { grammarData, cefrLevels } from '../core/data.js';
-import { attachEnglishValidation } from '../core/utils.js';
 
 const GRAMMAR_PROGRESS_KEY = 'grammar_completed';
 
@@ -174,7 +173,6 @@ function renderExercises(topicId, exercises) {
             btn.textContent = 'Kontrol Et';
             btn.addEventListener('click', () => checkGenericAnswer(input.value, ex.answer, index, ex.hint, topicId, exercises));
 
-            attachEnglishValidation(input);
             interactionDiv.appendChild(input);
             interactionDiv.appendChild(btn);
 
@@ -197,7 +195,6 @@ function renderExercises(topicId, exercises) {
             btn.textContent = 'Kontrol Et';
             btn.addEventListener('click', () => checkWritingAnswer(input.value, ex.keywords, index, topicId, exercises));
 
-            attachEnglishValidation(input);
             interactionDiv.appendChild(input);
             interactionDiv.appendChild(btn);
         }

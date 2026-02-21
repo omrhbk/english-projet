@@ -14,6 +14,22 @@ import { initPronunciation } from "../components/pronunciation.js";
 import { initWordChain } from "../components/word-chain.js";
 import { initWordFamilies } from "../components/word-families.js";
 import { initVerbConjugation } from "../components/verb-conjugation.js";
+import { initCrossword, cleanupCrossword } from "../components/crossword.js";
+import { initHangman, cleanupHangman } from "../components/hangman.js";
+import { initMemoryCards, cleanupMemoryCards } from "../components/memory-cards.js";
+import { initSpeedQuiz, cleanupSpeedQuiz } from "../components/speed-quiz.js";
+import { initDailyDialogue, cleanupDailyDialogue } from "../components/daily-dialogue.js";
+import { initSentenceBuilder, cleanupSentenceBuilder } from "../components/sentence-builder.js";
+import { initChatSimulator, cleanupChatSimulator } from "../components/chat-simulator.js";
+import { initSynonymsAntonyms, cleanupSynonymsAntonyms } from "../components/synonyms-antonyms.js";
+import { initCollocations, cleanupCollocations } from "../components/collocations.js";
+import { initPrefixesSuffixes, cleanupPrefixesSuffixes } from "../components/prefixes-suffixes.js";
+import { initMiniQuiz, cleanupMiniQuiz } from "../components/mini-quiz.js";
+import { initDailyChallenge, cleanupDailyChallenge } from "../components/daily-challenge.js";
+import { initLeaderboard, cleanupLeaderboard } from "../components/leaderboard.js";
+import { initBookmarks, cleanupBookmarks } from "../components/bookmarks.js";
+import { initNotes, cleanupNotes } from "../components/notes.js";
+import { initExportProgress, cleanupExportProgress } from "../components/export-progress.js";
 import { renderWordOfTheDay, setupWordOfTheDayEvents } from "../features/word-of-the-day.js";
 import { progressManager, setAchievementManager } from "./progress.js";
 import { renderWeeklyChart, renderStreakHeatmap } from "../features/progress-chart.js";
@@ -37,7 +53,7 @@ setAchievementManager(achievementManager);
 
 // DOM
 const appContainer    = document.getElementById("app");
-const navLinks        = document.querySelectorAll(".nav-links li");
+const navLinks        = document.querySelectorAll(".nav-links > li, .nav-dropdown li");
 const hamburger       = document.querySelector(".hamburger");
 const navLinksContainer = document.querySelector(".nav-links");
 const themeToggle     = document.getElementById("theme-toggle");
@@ -58,6 +74,7 @@ let _currentView = "dashboard";
 function navigateTo(view) {
     // Sayfa değişiminde aktif modülleri temizle
     cleanupChallenge();
+    cleanupSpeedQuiz();
 
     _currentView = view;
     window.location.hash = view;
@@ -67,21 +84,37 @@ function navigateTo(view) {
     if (activeLink) activeLink.classList.add("active");
 
     switch (view) {
-        case "vocabulary":      renderVocabulary();     break;
-        case "listening":       renderListening();      break;
-        case "grammar":         renderGrammar();        break;
-        case "reading":         renderReading();        break;
-        case "dictionary":      initDictionary();       break;
-        case "irregular-verbs": initIrregularVerbs();   break;
-        case "phrasal-verbs":   initPhrasalVerbs();     break;
-        case "idioms":          initIdiomsModule();     break;
-        case "writing":           initWritingPractice();  break;
-        case "pronunciation":    initPronunciation();    break;
-        case "word-chain":       initWordChain();        break;
-        case "word-families":    initWordFamilies();     break;
-        case "verb-conjugation": initVerbConjugation();  break;
-        case "statistics":       initStatistics();       break;
-        default:                 renderDashboard();      break;
+        case "vocabulary":        renderVocabulary();       break;
+        case "listening":         renderListening();        break;
+        case "grammar":           renderGrammar();          break;
+        case "reading":           renderReading();          break;
+        case "dictionary":        initDictionary();         break;
+        case "irregular-verbs":   initIrregularVerbs();     break;
+        case "phrasal-verbs":     initPhrasalVerbs();       break;
+        case "idioms":            initIdiomsModule();       break;
+        case "writing":           initWritingPractice();    break;
+        case "pronunciation":     initPronunciation();      break;
+        case "word-chain":        initWordChain();          break;
+        case "word-families":     initWordFamilies();       break;
+        case "verb-conjugation":  initVerbConjugation();    break;
+        case "statistics":        initStatistics();         break;
+        case "crossword":         initCrossword();          break;
+        case "hangman":           initHangman();            break;
+        case "memory-cards":      initMemoryCards();        break;
+        case "speed-quiz":        initSpeedQuiz();          break;
+        case "daily-dialogue":    initDailyDialogue();      break;
+        case "sentence-builder":  initSentenceBuilder();    break;
+        case "chat-simulator":    initChatSimulator();      break;
+        case "synonyms-antonyms": initSynonymsAntonyms();   break;
+        case "collocations":      initCollocations();       break;
+        case "prefixes-suffixes": initPrefixesSuffixes();   break;
+        case "mini-quiz":         initMiniQuiz();           break;
+        case "daily-challenge":   initDailyChallenge();     break;
+        case "leaderboard":       initLeaderboard();        break;
+        case "bookmarks":         initBookmarks();          break;
+        case "notes":             initNotes();              break;
+        case "export-progress":   initExportProgress();     break;
+        default:                  renderDashboard();        break;
     }
 }
 
@@ -139,7 +172,36 @@ function setupUIControls() {
 // ── Navigation ───────────────────────────────────────────────────────────────
 function setupNavigation() {
     navLinks.forEach(link => {
-        link.addEventListener("click", () => navigateTo(link.dataset.target));
+        if (link.dataset.target) {
+            link.addEventListener("click", (e) => {
+                e.stopPropagation();
+                navigateTo(link.dataset.target);
+                // Mobilde menüyü kapat
+                navLinksContainer.classList.remove("active");
+                // Dropdown'u kapat
+                document.querySelectorAll('.nav-group.open').forEach(g => g.classList.remove('open'));
+            });
+        }
+    });
+
+    // Dropdown toggle (mobilde)
+    document.querySelectorAll('.nav-group').forEach(group => {
+        const title = group.querySelector('.nav-group-title');
+        if (title) {
+            title.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // Diğerlerini kapat
+                document.querySelectorAll('.nav-group.open').forEach(g => {
+                    if (g !== group) g.classList.remove('open');
+                });
+                group.classList.toggle('open');
+            });
+        }
+    });
+
+    // Sayfa tıklamada dropdown kapat
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.nav-group.open').forEach(g => g.classList.remove('open'));
     });
 }
 
@@ -169,71 +231,195 @@ function renderDashboard() {
             </div>
         </div>
 
-        <div class="dashboard-grid">
-            <div class="card" id="dash-vocab">
-                <div class="card-icon">🧠</div>
-                <h3>Kelime Bilgisi</h3>
-                <p>Kartlar, Bulmacalar ve Eşleştirme</p>
+        <!-- Kelime Kategorisi -->
+        <div class="category-section">
+            <h2 class="category-title category-vocab">📚 Kelime</h2>
+            <div class="dashboard-grid">
+                <div class="card card-vocab" id="dash-vocab">
+                    <div class="card-icon">🧠</div>
+                    <h3>Kelime Bilgisi</h3>
+                    <p>Kartlar, Bulmacalar ve Eşleştirme</p>
+                </div>
+                <div class="card card-vocab" id="dash-word-chain">
+                    <div class="card-icon">⛓️</div>
+                    <h3>Kelime Zinciri</h3>
+                    <p>Son harfle kelime bul</p>
+                </div>
+                <div class="card card-vocab" id="dash-word-families">
+                    <div class="card-icon">🌳</div>
+                    <h3>Kelime Aileleri</h3>
+                    <p>Kök ve türetilmiş kelimeler</p>
+                </div>
+                <div class="card card-vocab" id="dash-synonyms-antonyms">
+                    <div class="card-icon">🔄</div>
+                    <h3>Eş & Zıt Anlam</h3>
+                    <p>Eş ve zıt anlamlı kelimeler</p>
+                </div>
+                <div class="card card-vocab" id="dash-collocations">
+                    <div class="card-icon">🤝</div>
+                    <h3>Collocations</h3>
+                    <p>make/do/take/get kalıpları</p>
+                </div>
+                <div class="card card-vocab" id="dash-prefixes-suffixes">
+                    <div class="card-icon">🔠</div>
+                    <h3>Ön & Son Ekler</h3>
+                    <p>Prefix ve suffix öğren</p>
+                </div>
             </div>
-            <div class="card" id="dash-listening">
-                <div class="card-icon">🎧</div>
-                <h3>Duyduğunu Anlama</h3>
-                <p>Videolar ve Diyaloglar</p>
+        </div>
+
+        <!-- Dil Bilgisi Kategorisi -->
+        <div class="category-section">
+            <h2 class="category-title category-grammar">✍️ Dil Bilgisi</h2>
+            <div class="dashboard-grid">
+                <div class="card card-grammar" id="dash-grammar">
+                    <div class="card-icon">📝</div>
+                    <h3>Gramer</h3>
+                    <p>Dersler ve Testler</p>
+                </div>
+                <div class="card card-grammar" id="dash-irregular">
+                    <div class="card-icon">🔀</div>
+                    <h3>Düzensiz Fiiller</h3>
+                    <p>V1-V2-V3 tablo ve drill</p>
+                </div>
+                <div class="card card-grammar" id="dash-phrasal">
+                    <div class="card-icon">🔗</div>
+                    <h3>Phrasal Verbs</h3>
+                    <p>Deyimsel fiiller ve testler</p>
+                </div>
+                <div class="card card-grammar" id="dash-verb-conjugation">
+                    <div class="card-icon">📐</div>
+                    <h3>Fiil Çekim</h3>
+                    <p>Tense ve çekim egzersizleri</p>
+                </div>
+                <div class="card card-grammar" id="dash-idioms">
+                    <div class="card-icon">💬</div>
+                    <h3>Deyimler</h3>
+                    <p>İngilizce deyimler ve kalıplar</p>
+                </div>
             </div>
-            <div class="card" id="dash-grammar">
-                <div class="card-icon">✍️</div>
-                <h3>Gramer</h3>
-                <p>Dersler ve Testler</p>
+        </div>
+
+        <!-- Beceriler Kategorisi -->
+        <div class="category-section">
+            <h2 class="category-title category-skills">🎯 Beceriler</h2>
+            <div class="dashboard-grid">
+                <div class="card card-skills" id="dash-listening">
+                    <div class="card-icon">🎧</div>
+                    <h3>Duyduğunu Anlama</h3>
+                    <p>Videolar ve Diyaloglar</p>
+                </div>
+                <div class="card card-skills" id="dash-reading">
+                    <div class="card-icon">📖</div>
+                    <h3>Okuma</h3>
+                    <p>Metin oku, kelimeleri keşfet</p>
+                </div>
+                <div class="card card-skills" id="dash-writing">
+                    <div class="card-icon">✏️</div>
+                    <h3>Yazma Pratiği</h3>
+                    <p>Paragraf ve cümle yazma</p>
+                </div>
+                <div class="card card-skills" id="dash-pronunciation">
+                    <div class="card-icon">🎤</div>
+                    <h3>Telaffuz</h3>
+                    <p>Konuşarak pratik yap</p>
+                </div>
+                <div class="card card-skills" id="dash-daily-dialogue">
+                    <div class="card-icon">💬</div>
+                    <h3>Günlük Diyalog</h3>
+                    <p>Senaryo bazlı konuşma</p>
+                </div>
+                <div class="card card-skills" id="dash-sentence-builder">
+                    <div class="card-icon">🔤</div>
+                    <h3>Cümle Kurma</h3>
+                    <p>Kelimeleri sırala, cümle kur</p>
+                </div>
+                <div class="card card-skills" id="dash-chat-simulator">
+                    <div class="card-icon">📱</div>
+                    <h3>Sohbet Simülatörü</h3>
+                    <p>WhatsApp tarzı sohbet</p>
+                </div>
             </div>
-            <div class="card" id="dash-reading">
-                <div class="card-icon">📖</div>
-                <h3>Okuma</h3>
-                <p>Metin oku, kelimeleri keşfet</p>
+        </div>
+
+        <!-- Oyunlar -->
+        <div class="category-section">
+            <h2 class="category-title category-games">🎮 Oyunlar</h2>
+            <div class="dashboard-grid">
+                <div class="card card-games" id="dash-crossword">
+                    <div class="card-icon">📰</div>
+                    <h3>Bulmaca</h3>
+                    <p>Türkçe ipucu → İngilizce cevap</p>
+                </div>
+                <div class="card card-games" id="dash-hangman">
+                    <div class="card-icon">🪢</div>
+                    <h3>Adam Asmaca</h3>
+                    <p>Harfleri tahmin et</p>
+                </div>
+                <div class="card card-games" id="dash-memory-cards">
+                    <div class="card-icon">🃏</div>
+                    <h3>Hafıza Kartları</h3>
+                    <p>Eşleştirme oyunu</p>
+                </div>
+                <div class="card card-games" id="dash-speed-quiz">
+                    <div class="card-icon">⚡</div>
+                    <h3>Hız Testi</h3>
+                    <p>Zamanlı 4 şıklı quiz</p>
+                </div>
             </div>
-            <div class="card" id="dash-irregular">
-                <div class="card-icon">🔀</div>
-                <h3>Düzensiz Fiiller</h3>
-                <p>V1-V2-V3 tablo ve drill</p>
+        </div>
+
+        <!-- Sınav & Test -->
+        <div class="category-section">
+            <h2 class="category-title category-exams">📋 Sınav & Test</h2>
+            <div class="dashboard-grid">
+                <div class="card card-exams" id="dash-mini-quiz">
+                    <div class="card-icon">📝</div>
+                    <h3>Mini Quiz</h3>
+                    <p>Karışık soru tipleri</p>
+                </div>
+                <div class="card card-exams" id="dash-daily-challenge">
+                    <div class="card-icon">📅</div>
+                    <h3>Günün Sorusu</h3>
+                    <p>Günlük 5 soru, seri takibi</p>
+                </div>
+                <div class="card card-exams" id="dash-leaderboard">
+                    <div class="card-icon">🏆</div>
+                    <h3>Skor Tablosu</h3>
+                    <p>Genel sıralama</p>
+                </div>
             </div>
-            <div class="card" id="dash-phrasal">
-                <div class="card-icon">🔗</div>
-                <h3>Phrasal Verbs</h3>
-                <p>Deyimsel fiiller ve testler</p>
-            </div>
-            <div class="card" id="dash-idioms">
-                <div class="card-icon">💬</div>
-                <h3>Deyimler</h3>
-                <p>İngilizce deyimler ve kalıplar</p>
-            </div>
-            <div class="card" id="dash-writing">
-                <div class="card-icon">✏️</div>
-                <h3>Yazma Pratiği</h3>
-                <p>Paragraf ve cümle yazma</p>
-            </div>
-            <div class="card" id="dash-pronunciation">
-                <div class="card-icon">🎤</div>
-                <h3>Telaffuz</h3>
-                <p>Konuşarak pratik yap</p>
-            </div>
-            <div class="card" id="dash-word-chain">
-                <div class="card-icon">🔗</div>
-                <h3>Kelime Zinciri</h3>
-                <p>Son harfle kelime bul</p>
-            </div>
-            <div class="card" id="dash-word-families">
-                <div class="card-icon">🌳</div>
-                <h3>Kelime Aileleri</h3>
-                <p>Kök ve türetilmiş kelimeler</p>
-            </div>
-            <div class="card" id="dash-verb-conjugation">
-                <div class="card-icon">📐</div>
-                <h3>Fiil Çekim</h3>
-                <p>Tense ve çekim egzersizleri</p>
-            </div>
-            <div class="card" id="dash-statistics">
-                <div class="card-icon">📊</div>
-                <h3>İstatistikler</h3>
-                <p>Detaylı ilerleme analizi</p>
+        </div>
+
+        <!-- Araçlar -->
+        <div class="category-section">
+            <h2 class="category-title category-tools">🔧 Araçlar</h2>
+            <div class="dashboard-grid">
+                <div class="card card-tools" id="dash-dictionary">
+                    <div class="card-icon">📖</div>
+                    <h3>Sözlük</h3>
+                    <p>Kelime ara ve tanım bul</p>
+                </div>
+                <div class="card card-tools" id="dash-statistics">
+                    <div class="card-icon">📊</div>
+                    <h3>İstatistikler</h3>
+                    <p>Detaylı ilerleme analizi</p>
+                </div>
+                <div class="card card-tools" id="dash-bookmarks">
+                    <div class="card-icon">⭐</div>
+                    <h3>Favorilerim</h3>
+                    <p>Favori kelimeleriniz</p>
+                </div>
+                <div class="card card-tools" id="dash-notes">
+                    <div class="card-icon">📝</div>
+                    <h3>Notlarım</h3>
+                    <p>Kişisel not defteri</p>
+                </div>
+                <div class="card card-tools" id="dash-export-progress">
+                    <div class="card-icon">📤</div>
+                    <h3>İlerleme Aktar</h3>
+                    <p>CSV/JSON dışa aktarma</p>
+                </div>
             </div>
         </div>
 
@@ -244,19 +430,36 @@ function renderDashboard() {
         ${renderStreakHeatmap()}
     `;
 
-    document.getElementById('dash-vocab').addEventListener('click',     () => navigateTo('vocabulary'));
-    document.getElementById('dash-listening').addEventListener('click', () => navigateTo('listening'));
-    document.getElementById('dash-grammar').addEventListener('click',   () => navigateTo('grammar'));
-    document.getElementById('dash-reading').addEventListener('click',   () => navigateTo('reading'));
-    document.getElementById('dash-irregular').addEventListener('click', () => navigateTo('irregular-verbs'));
-    document.getElementById('dash-phrasal').addEventListener('click',   () => navigateTo('phrasal-verbs'));
-    document.getElementById('dash-idioms').addEventListener('click',    () => navigateTo('idioms'));
-    document.getElementById('dash-writing').addEventListener('click',   () => navigateTo('writing'));
-    document.getElementById('dash-pronunciation').addEventListener('click',  () => navigateTo('pronunciation'));
-    document.getElementById('dash-word-chain').addEventListener('click',     () => navigateTo('word-chain'));
-    document.getElementById('dash-word-families').addEventListener('click',  () => navigateTo('word-families'));
+    document.getElementById('dash-vocab').addEventListener('click',           () => navigateTo('vocabulary'));
+    document.getElementById('dash-word-chain').addEventListener('click',      () => navigateTo('word-chain'));
+    document.getElementById('dash-word-families').addEventListener('click',   () => navigateTo('word-families'));
+    document.getElementById('dash-grammar').addEventListener('click',         () => navigateTo('grammar'));
+    document.getElementById('dash-irregular').addEventListener('click',       () => navigateTo('irregular-verbs'));
+    document.getElementById('dash-phrasal').addEventListener('click',         () => navigateTo('phrasal-verbs'));
     document.getElementById('dash-verb-conjugation').addEventListener('click',() => navigateTo('verb-conjugation'));
-    document.getElementById('dash-statistics').addEventListener('click',     () => navigateTo('statistics'));
+    document.getElementById('dash-idioms').addEventListener('click',          () => navigateTo('idioms'));
+    document.getElementById('dash-listening').addEventListener('click',       () => navigateTo('listening'));
+    document.getElementById('dash-reading').addEventListener('click',         () => navigateTo('reading'));
+    document.getElementById('dash-writing').addEventListener('click',         () => navigateTo('writing'));
+    document.getElementById('dash-pronunciation').addEventListener('click',   () => navigateTo('pronunciation'));
+    document.getElementById('dash-synonyms-antonyms').addEventListener('click', () => navigateTo('synonyms-antonyms'));
+    document.getElementById('dash-collocations').addEventListener('click',    () => navigateTo('collocations'));
+    document.getElementById('dash-prefixes-suffixes').addEventListener('click',() => navigateTo('prefixes-suffixes'));
+    document.getElementById('dash-daily-dialogue').addEventListener('click',  () => navigateTo('daily-dialogue'));
+    document.getElementById('dash-sentence-builder').addEventListener('click',() => navigateTo('sentence-builder'));
+    document.getElementById('dash-chat-simulator').addEventListener('click',  () => navigateTo('chat-simulator'));
+    document.getElementById('dash-crossword').addEventListener('click',       () => navigateTo('crossword'));
+    document.getElementById('dash-hangman').addEventListener('click',         () => navigateTo('hangman'));
+    document.getElementById('dash-memory-cards').addEventListener('click',    () => navigateTo('memory-cards'));
+    document.getElementById('dash-speed-quiz').addEventListener('click',      () => navigateTo('speed-quiz'));
+    document.getElementById('dash-mini-quiz').addEventListener('click',       () => navigateTo('mini-quiz'));
+    document.getElementById('dash-daily-challenge').addEventListener('click', () => navigateTo('daily-challenge'));
+    document.getElementById('dash-leaderboard').addEventListener('click',     () => navigateTo('leaderboard'));
+    document.getElementById('dash-dictionary').addEventListener('click',      () => navigateTo('dictionary'));
+    document.getElementById('dash-statistics').addEventListener('click',      () => navigateTo('statistics'));
+    document.getElementById('dash-bookmarks').addEventListener('click',       () => navigateTo('bookmarks'));
+    document.getElementById('dash-notes').addEventListener('click',           () => navigateTo('notes'));
+    document.getElementById('dash-export-progress').addEventListener('click', () => navigateTo('export-progress'));
     document.getElementById('share-progress-btn').addEventListener('click', shareProgress);
     setupWordOfTheDayEvents();
 }

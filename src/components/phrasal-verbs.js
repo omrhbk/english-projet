@@ -4,7 +4,7 @@
  * XP rewards: 10 XP per correct answer
  */
 
-import { getCEFRBadgeHTML, fisherYatesShuffle, attachEnglishValidation } from '../core/utils.js';
+import { getCEFRBadgeHTML, fisherYatesShuffle } from '../core/utils.js';
 import { showToast } from '../features/toast.js';
 
 // ── Phrasal Verbs Data (50 items) ─────────────────────────────────────────────
@@ -396,9 +396,6 @@ function loadNextFillQuestion() {
     const input = document.getElementById('pv-fill-input');
     const checkBtn = document.getElementById('pv-fill-check');
     const nextBtn = document.getElementById('pv-fill-next');
-
-    // Attach English validation
-    attachEnglishValidation(input);
 
     // Auto focus
     input.focus();

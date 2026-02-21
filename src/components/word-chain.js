@@ -1,7 +1,7 @@
 // Word Chain Game Module — Kelime Zinciri Oyunu
 // Bilgisayar bir kelime soyler, kullanici son harfle baslayan kelime yazar
 import { vocabData } from '../core/data.js';
-import { getCEFRBadgeHTML, attachEnglishValidation } from '../core/utils.js';
+import { getCEFRBadgeHTML } from '../core/utils.js';
 import { showToast } from '../features/toast.js';
 
 const LEADERBOARD_KEY = 'word_chain_leaderboard';
@@ -271,7 +271,6 @@ function renderGameScreen(state) {
     `;
 
     const input = document.getElementById('wc-input');
-    attachEnglishValidation(input);
     input.focus();
 
     input.addEventListener('keydown', (e) => {

@@ -3,7 +3,7 @@
  * Tablo, Drill (V1→V2/V3), Reverse Drill (V3→V1), Skor & XP
  */
 
-import { getCEFRBadgeHTML, fisherYatesShuffle, attachEnglishValidation } from '../core/utils.js';
+import { getCEFRBadgeHTML, fisherYatesShuffle } from '../core/utils.js';
 import { showToast } from '../features/toast.js';
 
 // ── Düzensiz Fiil Veritabanı (80+ fiil, A1–B2) ─────────────────────────────
@@ -458,7 +458,6 @@ function renderDrillQuestion(isReverse) {
         `;
 
         const v1Input = document.getElementById('iv-input-v1');
-        attachEnglishValidation(v1Input);
         v1Input.focus();
 
         v1Input.addEventListener('keydown', (e) => {
@@ -507,8 +506,6 @@ function renderDrillQuestion(isReverse) {
 
         const v2Input = document.getElementById('iv-input-v2');
         const v3Input = document.getElementById('iv-input-v3');
-        attachEnglishValidation(v2Input);
-        attachEnglishValidation(v3Input);
         v2Input.focus();
 
         v2Input.addEventListener('keydown', (e) => {

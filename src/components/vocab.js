@@ -1,7 +1,7 @@
 import { vocabData } from '../core/data.js';
 import { fetchDictionary, playPronunciation, fetchUnsplashImage } from '../core/services.js';
 import { reviewWord, getDueWords, getSRSStats, getCardData } from '../features/srs.js';
-import { getTypeBadgeHTML, attachEnglishValidation } from '../core/utils.js';
+import { getTypeBadgeHTML } from '../core/utils.js';
 
 let currentIndex = 0;
 let isFlipped = false;
@@ -516,9 +516,6 @@ export function initPuzzleGame() {
 
     document.getElementById('check-puzzle-btn').addEventListener('click', checkPuzzleAnswer);
     document.getElementById('next-puzzle-btn').addEventListener('click', loadNewPuzzle);
-
-    // Input validation for English-only
-    attachEnglishValidation(document.getElementById('puzzle-input'));
 
     // Allow Enter key to submit
     const puzzleInput = document.getElementById('puzzle-input');

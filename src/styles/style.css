@@ -66,22 +66,83 @@ body {
 .nav-links {
   list-style: none;
   display: flex;
-  gap: 1.5rem;
+  gap: 0.5rem;
+  align-items: center;
 }
 
-.nav-links li {
+.nav-links > li {
   cursor: pointer;
   font-weight: 500;
   color: var(--text-light);
   transition: var(--transition);
   padding: 0.5rem 1rem;
   border-radius: var(--border-radius);
+  position: relative;
 }
 
-.nav-links li:hover,
-.nav-links li.active {
+.nav-links > li:hover,
+.nav-links > li.active {
   color: var(--primary-color);
   background-color: rgba(74, 144, 226, 0.1);
+}
+
+/* Nav Group Dropdown */
+.nav-group {
+  position: relative;
+}
+
+.nav-group-title {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  pointer-events: auto;
+}
+
+.nav-group-title::after {
+  content: '▾';
+  font-size: 0.7rem;
+  opacity: 0.6;
+}
+
+.nav-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  min-width: 180px;
+  padding: 0.5rem 0;
+  z-index: 200;
+  list-style: none;
+  border: 1px solid var(--border-color);
+}
+
+.nav-group:hover .nav-dropdown,
+.nav-group.open .nav-dropdown {
+  display: block;
+}
+
+.nav-dropdown li {
+  padding: 0.5rem 1.25rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-color);
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.nav-dropdown li:hover {
+  background: rgba(74, 144, 226, 0.1);
+  color: var(--primary-color);
+}
+
+.nav-dropdown li.active {
+  color: var(--primary-color);
+  font-weight: 600;
+  background: rgba(74, 144, 226, 0.08);
 }
 
 /* Hamburger Menu */
@@ -141,8 +202,10 @@ body {
     flex-direction: column;
     padding: 1rem 2rem;
     box-shadow: var(--shadow);
-    gap: 0.5rem;
+    gap: 0.25rem;
     z-index: 99;
+    max-height: 80vh;
+    overflow-y: auto;
   }
 
   .nav-links.active {
@@ -151,6 +214,29 @@ body {
 
   .navbar {
     position: relative;
+  }
+
+  /* Mobilde dropdown pozisyonu */
+  .nav-dropdown {
+    position: static;
+    box-shadow: none;
+    border: none;
+    padding: 0;
+    min-width: auto;
+    background: transparent;
+  }
+
+  .nav-dropdown li {
+    padding-left: 2rem;
+    font-size: 0.85rem;
+  }
+
+  .nav-group:hover .nav-dropdown {
+    display: none;
+  }
+
+  .nav-group.open .nav-dropdown {
+    display: block;
   }
 
   .container {
@@ -180,12 +266,97 @@ body {
   width: 100%;
 }
 
+/* Category Sections */
+.category-section {
+  margin-bottom: 1.5rem;
+}
+
+.category-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.category-vocab {
+  background: linear-gradient(135deg, rgba(74,144,226,0.12), rgba(74,144,226,0.04));
+  color: #3a7bd5;
+  border-left: 4px solid #4a90e2;
+}
+
+.category-grammar {
+  background: linear-gradient(135deg, rgba(155,89,182,0.12), rgba(155,89,182,0.04));
+  color: #8e44ad;
+  border-left: 4px solid #9b59b6;
+}
+
+.category-skills {
+  background: linear-gradient(135deg, rgba(231,76,60,0.12), rgba(231,76,60,0.04));
+  color: #c0392b;
+  border-left: 4px solid #e74c3c;
+}
+
+.category-tools {
+  background: linear-gradient(135deg, rgba(243,156,18,0.12), rgba(243,156,18,0.04));
+  color: #d68910;
+  border-left: 4px solid #f39c12;
+}
+
+body.dark-mode .category-vocab { color: #7ec8e3; }
+body.dark-mode .category-grammar { color: #c39bd3; }
+body.dark-mode .category-skills { color: #f1948a; }
+body.dark-mode .category-tools { color: #f9e79f; }
+
+/* Card Color Variants */
+.card-vocab {
+  border-top: 4px solid #4a90e2;
+}
+.card-vocab:hover {
+  box-shadow: 0 8px 20px rgba(74,144,226,0.2);
+  border-top-color: #357abd;
+}
+.card-vocab h3 { color: #3a7bd5; }
+
+.card-grammar {
+  border-top: 4px solid #9b59b6;
+}
+.card-grammar:hover {
+  box-shadow: 0 8px 20px rgba(155,89,182,0.2);
+  border-top-color: #7d3c98;
+}
+.card-grammar h3 { color: #8e44ad; }
+
+.card-skills {
+  border-top: 4px solid #e74c3c;
+}
+.card-skills:hover {
+  box-shadow: 0 8px 20px rgba(231,76,60,0.2);
+  border-top-color: #c0392b;
+}
+.card-skills h3 { color: #c0392b; }
+
+.card-tools {
+  border-top: 4px solid #f39c12;
+}
+.card-tools:hover {
+  box-shadow: 0 8px 20px rgba(243,156,18,0.2);
+  border-top-color: #d68910;
+}
+.card-tools h3 { color: #d68910; }
+
+body.dark-mode .card-vocab h3 { color: #7ec8e3; }
+body.dark-mode .card-grammar h3 { color: #c39bd3; }
+body.dark-mode .card-skills h3 { color: #f1948a; }
+body.dark-mode .card-tools h3 { color: #f9e79f; }
+
 /* Dashboard Styling */
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 .card {
@@ -2581,4 +2752,283 @@ textarea:focus-visible {
         max-width: 100%;
         padding: 0;
     }
+}
+
+/* ══════════════════════════════════════════════════════════
+   NEW CATEGORY COLORS — Games, Conversation, Exams
+══════════════════════════════════════════════════════════ */
+.category-games {
+    background: linear-gradient(135deg, rgba(39,174,96,0.12), rgba(39,174,96,0.04));
+    color: #1e8449;
+    border-left: 4px solid #27ae60;
+}
+.category-conversation {
+    background: linear-gradient(135deg, rgba(230,126,34,0.12), rgba(230,126,34,0.04));
+    color: #ca6f1e;
+    border-left: 4px solid #e67e22;
+}
+.category-exams {
+    background: linear-gradient(135deg, rgba(52,152,219,0.12), rgba(52,152,219,0.04));
+    color: #2471a3;
+    border-left: 4px solid #3498db;
+}
+
+body.dark-mode .category-games { color: #58d68d; }
+body.dark-mode .category-conversation { color: #f0b27a; }
+body.dark-mode .category-exams { color: #85c1e9; }
+
+.card-games { border-top: 4px solid #27ae60; }
+.card-games:hover { box-shadow: 0 8px 20px rgba(39,174,96,0.2); border-top-color: #1e8449; }
+.card-games h3 { color: #1e8449; }
+
+.card-conversation { border-top: 4px solid #e67e22; }
+.card-conversation:hover { box-shadow: 0 8px 20px rgba(230,126,34,0.2); border-top-color: #ca6f1e; }
+.card-conversation h3 { color: #ca6f1e; }
+
+.card-exams { border-top: 4px solid #3498db; }
+.card-exams:hover { box-shadow: 0 8px 20px rgba(52,152,219,0.2); border-top-color: #2471a3; }
+.card-exams h3 { color: #2471a3; }
+
+body.dark-mode .card-games h3 { color: #58d68d; }
+body.dark-mode .card-conversation h3 { color: #f0b27a; }
+body.dark-mode .card-exams h3 { color: #85c1e9; }
+
+/* ══════════════════════════════════════════════════════════
+   Hangman Styles
+══════════════════════════════════════════════════════════ */
+.hm-letter-revealed {
+    color: var(--primary-color);
+}
+.hm-letter-blank {
+    color: var(--border-color);
+}
+.hm-keyboard {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.35rem;
+    max-width: 500px;
+    margin: 0 auto;
+}
+.hm-key {
+    width: 38px;
+    height: 38px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.hm-key:hover:not(:disabled) {
+    border-color: var(--primary-color);
+    background: rgba(74,144,226,0.1);
+}
+.hm-key.correct {
+    background: var(--accent-color);
+    color: #fff;
+    border-color: var(--accent-color);
+}
+.hm-key.wrong {
+    background: var(--danger-color);
+    color: #fff;
+    border-color: var(--danger-color);
+    opacity: 0.5;
+}
+.hm-key:disabled {
+    cursor: not-allowed;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Memory Cards Styles
+══════════════════════════════════════════════════════════ */
+.memory-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+}
+.memory-card {
+    aspect-ratio: 1;
+    perspective: 600px;
+    cursor: pointer;
+}
+.memory-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.5s;
+    transform-style: preserve-3d;
+}
+.memory-card.flipped .memory-card-inner,
+.memory-card.matched .memory-card-inner {
+    transform: rotateY(180deg);
+}
+.memory-card-front,
+.memory-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    box-shadow: var(--shadow);
+}
+.memory-card-front {
+    background: linear-gradient(135deg, var(--primary-color), #764ba2);
+    color: #fff;
+    font-size: 2rem;
+}
+.memory-card-back {
+    background: var(--card-bg);
+    color: var(--text-color);
+    transform: rotateY(180deg);
+    font-size: 0.9rem;
+    padding: 0.5rem;
+    text-align: center;
+    border: 2px solid var(--primary-color);
+    word-break: break-word;
+}
+.memory-card.matched .memory-card-back {
+    border-color: var(--accent-color);
+    background: rgba(126,211,33,0.1);
+}
+
+@media (max-width: 480px) {
+    .memory-grid { grid-template-columns: repeat(4, 1fr); gap: 0.4rem; }
+    .memory-card-front { font-size: 1.3rem; }
+    .memory-card-back { font-size: 0.75rem; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   Crossword Grid Styles
+══════════════════════════════════════════════════════════ */
+.crossword-grid-wrap {
+    overflow-x: auto;
+}
+.crossword-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 36px);
+    gap: 2px;
+    justify-content: center;
+}
+.cw-cell {
+    width: 36px;
+    height: 36px;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 700;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    text-transform: uppercase;
+}
+.cw-cell:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+.cw-black {
+    background: var(--text-color);
+    opacity: 0.15;
+    border-color: transparent;
+}
+body.dark-mode .cw-black {
+    background: #444;
+    opacity: 0.3;
+}
+
+@media (max-width: 480px) {
+    .crossword-grid { grid-template-columns: repeat(12, 28px); }
+    .cw-cell { width: 28px; height: 28px; font-size: 0.8rem; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   Chat Bubble Styles (Daily Dialogue & Chat Simulator)
+══════════════════════════════════════════════════════════ */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+.chat-bubble {
+    max-width: 80%;
+    padding: 0.75rem 1rem;
+    border-radius: 16px;
+    position: relative;
+    animation: fadeIn 0.3s;
+}
+.chat-bubble-left {
+    align-self: flex-start;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-bottom-left-radius: 4px;
+    box-shadow: var(--shadow);
+}
+.chat-bubble-right {
+    align-self: flex-end;
+    background: var(--primary-color);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+.chat-speaker {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 0.25rem;
+}
+.chat-text {
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+.chat-translation {
+    font-size: 0.75rem;
+    opacity: 0.65;
+    margin-top: 0.25rem;
+    font-style: italic;
+}
+.chat-bubble-right .chat-translation {
+    opacity: 0.8;
+}
+
+/* Chat Simulator specific */
+.chat-sim-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 1rem;
+}
+.chat-sim-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 350px;
+    overflow-y: auto;
+    padding: 1rem;
+    background: var(--background-color);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+/* ══════════════════════════════════════════════════════════
+   Notes Editor Styles
+══════════════════════════════════════════════════════════ */
+.note-card {
+    transition: var(--transition);
+}
+.note-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.12);
 }
