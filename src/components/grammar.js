@@ -449,7 +449,7 @@ function showTestResult(container, topic, state) {
     else if (pct >= 40) { emoji = '📖'; label = 'Biraz daha pratik yap.'; }
     else { emoji = '💪'; label = 'Tekrar dene, gelişeceksin!'; }
 
-    const xpGained = isPerfect ? 30 : Math.round(score * 5);
+    const xpGained = isPerfect ? 30 : Math.round((score / total) * 25);
 
     container.innerHTML = `
         <div class="grammar-test-result">

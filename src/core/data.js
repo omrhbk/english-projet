@@ -1781,7 +1781,12 @@ export const grammarData = [
             { id: 4, type: "multiple-choice", question: "She ___ to school every day.", options: ["go", "goes", "going", "gone"], answer: "goes", hint: "3. tekil şahıs → -s" },
             { id: 5, type: "fill-blank", question: "My father ____ (not/drink) tea.", answer: "doesn't drink", hint: "Olumsuz: doesn't + fiil" },
             { id: 6, type: "multiple-choice", question: "_____ they play tennis on Sundays?", options: ["Does", "Do", "Is", "Are"], answer: "Do", hint: "They → Do" },
-            { id: 7, type: "fill-blank", question: "The sun ____ (rise) in the east.", answer: "rises", hint: "Genel doğru, 3. tekil → -s" }
+            { id: 7, type: "fill-blank", question: "The sun ____ (rise) in the east.", answer: "rises", hint: "Genel doğru, 3. tekil → -s" },
+            { id: 8, type: "true-false", question: "He don't like vegetables. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "He doesn't like (3. tekil → doesn't)" },
+            { id: 9, type: "multiple-choice", question: "Water ___ at 100 degrees Celsius.", options: ["boil", "boils", "boiling", "boiled"], answer: "boils", hint: "Genel doğru, 3. tekil → -s" },
+            { id: 10, type: "fill-blank", question: "They ____ (play) football every Saturday.", answer: "play", hint: "They → çekim eki almaz" },
+            { id: 11, type: "writing", question: "Write a negative sentence using 'doesn't'.", keywords: ["doesn't"], answer: "check-keywords" },
+            { id: 12, type: "fill-blank", question: "My mother ____ (make) breakfast at 7 AM.", answer: "makes", hint: "3. tekil şahıs → -s ekle" }
         ],
         examples: [
             { sentence: "She works at a hospital.", translation: "Hastanede çalışır.", correct: true },
@@ -1796,7 +1801,12 @@ export const grammarData = [
             { id: 2, question: "Which sentence is correct?", options: ["He go to school.", "He goes to school.", "He going to school.", "He goed to school."], answer: 1 },
             { id: 3, question: "They ___ football on weekends.", options: ["plays", "playing", "play", "played"], answer: 2 },
             { id: 4, question: "___ she like pizza?", options: ["Do", "Does", "Is", "Are"], answer: 1 },
-            { id: 5, question: "The Earth ___ around the Sun.", options: ["move", "moves", "moving", "moved"], answer: 1 }
+            { id: 5, question: "The Earth ___ around the Sun.", options: ["move", "moves", "moving", "moved"], answer: 1 },
+            { id: 6, question: "We ___ to school every day.", options: ["goes", "going", "go", "gone"], answer: 2 },
+            { id: 7, question: "My father ___ coffee in the morning.", options: ["drink", "drinks", "drinking", "drank"], answer: 1 },
+            { id: 8, question: "___ your sister speak French?", options: ["Do", "Does", "Is", "Are"], answer: 1 },
+            { id: 9, question: "I ___ like spicy food.", options: ["doesn't", "isn't", "don't", "aren't"], answer: 2 },
+            { id: 10, question: "The shop ___ at 9 AM every day.", options: ["open", "opens", "opening", "opened"], answer: 1 }
         ]
     },
     {
@@ -1825,7 +1835,12 @@ export const grammarData = [
             { id: 4, type: "multiple-choice", question: "We ___ happy today.", options: ["am", "is", "are", "be"], answer: "are", hint: "We → are" },
             { id: 5, type: "fill-blank", question: "It ____ cold outside.", answer: "is", hint: "It → is" },
             { id: 6, type: "multiple-choice", question: "I ___ a student.", options: ["is", "am", "are", "be"], answer: "am", hint: "I → am" },
-            { id: 7, type: "fill-blank", question: "You ____ my best friend.", answer: "are", hint: "You → are" }
+            { id: 7, type: "fill-blank", question: "You ____ my best friend.", answer: "are", hint: "You → are" },
+            { id: 8, type: "true-false", question: "They is very tall. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "They → are" },
+            { id: 9, type: "fill-blank", question: "I ____ not hungry right now.", answer: "am", hint: "I → am" },
+            { id: 10, type: "multiple-choice", question: "___ the children at school?", options: ["Is", "Am", "Are", "Be"], answer: "Are", hint: "Children (çoğul) → Are" },
+            { id: 11, type: "writing", question: "Write a question using 'Is he...?'.", keywords: ["Is","he"], answer: "check-keywords" },
+            { id: 12, type: "fill-blank", question: "The flowers ____ beautiful.", answer: "are", hint: "Çoğul isim → are" }
         ],
         examples: [
             { sentence: "I am a student.", translation: "Ben bir öğrenciyim.", correct: true },
@@ -1839,7 +1854,12 @@ export const grammarData = [
             { id: 2, question: "She ___ from Istanbul.", options: ["am", "are", "is", "be"], answer: 2 },
             { id: 3, question: "They ___ students.", options: ["is", "am", "are", "was"], answer: 2 },
             { id: 4, question: "___ you tired?", options: ["Am", "Is", "Are", "Do"], answer: 2 },
-            { id: 5, question: "It ___ a beautiful day.", options: ["are", "am", "is", "were"], answer: 2 }
+            { id: 5, question: "It ___ a beautiful day.", options: ["are", "am", "is", "were"], answer: 2 },
+            { id: 6, question: "The cat ___ on the table.", options: ["am", "is", "are", "be"], answer: 1 },
+            { id: 7, question: "We ___ in the same class.", options: ["am", "is", "are", "be"], answer: 2 },
+            { id: 8, question: "___ he your brother?", options: ["Am", "Is", "Are", "Do"], answer: 1 },
+            { id: 9, question: "I ___ not a teacher.", options: ["is", "am", "are", "be"], answer: 1 },
+            { id: 10, question: "My parents ___ at home.", options: ["is", "am", "are", "be"], answer: 2 }
         ]
     },
     {
@@ -1868,7 +1888,12 @@ export const grammarData = [
             { id: 4, type: "multiple-choice", question: "I saw ___ cat in the garden.", options: ["a", "an", "the", "—"], answer: "a", hint: "İlk kez bahsedilen → a" },
             { id: 5, type: "multiple-choice", question: "___ sun is very hot today.", options: ["A", "An", "The", "—"], answer: "The", hint: "Tek olan şey → the" },
             { id: 6, type: "fill-blank", question: "He waited for ____ hour.", answer: "an", hint: "Hour → /aʊ/ ünlü ses" },
-            { id: 7, type: "fill-blank", question: "She goes to ____ university.", answer: "a", hint: "University → /juː/ ünsüz ses" }
+            { id: 7, type: "fill-blank", question: "She goes to ____ university.", answer: "a", hint: "University → /juː/ ünsüz ses" },
+            { id: 8, type: "true-false", question: "She is an university student. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "University → /juː/ ünsüz ses → a university" },
+            { id: 9, type: "multiple-choice", question: "Please close ___ door.", options: ["a", "an", "the", "—"], answer: "the", hint: "Bilinen/belirli nesne → the" },
+            { id: 10, type: "fill-blank", question: "He is ____ honest person.", answer: "an", hint: "Honest → h okunmaz, ünlü ses → an" },
+            { id: 11, type: "fill-blank", question: "I want to be ____ doctor when I grow up.", answer: "a", hint: "İlk kez bahsedilen meslek → a" },
+            { id: 12, type: "multiple-choice", question: "___ Moon goes around ___ Earth.", options: ["A / the", "The / the", "An / the", "— / —"], answer: "The / the", hint: "Tek olan şeyler → the" }
         ],
         examples: [
             { sentence: "I have a dog.", translation: "Bir köpeğim var.", correct: true },
@@ -1882,7 +1907,12 @@ export const grammarData = [
             { id: 2, question: "She is ___ artist.", options: ["a", "an", "the", "—"], answer: 1 },
             { id: 3, question: "___ Earth goes around the Sun.", options: ["A", "An", "The", "—"], answer: 2 },
             { id: 4, question: "He bought ___ orange.", options: ["a", "an", "the", "—"], answer: 1 },
-            { id: 5, question: "She goes to ___ university in London.", options: ["a", "an", "the", "—"], answer: 0 }
+            { id: 5, question: "She goes to ___ university in London.", options: ["a", "an", "the", "—"], answer: 0 },
+            { id: 6, question: "Can you open ___ window, please?", options: ["a", "an", "the", "—"], answer: 2 },
+            { id: 7, question: "He wants to be ___ engineer.", options: ["a", "an", "the", "—"], answer: 1 },
+            { id: 8, question: "I saw ___ elephant at the zoo.", options: ["a", "an", "the", "—"], answer: 1 },
+            { id: 9, question: "___ Amazon is the longest river.", options: ["A", "An", "The", "—"], answer: 2 },
+            { id: 10, question: "She ate ___ banana for breakfast.", options: ["a", "an", "the", "—"], answer: 0 }
         ]
     },
 
@@ -1922,7 +1952,12 @@ export const grammarData = [
             { id: 4, type: "multiple-choice", question: "We ___ dinner at a restaurant last night.", options: ["eat", "ate", "eaten", "eating"], answer: "ate", hint: "eat → ate (düzensiz)" },
             { id: 5, type: "fill-blank", question: "He ____ (not/come) to the party.", answer: "didn't come", hint: "Olumsuz: didn't + yalın fiil" },
             { id: 6, type: "multiple-choice", question: "___ you see the movie?", options: ["Do", "Did", "Does", "Was"], answer: "Did", hint: "Geçmiş zaman sorusu → Did" },
-            { id: 7, type: "fill-blank", question: "She ____ (buy) a new dress.", answer: "bought", hint: "buy → bought (düzensiz)" }
+            { id: 7, type: "fill-blank", question: "She ____ (buy) a new dress.", answer: "bought", hint: "buy → bought (düzensiz)" },
+            { id: 8, type: "true-false", question: "We didn't went to the cinema. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "didn't + yalın fiil → didn't go" },
+            { id: 9, type: "multiple-choice", question: "She ___ her homework two hours ago.", options: ["finish", "finishes", "finished", "finishing"], answer: "finished", hint: "Düzenli fiil + -ed" },
+            { id: 10, type: "fill-blank", question: "They ____ (have) a great holiday last summer.", answer: "had", hint: "have → had (düzensiz)" },
+            { id: 11, type: "writing", question: "Write a sentence about something you did yesterday.", keywords: ["yesterday"], answer: "check-keywords" },
+            { id: 12, type: "fill-blank", question: "____ she go to the party last night?", answer: "Did", hint: "Geçmiş zaman sorusu → Did" }
         ],
         examples: [
             { sentence: "I walked to school yesterday.", translation: "Dün okula yürüdüm.", correct: true },
@@ -1937,7 +1972,12 @@ export const grammarData = [
             { id: 2, question: "She ___ her homework yesterday.", options: ["do", "does", "did", "done"], answer: 2 },
             { id: 3, question: "They ___ TV last night.", options: ["watch", "watches", "watched", "watching"], answer: 2 },
             { id: 4, question: "___ he play football yesterday?", options: ["Do", "Does", "Did", "Was"], answer: 2 },
-            { id: 5, question: "We ___ a great time at the party.", options: ["have", "has", "had", "having"], answer: 2 }
+            { id: 5, question: "We ___ a great time at the party.", options: ["have", "has", "had", "having"], answer: 2 },
+            { id: 6, question: "We ___ a great movie last weekend.", options: ["see", "saw", "seen", "seeing"], answer: 1 },
+            { id: 7, question: "She ___ her keys at school.", options: ["lose", "loses", "lost", "losing"], answer: 2 },
+            { id: 8, question: "___ you finish your homework?", options: ["Do", "Does", "Did", "Are"], answer: 2 },
+            { id: 9, question: "The children ___ in the garden yesterday.", options: ["play", "plays", "played", "playing"], answer: 2 },
+            { id: 10, question: "He ___ to bed early last night.", options: ["go", "goes", "went", "going"], answer: 2 }
         ]
     },
     {
@@ -1969,7 +2009,12 @@ export const grammarData = [
             { id: 4, type: "multiple-choice", question: "She ___ come tomorrow.", options: ["will", "wills", "willing", "willed"], answer: "will", hint: "will hiç çekim eki almaz" },
             { id: 5, type: "fill-blank", question: "I ____ (not/tell) anyone your secret.", answer: "won't tell", hint: "will not = won't" },
             { id: 6, type: "multiple-choice", question: "___ you help me with this?", options: ["Will", "Do", "Are", "Did"], answer: "Will", hint: "Gelecek zaman sorusu → Will" },
-            { id: 7, type: "fill-blank", question: "It ____ (rain) tomorrow, I think.", answer: "will rain", hint: "Tahmin → will + fiil" }
+            { id: 7, type: "fill-blank", question: "It ____ (rain) tomorrow, I think.", answer: "will rain", hint: "Tahmin → will + fiil" },
+            { id: 8, type: "true-false", question: "He will goes to London next week. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "will + yalın fiil → will go" },
+            { id: 9, type: "multiple-choice", question: "I think she ___ the exam.", options: ["will pass", "passes", "passing", "passed"], answer: "will pass", hint: "Tahmin → will + fiil" },
+            { id: 10, type: "fill-blank", question: "We ____ (not/be) late, I promise.", answer: "won't be", hint: "will not = won't" },
+            { id: 11, type: "fill-blank", question: "____ they come to the meeting tomorrow?", answer: "Will", hint: "Gelecek zaman sorusu → Will" },
+            { id: 12, type: "multiple-choice", question: "Don't worry, I ___ you with your luggage.", options: ["help", "helped", "will help", "helping"], answer: "will help", hint: "Anlık karar/teklif → will" }
         ],
         examples: [
             { sentence: "I will help you with your homework.", translation: "Ödevinde sana yardım edeceğim.", correct: true },
@@ -1983,7 +2028,12 @@ export const grammarData = [
             { id: 2, question: "She ___ be 18 next month.", options: ["is", "will", "was", "does"], answer: 1 },
             { id: 3, question: "___ they come to the party?", options: ["Do", "Are", "Will", "Did"], answer: 2 },
             { id: 4, question: "I ___ not forget your birthday.", options: ["do", "will", "am", "did"], answer: 1 },
-            { id: 5, question: "We ___ travel to Japan next year.", options: ["will", "are", "do", "were"], answer: 0 }
+            { id: 5, question: "We ___ travel to Japan next year.", options: ["will", "are", "do", "were"], answer: 0 },
+            { id: 6, question: "He ___ 30 years old next month.", options: ["is", "will be", "was", "has been"], answer: 1 },
+            { id: 7, question: "I ___ call you when I arrive.", options: ["will", "am", "do", "was"], answer: 0 },
+            { id: 8, question: "___ it rain tomorrow?", options: ["Does", "Is", "Will", "Did"], answer: 2 },
+            { id: 9, question: "She ___ not forget your help.", options: ["does", "is", "will", "has"], answer: 2 },
+            { id: 10, question: "They ___ move to a new house next year.", options: ["will", "are", "do", "did"], answer: 0 }
         ]
     },
     {
@@ -2012,7 +2062,12 @@ export const grammarData = [
             { id: 4, type: "multiple-choice", question: "Look! The baby ___.", options: ["cry", "cries", "is crying", "cried"], answer: "is crying", hint: "Şu an olan eylem → is + V-ing" },
             { id: 5, type: "fill-blank", question: "I ____ (read) a very interesting book.", answer: "am reading", hint: "I → am + V-ing" },
             { id: 6, type: "multiple-choice", question: "___ you listening to me?", options: ["Do", "Are", "Is", "Did"], answer: "Are", hint: "You → Are" },
-            { id: 7, type: "fill-blank", question: "We ____ (have) lunch right now.", answer: "are having", hint: "We → are + V-ing" }
+            { id: 7, type: "fill-blank", question: "We ____ (have) lunch right now.", answer: "are having", hint: "We → are + V-ing" },
+            { id: 8, type: "true-false", question: "She is talk on the phone now. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "is talking (-ing gerekli)" },
+            { id: 9, type: "multiple-choice", question: "The children ___ in the garden right now.", options: ["play", "plays", "are playing", "played"], answer: "are playing", hint: "Şu an → are + V-ing" },
+            { id: 10, type: "fill-blank", question: "He ____ (write) an email at the moment.", answer: "is writing", hint: "He → is + V-ing" },
+            { id: 11, type: "fill-blank", question: "____ she sleeping right now?", answer: "Is", hint: "She → Is" },
+            { id: 12, type: "writing", question: "Write a sentence about what you are doing now.", keywords: ["am","ing"], answer: "check-keywords" }
         ],
         examples: [
             { sentence: "I am reading a book right now.", translation: "Şu an bir kitap okuyorum.", correct: true },
@@ -2026,7 +2081,12 @@ export const grammarData = [
             { id: 2, question: "We ___ dinner at the moment.", options: ["cook", "are cooking", "cooks", "cooked"], answer: 1 },
             { id: 3, question: "___ he sleeping?", options: ["Does", "Do", "Is", "Are"], answer: 2 },
             { id: 4, question: "I ___ not working today.", options: ["do", "am", "is", "are"], answer: 1 },
-            { id: 5, question: "Look! The children ___ in the park.", options: ["play", "plays", "are playing", "played"], answer: 2 }
+            { id: 5, question: "Look! The children ___ in the park.", options: ["play", "plays", "are playing", "played"], answer: 2 },
+            { id: 6, question: "They ___ a new house at the moment.", options: ["build", "builds", "are building", "built"], answer: 2 },
+            { id: 7, question: "___ you coming to the party tonight?", options: ["Do", "Does", "Are", "Is"], answer: 2 },
+            { id: 8, question: "He ___ TV right now.", options: ["watch", "watches", "is watching", "watched"], answer: 2 },
+            { id: 9, question: "The baby ___ at the moment.", options: ["sleep", "sleeps", "is sleeping", "slept"], answer: 2 },
+            { id: 10, question: "We ___ for the bus now.", options: ["wait", "waits", "are waiting", "waited"], answer: 2 }
         ]
     },
 
@@ -2062,7 +2122,11 @@ export const grammarData = [
             { id: 5, type: "fill-blank", question: "They ____ (live) here since 2018.", answer: "have lived", hint: "since → Present Perfect" },
             { id: 6, type: "multiple-choice", question: "She ___ already left.", options: ["have", "has", "had", "is"], answer: "has", hint: "She → has" },
             { id: 7, type: "fill-blank", question: "____ you ever been to Japan?", answer: "Have", hint: "Soru: Have + you + ever + V3" },
-            { id: 8, type: "multiple-choice", question: "We haven't finished ___.", options: ["already", "yet", "since", "just"], answer: "yet", hint: "Olumsuzda → yet" }
+            { id: 8, type: "multiple-choice", question: "We haven't finished ___.", options: ["already", "yet", "since", "just"], answer: "yet", hint: "Olumsuzda → yet" },
+            { id: 9, type: "fill-blank", question: "She ____ (already/read) that book.", answer: "has already read", hint: "has + already + V3" },
+            { id: 10, type: "multiple-choice", question: "I have lived in Ankara ___ 2015.", options: ["for", "since", "ago", "before"], answer: "since", hint: "Belirli tarih → since" },
+            { id: 11, type: "true-false", question: "They have went to Paris. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "went → gone (V3)" },
+            { id: 12, type: "fill-blank", question: "We ____ (not/see) each other for a long time.", answer: "haven't seen", hint: "have + not + V3" }
         ],
         examples: [
             { sentence: "I have visited Paris twice.", translation: "Paris'i iki kez ziyaret ettim.", correct: true },
@@ -2077,7 +2141,12 @@ export const grammarData = [
             { id: 2, question: "I ___ just finished my exam.", options: ["am", "have", "was", "did"], answer: 1 },
             { id: 3, question: "They have lived here ___ 10 years.", options: ["since", "for", "ago", "before"], answer: 1 },
             { id: 4, question: "___ you ever tried Turkish food?", options: ["Did", "Do", "Have", "Are"], answer: 2 },
-            { id: 5, question: "He hasn't called me ___.", options: ["just", "already", "yet", "ever"], answer: 2 }
+            { id: 5, question: "He hasn't called me ___.", options: ["just", "already", "yet", "ever"], answer: 2 },
+            { id: 6, question: "We ___ each other since childhood.", options: ["know", "knew", "have known", "knowing"], answer: 2 },
+            { id: 7, question: "She has ___ to three different countries.", options: ["go", "went", "gone", "going"], answer: 2 },
+            { id: 8, question: "I haven't finished the book ___.", options: ["already", "just", "yet", "since"], answer: 2 },
+            { id: 9, question: "He ___ just arrived at the airport.", options: ["have", "has", "had", "is"], answer: 1 },
+            { id: 10, question: "___ they ever visited Japan?", options: ["Did", "Do", "Have", "Are"], answer: 2 }
         ]
     },
     {
@@ -2108,7 +2177,12 @@ export const grammarData = [
             { id: 4, type: "multiple-choice", question: "You ___ see a doctor. You look sick.", options: ["should", "can", "might", "will"], answer: "should", hint: "Tavsiye → should" },
             { id: 5, type: "fill-blank", question: "Students ____ not use phones in class.", answer: "must", hint: "Zorunluluk/yasak → must" },
             { id: 6, type: "multiple-choice", question: "It ___ snow tomorrow. I'm not sure.", options: ["must", "should", "might", "can"], answer: "might", hint: "Belirsiz olasılık → might" },
-            { id: 7, type: "fill-blank", question: "____ I open the window?", answer: "Can", hint: "İzin isteme → Can" }
+            { id: 7, type: "fill-blank", question: "____ I open the window?", answer: "Can", hint: "İzin isteme → Can" },
+            { id: 8, type: "true-false", question: "He musts wear a uniform at school. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "Modal fiiller -s almaz → must" },
+            { id: 9, type: "fill-blank", question: "You ____ (not/should) eat so much sugar.", answer: "shouldn't", hint: "should + not = shouldn't" },
+            { id: 10, type: "multiple-choice", question: "___ you pass me the salt, please?", options: ["Must", "Should", "Could", "Might"], answer: "Could", hint: "Kibar istek → Could" },
+            { id: 11, type: "fill-blank", question: "She ____ speak three languages fluently.", answer: "can", hint: "Yetenek → can" },
+            { id: 12, type: "multiple-choice", question: "You ___ be more careful when crossing the road.", options: ["can", "might", "should", "could"], answer: "should", hint: "Tavsiye → should" }
         ],
         examples: [
             { sentence: "She can speak three languages.", translation: "Üç dil konuşabilir.", correct: true },
@@ -2122,7 +2196,12 @@ export const grammarData = [
             { id: 2, question: "___ you swim?", options: ["Must", "Should", "Can", "Might"], answer: 2 },
             { id: 3, question: "She ___ be at home. I'm not sure.", options: ["must", "might", "can", "should"], answer: 1 },
             { id: 4, question: "You ___ not park here. It's illegal.", options: ["should", "might", "can", "must"], answer: 3 },
-            { id: 5, question: "I think you ___ try the local food.", options: ["must", "should", "might", "can"], answer: 1 }
+            { id: 5, question: "I think you ___ try the local food.", options: ["must", "should", "might", "can"], answer: 1 },
+            { id: 6, question: "___ I borrow your pen?", options: ["Must", "Should", "Can", "Will"], answer: 2 },
+            { id: 7, question: "You ___ eat more fruit. It's healthy.", options: ["might", "should", "must", "can"], answer: 1 },
+            { id: 8, question: "She ___ play the piano when she was five.", options: ["can", "could", "must", "should"], answer: 1 },
+            { id: 9, question: "Students ___ cheat on exams.", options: ["must not", "should", "can", "might"], answer: 0 },
+            { id: 10, question: "It ___ be cold tomorrow. Take a jacket.", options: ["should", "can", "might", "must"], answer: 2 }
         ]
     },
 
@@ -2154,7 +2233,12 @@ export const grammarData = [
             { id: 4, type: "multiple-choice", question: "The cake ___ by my mother.", options: ["baked", "was baked", "is baking", "bakes"], answer: "was baked", hint: "Past passive → was + V3" },
             { id: 5, type: "fill-blank", question: "The new hospital ____ (build) next year.", answer: "will be built", hint: "Future passive: will be + V3" },
             { id: 6, type: "multiple-choice", question: "The letter ___ already ___.", options: ["has / sent", "has / been sent", "was / sent", "is / sending"], answer: "has / been sent", hint: "Present Perfect passive → has been + V3" },
-            { id: 7, type: "fill-blank", question: "Many languages ____ (speak) in India.", answer: "are spoken", hint: "Present passive: are + V3" }
+            { id: 7, type: "fill-blank", question: "Many languages ____ (speak) in India.", answer: "are spoken", hint: "Present passive: are + V3" },
+            { id: 8, type: "true-false", question: "The car was stole last night. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "stole → stolen (V3)" },
+            { id: 9, type: "fill-blank", question: "This bridge ____ (design) by a famous architect.", answer: "was designed", hint: "Past passive: was + V3" },
+            { id: 10, type: "multiple-choice", question: "The report ___ by the manager every month.", options: ["reviews", "is reviewed", "reviewing", "reviewed"], answer: "is reviewed", hint: "Present passive → is + V3" },
+            { id: 11, type: "fill-blank", question: "The results ____ (announce) tomorrow.", answer: "will be announced", hint: "Future passive: will be + V3" },
+            { id: 12, type: "writing", question: "Rewrite in passive: 'Someone stole my bike.'", keywords: ["was","stolen"], answer: "check-keywords" }
         ],
         examples: [
             { sentence: "The letter is written by him.", translation: "Mektup onun tarafından yazılır.", correct: true },
@@ -2168,7 +2252,12 @@ export const grammarData = [
             { id: 2, question: "The Mona Lisa ___ by Leonardo da Vinci.", options: ["painted", "was painted", "is painting", "paints"], answer: 1 },
             { id: 3, question: "The bridge ___ next month.", options: ["will build", "will be built", "is building", "built"], answer: 1 },
             { id: 4, question: "The homework ___ already ___ submitted.", options: ["has / been", "was / —", "is / being", "have / been"], answer: 0 },
-            { id: 5, question: "Rice ___ in Asia.", options: ["grows", "is grown", "growing", "grew"], answer: 1 }
+            { id: 5, question: "Rice ___ in Asia.", options: ["grows", "is grown", "growing", "grew"], answer: 1 },
+            { id: 6, question: "The letter ___ yesterday.", options: ["sent", "was sent", "is sending", "sends"], answer: 1 },
+            { id: 7, question: "A new school ___ next year.", options: ["will build", "will be built", "is building", "builds"], answer: 1 },
+            { id: 8, question: "The window ___ by the children.", options: ["broke", "was broken", "is breaking", "breaks"], answer: 1 },
+            { id: 9, question: "These cars ___ in Germany.", options: ["make", "made", "are made", "making"], answer: 2 },
+            { id: 10, question: "The food has ___ prepared.", options: ["be", "been", "being", "was"], answer: 1 }
         ]
     },
     {
@@ -2200,7 +2289,12 @@ export const grammarData = [
             { id: 4, type: "multiple-choice", question: "If you heat ice, it ___. (0th)", options: ["melts", "will melt", "would melt", "melted"], answer: "melts", hint: "0. tip: Present Simple + Present Simple" },
             { id: 5, type: "fill-blank", question: "If she ____ (study) harder, she would have passed. (3rd)", answer: "had studied", hint: "3. tip: If + had + V3" },
             { id: 6, type: "multiple-choice", question: "If I ___ you, I would apologize. (2nd)", options: ["am", "was", "were", "be"], answer: "were", hint: "2. tip → were" },
-            { id: 7, type: "fill-blank", question: "If you come early, we ____ (go) together. (1st)", answer: "will go", hint: "1. tip: will + fiil" }
+            { id: 7, type: "fill-blank", question: "If you come early, we ____ (go) together. (1st)", answer: "will go", hint: "1. tip: will + fiil" },
+            { id: 8, type: "true-false", question: "If I would know, I would tell you. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "If + would olmaz → If I knew" },
+            { id: 9, type: "fill-blank", question: "If you mix red and blue, you ____ (get) purple. (0th)", answer: "get", hint: "0. tip: Present Simple + Present Simple" },
+            { id: 10, type: "multiple-choice", question: "If I ___ the answer, I would tell you. (2nd)", options: ["know", "knew", "known", "will know"], answer: "knew", hint: "2. tip: If + Past Simple" },
+            { id: 11, type: "fill-blank", question: "If she ____ (not/miss) the bus, she would have arrived on time. (3rd)", answer: "hadn't missed", hint: "3. tip: If + had not + V3" },
+            { id: 12, type: "multiple-choice", question: "If it ___ tomorrow, we will cancel the picnic. (1st)", options: ["rained", "rains", "rain", "would rain"], answer: "rains", hint: "1. tip: If + Present Simple" }
         ],
         examples: [
             { sentence: "If you heat water, it boils.", translation: "Suyu ısıtırsan kaynar. (0. tip)", correct: true },
@@ -2214,7 +2308,12 @@ export const grammarData = [
             { id: 2, question: "If it rains, I ___ at home. (1st)", options: ["stay", "will stay", "would stay", "stayed"], answer: 1 },
             { id: 3, question: "If I ___ a bird, I would fly. (2nd)", options: ["am", "was", "were", "be"], answer: 2 },
             { id: 4, question: "If he ___ earlier, he wouldn't have been late. (3rd)", options: ["leaves", "left", "had left", "would leave"], answer: 2 },
-            { id: 5, question: "Which sentence is 2nd conditional?", options: ["If it rains, I'll stay home.", "If I were you, I'd study.", "If he comes, tell him.", "If you heat ice, it melts."], answer: 1 }
+            { id: 5, question: "Which sentence is 2nd conditional?", options: ["If it rains, I'll stay home.", "If I were you, I'd study.", "If he comes, tell him.", "If you heat ice, it melts."], answer: 1 },
+            { id: 6, question: "If she ___ hard, she will pass the exam. (1st)", options: ["study", "studies", "studied", "would study"], answer: 1 },
+            { id: 7, question: "If I ___ a car, I would drive to work. (2nd)", options: ["have", "has", "had", "would have"], answer: 2 },
+            { id: 8, question: "If they ___ earlier, they would have caught the train. (3rd)", options: ["leave", "left", "had left", "would leave"], answer: 2 },
+            { id: 9, question: "If you mix yellow and blue, you ___ green. (0th)", options: ["get", "will get", "would get", "got"], answer: 0 },
+            { id: 10, question: "If I ___ you, I would study more. (2nd)", options: ["am", "was", "were", "be"], answer: 2 }
         ]
     },
 
@@ -2252,7 +2351,12 @@ export const grammarData = [
             { id: 4, type: "multiple-choice", question: "Rarely ___ she make mistakes.", options: ["do", "does", "did", "has"], answer: "does", hint: "Present → does" },
             { id: 5, type: "fill-blank", question: "Not only ____ he pass the exam, but he also got the highest mark.", answer: "did", hint: "Not only + did + subject" },
             { id: 6, type: "multiple-choice", question: "___ I you, I would accept the offer.", options: ["Was", "Were", "Am", "Had"], answer: "Were", hint: "If I were you → Were I you" },
-            { id: 7, type: "fill-blank", question: "Hardly ____ she finished speaking when everyone applauded.", answer: "had", hint: "Hardly + had + subject" }
+            { id: 7, type: "fill-blank", question: "Hardly ____ she finished speaking when everyone applauded.", answer: "had", hint: "Hardly + had + subject" },
+            { id: 8, type: "true-false", question: "Seldom I have seen such dedication. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "Devrik yapı: Seldom have I seen" },
+            { id: 9, type: "fill-blank", question: "No sooner ____ she arrived than it started to rain.", answer: "had", hint: "No sooner + had + subject" },
+            { id: 10, type: "multiple-choice", question: "Under no circumstances ___ you leave early.", options: ["can", "should", "do", "may"], answer: "should", hint: "Negatif zarf + yardımcı fiil + özne" },
+            { id: 11, type: "fill-blank", question: "Little ____ he know about the surprise party.", answer: "did", hint: "Little + did + subject" },
+            { id: 12, type: "multiple-choice", question: "At no time ___ she aware of the danger.", options: ["is", "was", "has", "does"], answer: "was", hint: "At no time + was + subject" }
         ],
         examples: [
             { sentence: "Never have I seen such beauty.", translation: "Böyle bir güzellik hiç görmedim.", correct: true },
@@ -2266,7 +2370,12 @@ export const grammarData = [
             { id: 2, question: "___ he known earlier, he would have helped.", options: ["If", "Had", "Would", "Did"], answer: 1 },
             { id: 3, question: "Rarely ___ we see such talent.", options: ["do", "does", "did", "have"], answer: 0 },
             { id: 4, question: "Not only ___ she sing, but she also dances.", options: ["do", "does", "did", "can"], answer: 1 },
-            { id: 5, question: "___ I you, I'd take the job.", options: ["Was", "Am", "Were", "If"], answer: 2 }
+            { id: 5, question: "___ I you, I'd take the job.", options: ["Was", "Am", "Were", "If"], answer: 2 },
+            { id: 6, question: "Seldom ___ we encounter such problems.", options: ["do", "does", "did", "have"], answer: 0 },
+            { id: 7, question: "No sooner ___ he left than it rained.", options: ["has", "had", "did", "was"], answer: 1 },
+            { id: 8, question: "Little ___ she know about the plan.", options: ["do", "does", "did", "has"], answer: 2 },
+            { id: 9, question: "Under no circumstances ___ you cheat.", options: ["can", "could", "should", "might"], answer: 2 },
+            { id: 10, question: "___ she known the truth, she would have left.", options: ["If", "Had", "Should", "Were"], answer: 1 }
         ]
     },
     {
@@ -2296,7 +2405,12 @@ export const grammarData = [
             { id: 4, type: "multiple-choice", question: "I suggest that he ___ on time.", options: ["comes", "come", "came", "coming"], answer: "come", hint: "Subjunctive: yalın fiil" },
             { id: 5, type: "fill-blank", question: "It is important that she ____ (be) there by noon.", answer: "be", hint: "Subjunctive: be (not is)" },
             { id: 6, type: "multiple-choice", question: "The board demands that the CEO ___.", options: ["resigns", "resign", "resigned", "resigning"], answer: "resign", hint: "Subjunctive: yalın fiil" },
-            { id: 7, type: "fill-blank", question: "I recommend that he ____ (not/go) alone.", answer: "not go", hint: "Olumsuz: not + yalın fiil" }
+            { id: 7, type: "fill-blank", question: "I recommend that he ____ (not/go) alone.", answer: "not go", hint: "Olumsuz: not + yalın fiil" },
+            { id: 8, type: "true-false", question: "The teacher insists that he studies harder. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "Subjunctive: study (yalın)" },
+            { id: 9, type: "fill-blank", question: "It is necessary that everyone ____ (attend) the meeting.", answer: "attend", hint: "Subjunctive: yalın fiil" },
+            { id: 10, type: "multiple-choice", question: "She requested that the document ___ sent immediately.", options: ["is", "be", "was", "has been"], answer: "be", hint: "Subjunctive: be" },
+            { id: 11, type: "fill-blank", question: "The law requires that every citizen ____ (pay) taxes.", answer: "pay", hint: "Subjunctive: yalın fiil (pays değil)" },
+            { id: 12, type: "multiple-choice", question: "It is imperative that she ___ on time.", options: ["arrives", "arrive", "arrived", "arriving"], answer: "arrive", hint: "Subjunctive: yalın fiil" }
         ],
         examples: [
             { sentence: "It is vital that he be present.", translation: "Orada bulunması hayati önem taşır.", correct: true },
@@ -2310,7 +2424,12 @@ export const grammarData = [
             { id: 2, question: "I suggest that he ___ a doctor.", options: ["sees", "see", "saw", "seeing"], answer: 1 },
             { id: 3, question: "It is vital that the meeting ___ on time.", options: ["starts", "start", "started", "starting"], answer: 1 },
             { id: 4, question: "The manager insists that everyone ___ present.", options: ["is", "be", "are", "being"], answer: 1 },
-            { id: 5, question: "I recommend that she ___ not go alone.", options: ["do", "does", "—", "did"], answer: 2 }
+            { id: 5, question: "I recommend that she ___ not go alone.", options: ["do", "does", "—", "did"], answer: 2 },
+            { id: 6, question: "The doctor recommends that he ___ more water.", options: ["drinks", "drink", "drank", "drinking"], answer: 1 },
+            { id: 7, question: "It is necessary that the door ___ locked.", options: ["is", "be", "was", "been"], answer: 1 },
+            { id: 8, question: "She demanded that he ___ immediately.", options: ["leaves", "leave", "left", "leaving"], answer: 1 },
+            { id: 9, question: "It is crucial that everyone ___ the rules.", options: ["follows", "follow", "followed", "following"], answer: 1 },
+            { id: 10, question: "The professor suggests that she ___ the paper.", options: ["rewrites", "rewrite", "rewrote", "rewriting"], answer: 1 }
         ]
     },
 
@@ -2347,7 +2466,12 @@ export const grammarData = [
             { id: 4, type: "multiple-choice", question: "It ___ Mary who found the answer.", options: ["is", "was", "were", "has"], answer: "was", hint: "It-cleft: It was + kişi + who" },
             { id: 5, type: "fill-blank", question: "What surprised me ____ his reaction.", answer: "was", hint: "Wh-cleft: What + clause + was" },
             { id: 6, type: "multiple-choice", question: "___ I want is some peace and quiet.", options: ["That", "Which", "What", "It"], answer: "What", hint: "Wh-cleft: What + I want + is" },
-            { id: 7, type: "fill-blank", question: "It was in Paris ____ they first met.", answer: "that", hint: "It-cleft: It was + yer + that" }
+            { id: 7, type: "fill-blank", question: "It was in Paris ____ they first met.", answer: "that", hint: "It-cleft: It was + yer + that" },
+            { id: 8, type: "true-false", question: "It was yesterday when she arrived. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "It-cleft'te 'that' kullanılır: It was yesterday that..." },
+            { id: 9, type: "fill-blank", question: "It was the teacher ____ inspired me the most.", answer: "who", hint: "It-cleft (kişi): It was + kişi + who" },
+            { id: 10, type: "multiple-choice", question: "___ he said surprised everyone.", options: ["That", "It", "What", "Which"], answer: "What", hint: "Wh-cleft: What + cümle" },
+            { id: 11, type: "fill-blank", question: "It ____ in 1969 that man first walked on the Moon.", answer: "was", hint: "It-cleft: It was + zaman + that" },
+            { id: 12, type: "multiple-choice", question: "A good rest is ___ you need right now.", options: ["that", "which", "what", "it"], answer: "what", hint: "Reversed wh-cleft: ... is what ..." }
         ],
         examples: [
             { sentence: "It was John who broke the window.", translation: "Pencereyi kıran John'du.", correct: true },
@@ -2361,7 +2485,12 @@ export const grammarData = [
             { id: 2, question: "___ I really want is a cup of tea.", options: ["That", "Which", "What", "It"], answer: 2 },
             { id: 3, question: "It was in London ___ the event took place.", options: ["where", "which", "that", "when"], answer: 2 },
             { id: 4, question: "___ annoys me is the constant noise.", options: ["That", "It", "What", "Which"], answer: 2 },
-            { id: 5, question: "It ___ the children who ate the cake.", options: ["is", "was", "were", "has"], answer: 1 }
+            { id: 5, question: "It ___ the children who ate the cake.", options: ["is", "was", "were", "has"], answer: 1 },
+            { id: 6, question: "It was ___ who broke the vase.", options: ["him", "he", "his", "himself"], answer: 1 },
+            { id: 7, question: "What ___ me was her generosity.", options: ["surprise", "surprises", "surprised", "surprising"], answer: 2 },
+            { id: 8, question: "It was in 2020 ___ the pandemic started.", options: ["when", "where", "which", "that"], answer: 3 },
+            { id: 9, question: "___ bothers me is his attitude.", options: ["It", "That", "What", "Which"], answer: 2 },
+            { id: 10, question: "It ___ the manager who made the decision.", options: ["is", "was", "were", "has"], answer: 1 }
         ]
     },
     {
@@ -2392,7 +2521,12 @@ export const grammarData = [
             { id: 4, type: "multiple-choice", question: "The plan has risks; ___, we should proceed.", options: ["nevertheless", "thereby", "hence", "admittedly"], answer: "nevertheless", hint: "Zıtlık → nevertheless" },
             { id: 5, type: "fill-blank", question: "____, the theory is not perfect, but it is the best we have.", answer: "Admittedly", hint: "Taviz → Admittedly" },
             { id: 6, type: "multiple-choice", question: "Costs increased; ___, profits fell.", options: ["nevertheless", "hence", "admittedly", "notwithstanding"], answer: "hence", hint: "Sonuç → hence" },
-            { id: 7, type: "fill-blank", question: "The experiment was a success; ____, it opened new research areas.", answer: "furthermore", hint: "Ekleme → furthermore" }
+            { id: 7, type: "fill-blank", question: "The experiment was a success; ____, it opened new research areas.", answer: "furthermore", hint: "Ekleme → furthermore" },
+            { id: 8, type: "true-false", question: "The plan failed; thereby, we tried again. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "'thereby' sonuç + -ing ile kullanılır. Burada 'nevertheless' uygun." },
+            { id: 9, type: "fill-blank", question: "She worked hard; ____, she was promoted.", answer: "consequently", hint: "Sonuç → consequently" },
+            { id: 10, type: "multiple-choice", question: "The evidence is strong; ___, we cannot ignore the risks.", options: ["hence", "moreover", "nonetheless", "thereby"], answer: "nonetheless", hint: "Zıtlık → nonetheless" },
+            { id: 11, type: "fill-blank", question: "The study has limitations; ____, it provides valuable data.", answer: "nonetheless", hint: "Zıtlık → nonetheless" },
+            { id: 12, type: "multiple-choice", question: "She is experienced; ___, she speaks three languages.", options: ["hence", "moreover", "thereby", "nevertheless"], answer: "moreover", hint: "Ekleme → moreover" }
         ],
         examples: [
             { sentence: "The evidence is weak; nevertheless, the jury convicted him.", translation: "Kanıtlar zayıf; yine de jüri onu mahkum etti.", correct: true },
@@ -2406,7 +2540,12 @@ export const grammarData = [
             { id: 2, question: "___ the difficulties, the team succeeded.", options: ["Nevertheless", "Hence", "Notwithstanding", "Thereby"], answer: 2 },
             { id: 3, question: "She resigned, ___ ending her 20-year career.", options: ["nevertheless", "hence", "thereby", "admittedly"], answer: 2 },
             { id: 4, question: "The method is flawed; ___, we need a new approach.", options: ["thereby", "hence", "notwithstanding", "admittedly"], answer: 1 },
-            { id: 5, question: "___, the results were disappointing.", options: ["Hence", "Thereby", "Notwithstanding", "Admittedly"], answer: 3 }
+            { id: 5, question: "___, the results were disappointing.", options: ["Hence", "Thereby", "Notwithstanding", "Admittedly"], answer: 3 },
+            { id: 6, question: "He broke the rules, ___ losing his membership.", options: ["nevertheless", "hence", "thereby", "moreover"], answer: 2 },
+            { id: 7, question: "___, I agree with the main argument.", options: ["Thereby", "Hence", "Nevertheless", "Granted"], answer: 3 },
+            { id: 8, question: "The results were positive; ___, more research is needed.", options: ["thereby", "hence", "moreover", "nevertheless"], answer: 3 },
+            { id: 9, question: "The company grew; ___, it hired more staff.", options: ["nevertheless", "consequently", "notwithstanding", "admittedly"], answer: 1 },
+            { id: 10, question: "___ the challenges, the team delivered on time.", options: ["Hence", "Thereby", "Notwithstanding", "Moreover"], answer: 2 }
         ]
     }
 ];
