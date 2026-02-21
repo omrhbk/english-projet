@@ -1,6 +1,7 @@
 import { vocabData } from '../core/data.js';
 import { fetchDictionary, playPronunciation, fetchUnsplashImage } from '../core/services.js';
 import { reviewWord, getDueWords, getSRSStats, getCardData } from '../features/srs.js';
+import { getTypeBadgeHTML, attachEnglishValidation } from '../core/utils.js';
 
 let currentIndex = 0;
 let isFlipped = false;
@@ -8,6 +9,9 @@ let isFlipped = false;
 // SRS modu
 let srsQueue = [];     // gözden geçirilecek kelime ID listesi
 let srsMode = false;   // SRS modu aktif mi
+
+// Event listener cleanup
+let srsAbortController = null;
 
 // --- Vocab Search / Browse ---
 
@@ -82,7 +86,7 @@ function renderVocabResults(words) {
     container.innerHTML = words.map(w => `
         <div class="vocab-result-card">
             <div class="vocab-card-badges">
-                <span class="badge">${w.type}</span>
+                ${getTypeBadgeHTML(w.type)}
                 ${w.level ? `<span class="badge badge-level badge-level-${w.level}">${w.level}</span>` : ''}
             </div>
             <h3 class="vocab-result-word">${w.word}</h3>
@@ -124,7 +128,7 @@ export function initFlashcards(useSRS = false) {
                     <img id="card-image" class="card-image" src="" alt="" style="display:none" />
                     <h2 id="card-word">Loading...</h2>
                     <div class="card-front-meta">
-                        <span id="card-type" class="badge">Noun</span>
+                        <span id="card-type">Noun</span>
                         <span id="card-phonetic" class="phonetic"></span>
                         <button id="speak-btn" class="tts-btn" title="Telaffuzu Dinle" aria-label="Telaffuzu Dinle">🔊</button>
                     </div>
@@ -205,7 +209,9 @@ function setupEventListeners() {
         });
     }
 
-    // SRS değerlendirme butonları (kart çevrildikten sonra görünür)
+    // SRS değerlendirme butonları — AbortController ile temizlenir
+    if (srsAbortController) srsAbortController.abort();
+    srsAbortController = new AbortController();
     document.addEventListener('click', (e) => {
         if (!e.target.classList.contains('srs-btn')) return;
         const quality = parseInt(e.target.dataset.quality);
@@ -231,7 +237,7 @@ function setupEventListeners() {
             resetCard();
             loadCard(currentIndex);
         }
-    });
+    }, { signal: srsAbortController.signal });
 }
 
 function showSRSComplete() {
@@ -275,7 +281,7 @@ function loadCard(index) {
     if (!wordData) return;
 
     document.getElementById('card-word').textContent = wordData.word;
-    document.getElementById('card-type').textContent = wordData.type;
+    document.getElementById('card-type').innerHTML = getTypeBadgeHTML(wordData.type);
     document.getElementById('card-meaning').textContent = wordData.meaning;
 
     // İlerleme göstergesi
@@ -382,7 +388,7 @@ export function initMatchingGame() {
     startMatchingGame();
 }
 
-function startMatchingGame() {
+async function startMatchingGame() {
     const grid = document.getElementById('matching-grid');
     grid.innerHTML = '';
     document.getElementById('game-message').classList.add('hidden');
@@ -390,18 +396,19 @@ function startMatchingGame() {
     matchedPairs = 0;
     updateScore();
 
-    // Select 5 random words
-    const gameWords = [...vocabData].sort(() => 0.5 - Math.random()).slice(0, 5);
-    
-    // Create pairs (Word and Meaning)
+    // Select 5 random words (Fisher-Yates)
+    const { fisherYatesShuffle } = await import('../core/utils.js');
+    const gameWords = fisherYatesShuffle([...vocabData]).slice(0, 5);
+
+    // Create pairs (Word and Meaning) — word kartında type badge ekle
     let cards = [];
     gameWords.forEach(item => {
-        cards.push({ id: item.id, type: 'word', content: item.word });
-        cards.push({ id: item.id, type: 'meaning', content: item.meaning });
+        cards.push({ id: item.id, type: 'word', content: item.word, wordType: item.type });
+        cards.push({ id: item.id, type: 'meaning', content: item.meaning, wordType: item.type });
     });
 
-    // Shuffle cards
-    cards.sort(() => 0.5 - Math.random());
+    // Shuffle cards (Fisher-Yates)
+    fisherYatesShuffle(cards);
 
     // Render cards
     cards.forEach(card => {
@@ -409,7 +416,11 @@ function startMatchingGame() {
         cardEl.classList.add('match-card');
         cardEl.dataset.id = card.id;
         cardEl.dataset.type = card.type;
-        cardEl.textContent = card.content;
+        if (card.type === 'word') {
+            cardEl.innerHTML = `${card.content} ${getTypeBadgeHTML(card.wordType)}`;
+        } else {
+            cardEl.textContent = card.content;
+        }
         cardEl.addEventListener('click', () => handleCardClick(cardEl));
         grid.appendChild(cardEl);
     });
@@ -482,7 +493,7 @@ export function initPuzzleGame() {
             </div>
             
             <div class="puzzle-card">
-                <p class="puzzle-hint">İpucu: <span id="puzzle-meaning">...</span></p>
+                <p class="puzzle-hint">İpucu: <span id="puzzle-meaning">...</span> <span id="puzzle-type-badge"></span></p>
                 
                 <div class="scrambled-letters" id="scrambled-letters">
                     <!-- Letters go here -->
@@ -505,7 +516,10 @@ export function initPuzzleGame() {
 
     document.getElementById('check-puzzle-btn').addEventListener('click', checkPuzzleAnswer);
     document.getElementById('next-puzzle-btn').addEventListener('click', loadNewPuzzle);
-    
+
+    // Input validation for English-only
+    attachEnglishValidation(document.getElementById('puzzle-input'));
+
     // Allow Enter key to submit
     const puzzleInput = document.getElementById('puzzle-input');
     
@@ -530,7 +544,7 @@ export function initPuzzleGame() {
 
 let puzzleScore = 0;
 
-function loadNewPuzzle() {
+async function loadNewPuzzle() {
     // Reset UI
     document.getElementById('puzzle-feedback').textContent = '';
     document.getElementById('puzzle-feedback').className = 'feedback-msg';
@@ -544,12 +558,14 @@ function loadNewPuzzle() {
     // Pick random word
     currentPuzzleWord = vocabData[Math.floor(Math.random() * vocabData.length)];
     
-    // Show meaning
+    // Show meaning + type badge
     document.getElementById('puzzle-meaning').textContent = currentPuzzleWord.meaning;
-    
-    // Scramble letters
+    document.getElementById('puzzle-type-badge').innerHTML = getTypeBadgeHTML(currentPuzzleWord.type);
+
+    // Scramble letters (Fisher-Yates)
+    const { fisherYatesShuffle: shuffle } = await import('../core/utils.js');
     const letters = currentPuzzleWord.word.toUpperCase().split('');
-    const scrambled = letters.sort(() => 0.5 - Math.random());
+    const scrambled = shuffle([...letters]);
     
     const lettersContainer = document.getElementById('scrambled-letters');
     lettersContainer.innerHTML = '';

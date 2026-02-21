@@ -5,6 +5,12 @@ import { initSentenceOrder } from "../components/sentence-order.js";
 import { initListeningModule } from "../components/listening.js";
 import { initGrammarModule } from "../components/grammar.js";
 import { initReadingModule } from "../components/reading.js";
+import { initIrregularVerbs } from "../components/irregular-verbs.js";
+import { initPhrasalVerbs } from "../components/phrasal-verbs.js";
+import { initIdiomsModule } from "../components/idioms.js";
+import { initWritingPractice } from "../components/writing.js";
+import { initStatistics } from "../components/statistics.js";
+import { renderWordOfTheDay, setupWordOfTheDayEvents } from "../features/word-of-the-day.js";
 import { progressManager, setAchievementManager } from "./progress.js";
 import { renderWeeklyChart, renderStreakHeatmap } from "../features/progress-chart.js";
 import { initAuth, isLoggedIn, showAuthModal } from "./auth.js";
@@ -12,6 +18,7 @@ import { achievementManager, achievements } from "../features/achievements.js";
 import { showXPGain, celebrateLevelUp } from "../features/animations.js";
 import { errorAnalytics } from "../features/analytics.js";
 import { audioManager } from "../features/audio.js";
+import { showToast } from '../features/toast.js';
 import { vocabData } from "./data.js";
 
 // Alt modüllerin window üzerinden erişebilmesi için global yap
@@ -56,12 +63,17 @@ function navigateTo(view) {
     if (activeLink) activeLink.classList.add("active");
 
     switch (view) {
-        case "vocabulary":  renderVocabulary(); break;
-        case "listening":   renderListening();  break;
-        case "grammar":     renderGrammar();    break;
-        case "reading":     renderReading();    break;
-        case "dictionary":  initDictionary();   break;
-        default:            renderDashboard();  break;
+        case "vocabulary":      renderVocabulary();     break;
+        case "listening":       renderListening();      break;
+        case "grammar":         renderGrammar();        break;
+        case "reading":         renderReading();        break;
+        case "dictionary":      initDictionary();       break;
+        case "irregular-verbs": initIrregularVerbs();   break;
+        case "phrasal-verbs":   initPhrasalVerbs();     break;
+        case "idioms":          initIdiomsModule();     break;
+        case "writing":         initWritingPractice();  break;
+        case "statistics":      initStatistics();       break;
+        default:                renderDashboard();      break;
     }
 }
 
@@ -170,8 +182,34 @@ function renderDashboard() {
                 <h3>Okuma</h3>
                 <p>Metin oku, kelimeleri keşfet</p>
             </div>
+            <div class="card" id="dash-irregular">
+                <div class="card-icon">🔀</div>
+                <h3>Düzensiz Fiiller</h3>
+                <p>V1-V2-V3 tablo ve drill</p>
+            </div>
+            <div class="card" id="dash-phrasal">
+                <div class="card-icon">🔗</div>
+                <h3>Phrasal Verbs</h3>
+                <p>Deyimsel fiiller ve testler</p>
+            </div>
+            <div class="card" id="dash-idioms">
+                <div class="card-icon">💬</div>
+                <h3>Deyimler</h3>
+                <p>İngilizce deyimler ve kalıplar</p>
+            </div>
+            <div class="card" id="dash-writing">
+                <div class="card-icon">✏️</div>
+                <h3>Yazma Pratiği</h3>
+                <p>Paragraf ve cümle yazma</p>
+            </div>
+            <div class="card" id="dash-statistics">
+                <div class="card-icon">📊</div>
+                <h3>İstatistikler</h3>
+                <p>Detaylı ilerleme analizi</p>
+            </div>
         </div>
 
+        ${renderWordOfTheDay()}
         ${renderWeakWordsPanel()}
         ${renderBadgesPanel()}
         ${renderWeeklyChart()}
@@ -182,7 +220,13 @@ function renderDashboard() {
     document.getElementById('dash-listening').addEventListener('click', () => navigateTo('listening'));
     document.getElementById('dash-grammar').addEventListener('click',   () => navigateTo('grammar'));
     document.getElementById('dash-reading').addEventListener('click',   () => navigateTo('reading'));
+    document.getElementById('dash-irregular').addEventListener('click', () => navigateTo('irregular-verbs'));
+    document.getElementById('dash-phrasal').addEventListener('click',   () => navigateTo('phrasal-verbs'));
+    document.getElementById('dash-idioms').addEventListener('click',    () => navigateTo('idioms'));
+    document.getElementById('dash-writing').addEventListener('click',   () => navigateTo('writing'));
+    document.getElementById('dash-statistics').addEventListener('click',() => navigateTo('statistics'));
     document.getElementById('share-progress-btn').addEventListener('click', shareProgress);
+    setupWordOfTheDayEvents();
 }
 
 // HIGH-5: Hatalı kelimeler paneli
@@ -305,8 +349,10 @@ function shareProgress() {
 
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
-        alert('📋 İlerlemeniz kopyalandı! Sosyal medyada paylaşabilirsiniz.');
-    }).catch(() => prompt('İlerlemenizi kopyalayın:', text));
+        showToast('İlerlemeniz kopyalandı! Sosyal medyada paylaşabilirsiniz.', 'success');
+    }).catch(() => {
+        showToast('Kopyalama başarısız oldu.', 'warning');
+    });
 }
 
 // ── Start ────────────────────────────────────────────────────────────────────

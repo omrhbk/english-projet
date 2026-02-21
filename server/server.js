@@ -76,6 +76,8 @@ app.use(cors());
 app.use(express.json());
 // Serve static files from parent directory (where public/ and src/ folders are)
 app.use(express.static(join(__dirname, '..')));
+// Also serve public/ folder at root so index.html loads at /
+app.use(express.static(join(__dirname, '..', 'public')));
 
 // API Routes
 

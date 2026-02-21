@@ -2328,3 +2328,79 @@ body.dark-mode .dictionary-card {
 .dict-section .dict-meaning {
     margin: 0;
 }
+
+/* ══════════════════════════════════════════════════════════
+   Input Validation Styles
+══════════════════════════════════════════════════════════ */
+.input-invalid {
+    border-color: var(--danger-color) !important;
+    box-shadow: 0 0 0 2px rgba(208, 2, 27, 0.2) !important;
+}
+
+.input-warning {
+    display: none;
+    color: var(--danger-color);
+    font-size: 0.75rem;
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Type Badge Styles
+══════════════════════════════════════════════════════════ */
+.type-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #fff;
+    vertical-align: middle;
+    margin-left: 4px;
+    line-height: 1.4;
+}
+
+/* ══════════════════════════════════════════════════════════
+   CEFR Badge Styles
+══════════════════════════════════════════════════════════ */
+.cefr-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Toast Notification Styles
+══════════════════════════════════════════════════════════ */
+#toast-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.toast {
+    pointer-events: auto;
+    cursor: pointer;
+    animation: toast-slide-in 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes toast-slide-in {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

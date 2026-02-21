@@ -1,5 +1,6 @@
 // Progress Management Module
 import { logDailyXP } from '../features/progress-chart.js';
+import { showToast } from '../features/toast.js';
 
 const STORAGE_KEY = 'english_app_progress';
 
@@ -114,10 +115,8 @@ export const progressManager = {
             
             // Celebrate!
             if (window.celebrateLevelUp) window.celebrateLevelUp();
-            
-            setTimeout(() => {
-                alert(`Tebrikler! Seviye Atladın! 🎉\nYeni Seviye: ${newLevel}`);
-            }, 500);
+
+            showToast(`Tebrikler! Seviye ${newLevel}'e Atladın!`, 'levelup', 5000);
         }
     },
 
