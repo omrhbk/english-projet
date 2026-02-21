@@ -3032,3 +3032,516 @@ body.dark-mode .cw-black {
     transform: translateY(-2px);
     box-shadow: 0 6px 14px rgba(0,0,0,0.12);
 }
+
+/* ══════════════════════════════════════════════════════════
+   Word Search Grid Styles
+══════════════════════════════════════════════════════════ */
+.ws-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 2px;
+    max-width: 480px;
+    margin: 0 auto;
+    user-select: none;
+    touch-action: none;
+}
+.ws-cell {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+.ws-cell:hover {
+    background: rgba(74, 144, 226, 0.1);
+}
+.ws-cell.ws-selected {
+    background: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+}
+.ws-cell.ws-found {
+    background: rgba(126, 211, 33, 0.2);
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+    font-weight: 800;
+}
+
+@media (max-width: 480px) {
+    .ws-grid {
+        gap: 1px;
+    }
+    .ws-cell {
+        font-size: 0.7rem;
+    }
+}
+
+/* ══════════════════════════════════════════════════════════
+   True/False Button Styles
+══════════════════════════════════════════════════════════ */
+.tf-btn-row {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+.tf-btn-true {
+    background: #27ae60;
+    color: #fff;
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    min-width: 120px;
+}
+.tf-btn-true:hover {
+    background: #1e8449;
+}
+.tf-btn-false {
+    background: #e74c3c;
+    color: #fff;
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    min-width: 120px;
+}
+.tf-btn-false:hover {
+    background: #c0392b;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Emoji Quiz Display Styles
+══════════════════════════════════════════════════════════ */
+.eq-emoji-display {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Word Scramble Letter Tile Styles
+══════════════════════════════════════════════════════════ */
+.ws-letter-tile {
+    background: var(--secondary-color);
+    color: white;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    font-weight: bold;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* ══════════════════════════════════════════════════════════
+   Grammar Module — Tabs, Tables, Examples, Test UI
+══════════════════════════════════════════════════════════ */
+
+/* ── Tab Navigation ─────────────────────────────────── */
+.grammar-tabs {
+    display: flex;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 1.5rem;
+    gap: 0;
+    overflow-x: auto;
+}
+
+.grammar-tab {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.grammar-tab:hover {
+    color: var(--primary-color);
+    background: rgba(74, 144, 226, 0.05);
+}
+
+.grammar-tab.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+    font-weight: 700;
+}
+
+.grammar-tab-content {
+    animation: grammarFadeIn 0.3s ease;
+}
+
+@keyframes grammarFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Rule Table ─────────────────────────────────────── */
+.grammar-rule-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.grammar-rule-table th {
+    background: var(--primary-color);
+    color: #fff;
+    padding: 0.7rem 1rem;
+    text-align: left;
+    font-weight: 600;
+}
+
+.grammar-rule-table td {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.grammar-rule-table tr:nth-child(even) td {
+    background: rgba(74, 144, 226, 0.04);
+}
+
+body.dark-mode .grammar-rule-table tr:nth-child(even) td {
+    background: rgba(100, 181, 246, 0.06);
+}
+
+/* ── Formula Box ────────────────────────────────────── */
+.grammar-formula {
+    background: linear-gradient(135deg, rgba(74,144,226,0.1) 0%, rgba(126,211,33,0.08) 100%);
+    border: 2px solid var(--primary-color);
+    border-radius: var(--border-radius);
+    padding: 1rem 1.5rem;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.05rem;
+    font-weight: 600;
+    text-align: center;
+    margin: 1rem 0;
+    color: var(--text-color);
+}
+
+body.dark-mode .grammar-formula {
+    background: linear-gradient(135deg, rgba(100,181,246,0.12) 0%, rgba(126,211,33,0.08) 100%);
+}
+
+/* ── Note / Hint Box ────────────────────────────────── */
+.grammar-note {
+    background: #fff9e6;
+    border-left: 4px solid #f5a623;
+    border-radius: 0 8px 8px 0;
+    padding: 0.75rem 1.25rem;
+    margin: 1rem 0;
+    font-size: 0.93rem;
+    color: #664d03;
+    line-height: 1.6;
+}
+
+body.dark-mode .grammar-note {
+    background: #332b00;
+    color: #ffe082;
+    border-left-color: #f5a623;
+}
+
+/* ── Example Cards ──────────────────────────────────── */
+.grammar-examples-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.grammar-example-card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 1rem 1.25rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    transition: transform 0.2s;
+}
+
+.grammar-example-card:hover {
+    transform: translateX(4px);
+}
+
+.grammar-example-correct {
+    border-left: 4px solid var(--accent-color);
+}
+
+.grammar-example-wrong {
+    border-left: 4px solid var(--danger-color);
+}
+
+.grammar-example-wrong .grammar-example-sentence {
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+.grammar-example-sentence {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.grammar-example-translation {
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+.grammar-example-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.15rem;
+}
+
+.grammar-example-correct .grammar-example-label {
+    color: var(--accent-color);
+}
+
+.grammar-example-wrong .grammar-example-label {
+    color: var(--danger-color);
+}
+
+.grammar-example-note {
+    font-size: 0.82rem;
+    color: var(--secondary-color);
+    font-style: italic;
+}
+
+/* ── Test UI ────────────────────────────────────────── */
+.grammar-test-progress {
+    width: 100%;
+    height: 8px;
+    background: var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.grammar-test-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    border-radius: 4px;
+    transition: width 0.4s ease;
+}
+
+.grammar-test-counter {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.grammar-test-card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.grammar-test-card .test-question {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+    line-height: 1.5;
+}
+
+.grammar-test-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+.grammar-test-opt {
+    padding: 0.85rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-color);
+    text-align: left;
+}
+
+.grammar-test-opt:hover:not(.correct):not(.wrong):not(:disabled) {
+    border-color: var(--primary-color);
+    background: rgba(74, 144, 226, 0.06);
+}
+
+.grammar-test-opt.selected {
+    border-color: var(--primary-color);
+    background: rgba(74, 144, 226, 0.1);
+}
+
+.grammar-test-opt.correct {
+    border-color: var(--accent-color);
+    background: rgba(126, 211, 33, 0.12);
+    color: #1b5e20;
+}
+
+.grammar-test-opt.wrong {
+    border-color: var(--danger-color);
+    background: rgba(208, 2, 27, 0.08);
+    color: var(--danger-color);
+}
+
+.grammar-test-opt:disabled {
+    cursor: default;
+}
+
+body.dark-mode .grammar-test-opt.correct {
+    color: #81c784;
+}
+
+body.dark-mode .grammar-test-opt.wrong {
+    color: #ef9a9a;
+}
+
+/* ── Test Result Screen ─────────────────────────────── */
+.grammar-test-result {
+    text-align: center;
+    padding: 2rem;
+}
+
+.grammar-test-result .test-score-emoji {
+    font-size: 4rem;
+    margin-bottom: 0.5rem;
+}
+
+.grammar-test-result .test-score-text {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.grammar-test-result .test-score-label {
+    font-size: 1rem;
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+}
+
+.grammar-test-result .test-xp-bonus {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    font-weight: 700;
+    padding: 0.4rem 1.2rem;
+    border-radius: 20px;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+}
+
+/* ── Exercise: Multiple Choice Grid ─────────────────── */
+.mc-options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+    margin-top: 0.5rem;
+}
+
+.mc-option-btn {
+    padding: 0.7rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-color);
+    text-align: left;
+}
+
+.mc-option-btn:hover:not(.correct):not(.wrong):not(:disabled) {
+    border-color: var(--primary-color);
+    background: rgba(74, 144, 226, 0.06);
+}
+
+.mc-option-btn.correct {
+    border-color: var(--accent-color);
+    background: rgba(126, 211, 33, 0.12);
+    color: #1b5e20;
+}
+
+.mc-option-btn.wrong {
+    border-color: var(--danger-color);
+    background: rgba(208, 2, 27, 0.08);
+}
+
+.mc-option-btn:disabled {
+    cursor: default;
+}
+
+body.dark-mode .mc-option-btn.correct {
+    color: #81c784;
+}
+
+body.dark-mode .mc-option-btn.wrong {
+    color: #ef9a9a;
+}
+
+/* ── Topic card badge for exercise count & test ────── */
+.grammar-card-meta {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 0.25rem;
+}
+
+.grammar-card-meta .meta-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    background: rgba(74, 144, 226, 0.1);
+    color: var(--primary-color);
+}
+
+.grammar-card-meta .meta-badge.test-badge {
+    background: rgba(126, 211, 33, 0.12);
+    color: #2e7d32;
+}
+
+body.dark-mode .grammar-card-meta .meta-badge.test-badge {
+    color: #81c784;
+}
+
+/* ── Responsive adjustments ─────────────────────────── */
+@media (max-width: 600px) {
+    .grammar-tabs {
+        gap: 0;
+    }
+    .grammar-tab {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+    }
+    .grammar-test-options {
+        grid-template-columns: 1fr;
+    }
+    .mc-options-grid {
+        grid-template-columns: 1fr;
+    }
+    .grammar-test-card {
+        padding: 1.25rem;
+    }
+}

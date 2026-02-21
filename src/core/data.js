@@ -1760,19 +1760,43 @@ export const grammarData = [
             <h3>Kullanım Alanları</h3>
             <p><strong>1. Alışkanlıklar:</strong> I drink coffee every morning.</p>
             <p><strong>2. Genel Doğrular:</strong> The sun rises in the east.</p>
-            <br>
-            <h3>Yapı</h3>
-            <p>I/You/We/They + <strong>Fiil</strong></p>
-            <p>He/She/It + <strong>Fiil + -s/es</strong></p>
-            <br>
-            <h3>Örnekler</h3>
-            <p>✅ She <strong>works</strong> at a hospital.</p>
-            <p>✅ They <strong>play</strong> football on Sundays.</p>
+            <p><strong>3. Program/Takvimler:</strong> The train leaves at 9 AM.</p>
+
+            <table class="grammar-rule-table">
+                <tr><th>Yapı</th><th>Olumlu</th><th>Olumsuz</th><th>Soru</th></tr>
+                <tr><td>I/You/We/They</td><td>work</td><td>don't work</td><td>Do ... work?</td></tr>
+                <tr><td>He/She/It</td><td>works</td><td>doesn't work</td><td>Does ... work?</td></tr>
+            </table>
+
+            <div class="grammar-formula">Özne + Fiil (he/she/it → +s/es)</div>
+
+            <div class="grammar-note">
+                <strong>Zaman İfadeleri:</strong> always, usually, often, sometimes, rarely, never, every day/week/month
+            </div>
         `,
         exercises: [
             { id: 1, type: "fill-blank",  question: "She ____ (like) visual arts.",           answer: "likes",   hint: "3. tekil şahıs → -s ekle." },
             { id: 2, type: "true-false",  question: "We uses the internet everyday. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "'We use' doğrudur." },
-            { id: 3, type: "writing",     question: "Write a sentence using 'always'.",        keywords: ["always"], answer: "check-keywords" }
+            { id: 3, type: "writing",     question: "Write a sentence using 'always'.",        keywords: ["always"], answer: "check-keywords" },
+            { id: 4, type: "multiple-choice", question: "She ___ to school every day.", options: ["go", "goes", "going", "gone"], answer: "goes", hint: "3. tekil şahıs → -s" },
+            { id: 5, type: "fill-blank", question: "My father ____ (not/drink) tea.", answer: "doesn't drink", hint: "Olumsuz: doesn't + fiil" },
+            { id: 6, type: "multiple-choice", question: "_____ they play tennis on Sundays?", options: ["Does", "Do", "Is", "Are"], answer: "Do", hint: "They → Do" },
+            { id: 7, type: "fill-blank", question: "The sun ____ (rise) in the east.", answer: "rises", hint: "Genel doğru, 3. tekil → -s" }
+        ],
+        examples: [
+            { sentence: "She works at a hospital.", translation: "Hastanede çalışır.", correct: true },
+            { sentence: "She work at a hospital.", translation: "Hastanede çalışır.", correct: false, note: "3. tekil şahıs → works" },
+            { sentence: "They play football on Sundays.", translation: "Pazar günleri futbol oynarlar.", correct: true },
+            { sentence: "He don't like coffee.", translation: "Kahveyi sevmez.", correct: false, note: "He doesn't like (does + not)" },
+            { sentence: "Do you speak English?", translation: "İngilizce konuşuyor musun?", correct: true },
+            { sentence: "Water boils at 100°C.", translation: "Su 100°C'de kaynar.", correct: true }
+        ],
+        test: [
+            { id: 1, question: "She ___ coffee every morning.", options: ["drink", "drinks", "drinking", "drank"], answer: 1 },
+            { id: 2, question: "Which sentence is correct?", options: ["He go to school.", "He goes to school.", "He going to school.", "He goed to school."], answer: 1 },
+            { id: 3, question: "They ___ football on weekends.", options: ["plays", "playing", "play", "played"], answer: 2 },
+            { id: 4, question: "___ she like pizza?", options: ["Do", "Does", "Is", "Are"], answer: 1 },
+            { id: 5, question: "The Earth ___ around the Sun.", options: ["move", "moves", "moving", "moved"], answer: 1 }
         ]
     },
     {
@@ -1781,20 +1805,41 @@ export const grammarData = [
         title: "To Be (Am / Is / Are)",
         description: "İngilizce'nin en temel yardımcı fiili.",
         content: `
-            <h3>Yapı</h3>
-            <p>I <strong>am</strong> → I'm</p>
-            <p>He/She/It <strong>is</strong> → He's</p>
-            <p>You/We/They <strong>are</strong> → You're</p>
-            <br>
-            <h3>Örnekler</h3>
-            <p>✅ I <strong>am</strong> a student.</p>
-            <p>✅ She <strong>is</strong> happy today.</p>
-            <p>✅ We <strong>are</strong> friends.</p>
+            <table class="grammar-rule-table">
+                <tr><th>Özne</th><th>Olumlu</th><th>Kısa</th><th>Olumsuz</th></tr>
+                <tr><td>I</td><td>am</td><td>I'm</td><td>am not</td></tr>
+                <tr><td>He/She/It</td><td>is</td><td>He's</td><td>isn't</td></tr>
+                <tr><td>You/We/They</td><td>are</td><td>You're</td><td>aren't</td></tr>
+            </table>
+
+            <div class="grammar-formula">Özne + am/is/are + isim/sıfat/yer</div>
+
+            <div class="grammar-note">
+                <strong>Dikkat:</strong> "I amn't" kullanılmaz, olumsuz hali "I'm not" şeklindedir.
+            </div>
         `,
         exercises: [
             { id: 1, type: "fill-blank", question: "She ____ a doctor.", answer: "is",  hint: "He/She/It → is" },
             { id: 2, type: "fill-blank", question: "They ____ from Turkey.", answer: "are", hint: "They → are" },
-            { id: 3, type: "true-false", question: "I are 20 years old. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "I am doğrudur." }
+            { id: 3, type: "true-false", question: "I are 20 years old. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "I am doğrudur." },
+            { id: 4, type: "multiple-choice", question: "We ___ happy today.", options: ["am", "is", "are", "be"], answer: "are", hint: "We → are" },
+            { id: 5, type: "fill-blank", question: "It ____ cold outside.", answer: "is", hint: "It → is" },
+            { id: 6, type: "multiple-choice", question: "I ___ a student.", options: ["is", "am", "are", "be"], answer: "am", hint: "I → am" },
+            { id: 7, type: "fill-blank", question: "You ____ my best friend.", answer: "are", hint: "You → are" }
+        ],
+        examples: [
+            { sentence: "I am a student.", translation: "Ben bir öğrenciyim.", correct: true },
+            { sentence: "She is happy today.", translation: "Bugün mutlu.", correct: true },
+            { sentence: "We is friends.", translation: "Biz arkadaşız.", correct: false, note: "We → are (We are friends)" },
+            { sentence: "They aren't at home.", translation: "Evde değiller.", correct: true },
+            { sentence: "Is he a teacher?", translation: "O bir öğretmen mi?", correct: true }
+        ],
+        test: [
+            { id: 1, question: "I ___ 15 years old.", options: ["am", "is", "are", "be"], answer: 0 },
+            { id: 2, question: "She ___ from Istanbul.", options: ["am", "are", "is", "be"], answer: 2 },
+            { id: 3, question: "They ___ students.", options: ["is", "am", "are", "was"], answer: 2 },
+            { id: 4, question: "___ you tired?", options: ["Am", "Is", "Are", "Do"], answer: 2 },
+            { id: 5, question: "It ___ a beautiful day.", options: ["are", "am", "is", "were"], answer: 2 }
         ]
     },
     {
@@ -1803,18 +1848,41 @@ export const grammarData = [
         title: "Articles (a / an / the)",
         description: "Belirsiz ve belirli artikel kullanımı.",
         content: `
-            <h3>a / an — Belirsiz Artikel</h3>
-            <p><strong>a</strong>: ünsüz harfle başlayan isimler → a book, a car</p>
-            <p><strong>an</strong>: ünlü harfle başlayan isimler → an apple, an hour</p>
-            <br>
-            <h3>the — Belirli Artikel</h3>
-            <p>Daha önce bahsedilen veya tek olan nesneler için:</p>
-            <p>✅ I saw <strong>a</strong> dog. <strong>The</strong> dog was big.</p>
+            <table class="grammar-rule-table">
+                <tr><th>Artikel</th><th>Kullanım</th><th>Örnek</th></tr>
+                <tr><td><strong>a</strong></td><td>Ünsüz sesle başlayan tekil isimler</td><td>a book, a car, a university</td></tr>
+                <tr><td><strong>an</strong></td><td>Ünlü sesle başlayan tekil isimler</td><td>an apple, an hour, an umbrella</td></tr>
+                <tr><td><strong>the</strong></td><td>Belirli / bilinen nesneler</td><td>the sun, the book (on the table)</td></tr>
+            </table>
+
+            <div class="grammar-formula">a/an = ilk kez bahsedilen &nbsp;|&nbsp; the = bilinen / tek olan</div>
+
+            <div class="grammar-note">
+                <strong>Dikkat:</strong> "University" ünlüyle başlar ama /juː/ sesiyle okunur → <strong>a</strong> university. "Hour" ünsüzle başlar ama /aʊ/ sesiyle okunur → <strong>an</strong> hour.
+            </div>
         `,
         exercises: [
             { id: 1, type: "fill-blank", question: "I have ____ umbrella.", answer: "an", hint: "Umbrella ünlü harfle başlar." },
             { id: 2, type: "fill-blank", question: "She is ____ engineer.", answer: "an", hint: "Engineer ünlü harfle başlar." },
-            { id: 3, type: "true-false", question: "He is a honest man. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "'Honest' h harfi okunmaz, 'an' kullanılır." }
+            { id: 3, type: "true-false", question: "He is a honest man. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "'Honest' h harfi okunmaz, 'an' kullanılır." },
+            { id: 4, type: "multiple-choice", question: "I saw ___ cat in the garden.", options: ["a", "an", "the", "—"], answer: "a", hint: "İlk kez bahsedilen → a" },
+            { id: 5, type: "multiple-choice", question: "___ sun is very hot today.", options: ["A", "An", "The", "—"], answer: "The", hint: "Tek olan şey → the" },
+            { id: 6, type: "fill-blank", question: "He waited for ____ hour.", answer: "an", hint: "Hour → /aʊ/ ünlü ses" },
+            { id: 7, type: "fill-blank", question: "She goes to ____ university.", answer: "a", hint: "University → /juː/ ünsüz ses" }
+        ],
+        examples: [
+            { sentence: "I have a dog.", translation: "Bir köpeğim var.", correct: true },
+            { sentence: "She ate an apple.", translation: "Bir elma yedi.", correct: true },
+            { sentence: "I saw a elephant.", translation: "Bir fil gördüm.", correct: false, note: "Elephant → ünlü ses → an elephant" },
+            { sentence: "The moon is beautiful tonight.", translation: "Ay bu gece güzel.", correct: true },
+            { sentence: "He is an honest man.", translation: "O dürüst bir adam.", correct: true }
+        ],
+        test: [
+            { id: 1, question: "I need ___ pen.", options: ["a", "an", "the", "—"], answer: 0 },
+            { id: 2, question: "She is ___ artist.", options: ["a", "an", "the", "—"], answer: 1 },
+            { id: 3, question: "___ Earth goes around the Sun.", options: ["A", "An", "The", "—"], answer: 2 },
+            { id: 4, question: "He bought ___ orange.", options: ["a", "an", "the", "—"], answer: 1 },
+            { id: 5, question: "She goes to ___ university in London.", options: ["a", "an", "the", "—"], answer: 0 }
         ]
     },
 
@@ -1825,22 +1893,51 @@ export const grammarData = [
         title: "Past Simple (Geçmiş Zaman)",
         description: "Geçmişte tamamlanmış eylemler.",
         content: `
-            <h3>Yapı</h3>
-            <p>Özne + <strong>Fiil-2 (düzenli: -ed / düzensiz: özel hali)</strong></p>
-            <br>
-            <h3>Düzenli Fiiller</h3>
-            <p>walk → <strong>walked</strong>, play → <strong>played</strong></p>
-            <h3>Düzensiz Fiiller</h3>
-            <p>go → <strong>went</strong>, see → <strong>saw</strong>, have → <strong>had</strong></p>
-            <br>
-            <h3>Örnekler</h3>
-            <p>✅ I <strong>walked</strong> to school yesterday.</p>
-            <p>✅ She <strong>went</strong> to the cinema last night.</p>
+            <table class="grammar-rule-table">
+                <tr><th>Yapı</th><th>Olumlu</th><th>Olumsuz</th><th>Soru</th></tr>
+                <tr><td>Düzenli</td><td>verb + -ed</td><td>didn't + verb</td><td>Did + S + verb?</td></tr>
+                <tr><td>Düzensiz</td><td>V2 (went, saw)</td><td>didn't + verb</td><td>Did + S + verb?</td></tr>
+            </table>
+
+            <div class="grammar-formula">Özne + Fiil-2 (düzenli: -ed / düzensiz: özel hali)</div>
+
+            <div class="grammar-note">
+                <strong>Zaman İfadeleri:</strong> yesterday, last week/month/year, ago, in 2020, when I was young
+            </div>
+
+            <h3>Sık Kullanılan Düzensiz Fiiller</h3>
+            <table class="grammar-rule-table">
+                <tr><th>Base</th><th>Past (V2)</th><th>Türkçe</th></tr>
+                <tr><td>go</td><td>went</td><td>gitmek</td></tr>
+                <tr><td>see</td><td>saw</td><td>görmek</td></tr>
+                <tr><td>have</td><td>had</td><td>sahip olmak</td></tr>
+                <tr><td>eat</td><td>ate</td><td>yemek</td></tr>
+                <tr><td>come</td><td>came</td><td>gelmek</td></tr>
+            </table>
         `,
         exercises: [
             { id: 1, type: "fill-blank", question: "They ____ (visit) London last year.", answer: "visited", hint: "Düzenli fiil → -ed." },
             { id: 2, type: "fill-blank", question: "I ____ (see) a movie yesterday.", answer: "saw", hint: "'See' düzensiz bir fiildir." },
-            { id: 3, type: "true-false", question: "She goed to school. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "'Go' düzensiz: went." }
+            { id: 3, type: "true-false", question: "She goed to school. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "'Go' düzensiz: went." },
+            { id: 4, type: "multiple-choice", question: "We ___ dinner at a restaurant last night.", options: ["eat", "ate", "eaten", "eating"], answer: "ate", hint: "eat → ate (düzensiz)" },
+            { id: 5, type: "fill-blank", question: "He ____ (not/come) to the party.", answer: "didn't come", hint: "Olumsuz: didn't + yalın fiil" },
+            { id: 6, type: "multiple-choice", question: "___ you see the movie?", options: ["Do", "Did", "Does", "Was"], answer: "Did", hint: "Geçmiş zaman sorusu → Did" },
+            { id: 7, type: "fill-blank", question: "She ____ (buy) a new dress.", answer: "bought", hint: "buy → bought (düzensiz)" }
+        ],
+        examples: [
+            { sentence: "I walked to school yesterday.", translation: "Dün okula yürüdüm.", correct: true },
+            { sentence: "She went to the cinema last night.", translation: "Dün gece sinemaya gitti.", correct: true },
+            { sentence: "He didn't went home.", translation: "Eve gitmedi.", correct: false, note: "didn't + yalın fiil → didn't go" },
+            { sentence: "Did you eat breakfast?", translation: "Kahvaltı yedin mi?", correct: true },
+            { sentence: "They played football yesterday.", translation: "Dün futbol oynadılar.", correct: true },
+            { sentence: "She buyed a book.", translation: "Bir kitap aldı.", correct: false, note: "buy → bought (düzensiz fiil)" }
+        ],
+        test: [
+            { id: 1, question: "I ___ to Istanbul last summer.", options: ["go", "went", "gone", "going"], answer: 1 },
+            { id: 2, question: "She ___ her homework yesterday.", options: ["do", "does", "did", "done"], answer: 2 },
+            { id: 3, question: "They ___ TV last night.", options: ["watch", "watches", "watched", "watching"], answer: 2 },
+            { id: 4, question: "___ he play football yesterday?", options: ["Do", "Does", "Did", "Was"], answer: 2 },
+            { id: 5, question: "We ___ a great time at the party.", options: ["have", "has", "had", "having"], answer: 2 }
         ]
     },
     {
@@ -1849,18 +1946,44 @@ export const grammarData = [
         title: "Future Simple (Gelecek Zaman — will)",
         description: "Gelecekteki kararlar ve tahminler.",
         content: `
-            <h3>Yapı</h3>
-            <p>Özne + <strong>will</strong> + Fiil (yalın)</p>
-            <br>
-            <h3>Kullanım</h3>
+            <table class="grammar-rule-table">
+                <tr><th>Yapı</th><th>Olumlu</th><th>Olumsuz</th><th>Soru</th></tr>
+                <tr><td>Tüm özneler</td><td>will + verb</td><td>won't + verb</td><td>Will + S + verb?</td></tr>
+            </table>
+
+            <div class="grammar-formula">Özne + will + Fiil (yalın hali)</div>
+
+            <h3>Kullanım Alanları</h3>
             <p><strong>Anlık karar:</strong> I'll take the bus.</p>
             <p><strong>Tahmin:</strong> It will rain tomorrow.</p>
             <p><strong>Söz/teklif:</strong> I will help you.</p>
+
+            <div class="grammar-note">
+                <strong>Kısaltma:</strong> will → 'll (I'll, He'll, We'll) &nbsp;|&nbsp; will not → won't
+            </div>
         `,
         exercises: [
             { id: 1, type: "fill-blank", question: "They ____ (arrive) tomorrow morning.", answer: "will arrive", hint: "will + fiil" },
             { id: 2, type: "true-false", question: "I will going to the party. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "'will go' doğrudur." },
-            { id: 3, type: "writing",    question: "Write a future plan using 'will'.", keywords: ["will"], answer: "check-keywords" }
+            { id: 3, type: "writing",    question: "Write a future plan using 'will'.", keywords: ["will"], answer: "check-keywords" },
+            { id: 4, type: "multiple-choice", question: "She ___ come tomorrow.", options: ["will", "wills", "willing", "willed"], answer: "will", hint: "will hiç çekim eki almaz" },
+            { id: 5, type: "fill-blank", question: "I ____ (not/tell) anyone your secret.", answer: "won't tell", hint: "will not = won't" },
+            { id: 6, type: "multiple-choice", question: "___ you help me with this?", options: ["Will", "Do", "Are", "Did"], answer: "Will", hint: "Gelecek zaman sorusu → Will" },
+            { id: 7, type: "fill-blank", question: "It ____ (rain) tomorrow, I think.", answer: "will rain", hint: "Tahmin → will + fiil" }
+        ],
+        examples: [
+            { sentence: "I will help you with your homework.", translation: "Ödevinde sana yardım edeceğim.", correct: true },
+            { sentence: "She will comes tomorrow.", translation: "Yarın gelecek.", correct: false, note: "will + yalın fiil → will come" },
+            { sentence: "It won't rain today.", translation: "Bugün yağmur yağmayacak.", correct: true },
+            { sentence: "Will you marry me?", translation: "Benimle evlenir misin?", correct: true },
+            { sentence: "They'll arrive at 6 PM.", translation: "Akşam 6'da varacaklar.", correct: true }
+        ],
+        test: [
+            { id: 1, question: "I think it ___ snow tonight.", options: ["will", "is", "does", "was"], answer: 0 },
+            { id: 2, question: "She ___ be 18 next month.", options: ["is", "will", "was", "does"], answer: 1 },
+            { id: 3, question: "___ they come to the party?", options: ["Do", "Are", "Will", "Did"], answer: 2 },
+            { id: 4, question: "I ___ not forget your birthday.", options: ["do", "will", "am", "did"], answer: 1 },
+            { id: 5, question: "We ___ travel to Japan next year.", options: ["will", "are", "do", "were"], answer: 0 }
         ]
     },
     {
@@ -1869,21 +1992,41 @@ export const grammarData = [
         title: "Present Continuous (Şimdiki Zaman)",
         description: "Şu an olmakta olan eylemler.",
         content: `
-            <h3>Yapı</h3>
-            <p>Özne + <strong>am/is/are + Fiil-ing</strong></p>
-            <br>
-            <h3>Örnekler</h3>
-            <p>✅ I <strong>am reading</strong> a book right now.</p>
-            <p>✅ She <strong>is talking</strong> on the phone.</p>
-            <p>✅ They <strong>are playing</strong> football.</p>
-            <br>
-            <h3>Zaman İfadeleri</h3>
-            <p>now, right now, at the moment, currently, look! listen!</p>
+            <table class="grammar-rule-table">
+                <tr><th>Özne</th><th>Olumlu</th><th>Olumsuz</th><th>Soru</th></tr>
+                <tr><td>I</td><td>am + V-ing</td><td>am not + V-ing</td><td>Am I + V-ing?</td></tr>
+                <tr><td>He/She/It</td><td>is + V-ing</td><td>isn't + V-ing</td><td>Is he + V-ing?</td></tr>
+                <tr><td>You/We/They</td><td>are + V-ing</td><td>aren't + V-ing</td><td>Are they + V-ing?</td></tr>
+            </table>
+
+            <div class="grammar-formula">Özne + am/is/are + Fiil-ing</div>
+
+            <div class="grammar-note">
+                <strong>Zaman İfadeleri:</strong> now, right now, at the moment, currently, Look! Listen!
+            </div>
         `,
         exercises: [
             { id: 1, type: "fill-blank", question: "She ____ (study) for her exam now.", answer: "is studying", hint: "is + study + -ing" },
             { id: 2, type: "fill-blank", question: "They ____ (not/watch) TV at the moment.", answer: "are not watching", hint: "are + not + fiil-ing" },
-            { id: 3, type: "true-false", question: "He is play football now. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "'is playing' doğrudur." }
+            { id: 3, type: "true-false", question: "He is play football now. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "'is playing' doğrudur." },
+            { id: 4, type: "multiple-choice", question: "Look! The baby ___.", options: ["cry", "cries", "is crying", "cried"], answer: "is crying", hint: "Şu an olan eylem → is + V-ing" },
+            { id: 5, type: "fill-blank", question: "I ____ (read) a very interesting book.", answer: "am reading", hint: "I → am + V-ing" },
+            { id: 6, type: "multiple-choice", question: "___ you listening to me?", options: ["Do", "Are", "Is", "Did"], answer: "Are", hint: "You → Are" },
+            { id: 7, type: "fill-blank", question: "We ____ (have) lunch right now.", answer: "are having", hint: "We → are + V-ing" }
+        ],
+        examples: [
+            { sentence: "I am reading a book right now.", translation: "Şu an bir kitap okuyorum.", correct: true },
+            { sentence: "She is talking on the phone.", translation: "Telefonda konuşuyor.", correct: true },
+            { sentence: "He is play football now.", translation: "Şu an futbol oynuyor.", correct: false, note: "is + playing (-ing unutulmamalı)" },
+            { sentence: "They are not sleeping.", translation: "Uyumuyorlar.", correct: true },
+            { sentence: "Are you coming to the party?", translation: "Partiye geliyor musun?", correct: true }
+        ],
+        test: [
+            { id: 1, question: "She ___ to music right now.", options: ["listen", "listens", "is listening", "listened"], answer: 2 },
+            { id: 2, question: "We ___ dinner at the moment.", options: ["cook", "are cooking", "cooks", "cooked"], answer: 1 },
+            { id: 3, question: "___ he sleeping?", options: ["Does", "Do", "Is", "Are"], answer: 2 },
+            { id: 4, question: "I ___ not working today.", options: ["do", "am", "is", "are"], answer: 1 },
+            { id: 5, question: "Look! The children ___ in the park.", options: ["play", "plays", "are playing", "played"], answer: 2 }
         ]
     },
 
@@ -1894,18 +2037,47 @@ export const grammarData = [
         title: "Present Perfect (Yakın Geçmiş)",
         description: "Geçmişte başlayan, şimdiye etkisi olan eylemler.",
         content: `
-            <h3>Yapı</h3>
-            <p>Özne + <strong>have/has + Past Participle (3. hal)</strong></p>
-            <br>
-            <h3>Kullanım</h3>
+            <table class="grammar-rule-table">
+                <tr><th>Özne</th><th>Olumlu</th><th>Olumsuz</th><th>Soru</th></tr>
+                <tr><td>I/You/We/They</td><td>have + V3</td><td>haven't + V3</td><td>Have ... V3?</td></tr>
+                <tr><td>He/She/It</td><td>has + V3</td><td>hasn't + V3</td><td>Has ... V3?</td></tr>
+            </table>
+
+            <div class="grammar-formula">Özne + have/has + Past Participle (V3)</div>
+
+            <h3>Kullanım Alanları</h3>
             <p><strong>Deneyim:</strong> I <strong>have visited</strong> Paris. (ever/never)</p>
             <p><strong>Sonuç:</strong> She <strong>has lost</strong> her keys. (just/already/yet)</p>
             <p><strong>Devam:</strong> I <strong>have lived</strong> here for 5 years. (for/since)</p>
+
+            <div class="grammar-note">
+                <strong>for</strong> = süre boyunca (for 3 years) &nbsp;|&nbsp; <strong>since</strong> = başlangıç noktası (since 2020)
+            </div>
         `,
         exercises: [
             { id: 1, type: "fill-blank", question: "I ____ (never/see) the ocean.", answer: "have never seen", hint: "have + never + past participle" },
             { id: 2, type: "fill-blank", question: "She ____ (just/finish) her homework.", answer: "has just finished", hint: "has + just + past participle" },
-            { id: 3, type: "true-false", question: "He has went to London twice. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "'gone' kullanılır, 'went' değil." }
+            { id: 3, type: "true-false", question: "He has went to London twice. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "'gone' kullanılır, 'went' değil." },
+            { id: 4, type: "multiple-choice", question: "I ___ this movie before.", options: ["see", "saw", "have seen", "seeing"], answer: "have seen", hint: "Deneyim → have + V3" },
+            { id: 5, type: "fill-blank", question: "They ____ (live) here since 2018.", answer: "have lived", hint: "since → Present Perfect" },
+            { id: 6, type: "multiple-choice", question: "She ___ already left.", options: ["have", "has", "had", "is"], answer: "has", hint: "She → has" },
+            { id: 7, type: "fill-blank", question: "____ you ever been to Japan?", answer: "Have", hint: "Soru: Have + you + ever + V3" },
+            { id: 8, type: "multiple-choice", question: "We haven't finished ___.", options: ["already", "yet", "since", "just"], answer: "yet", hint: "Olumsuzda → yet" }
+        ],
+        examples: [
+            { sentence: "I have visited Paris twice.", translation: "Paris'i iki kez ziyaret ettim.", correct: true },
+            { sentence: "She has lost her keys.", translation: "Anahtarlarını kaybetti.", correct: true },
+            { sentence: "He has went to London.", translation: "Londra'ya gitti.", correct: false, note: "went → gone (V3 kullanılmalı)" },
+            { sentence: "We have known each other since 2015.", translation: "2015'ten beri birbirimizi tanıyoruz.", correct: true },
+            { sentence: "Have you ever eaten sushi?", translation: "Hiç suşi yedin mi?", correct: true },
+            { sentence: "I have already did my homework.", translation: "Ödevimi çoktan yaptım.", correct: false, note: "did → done (have + V3)" }
+        ],
+        test: [
+            { id: 1, question: "She ___ never been to Italy.", options: ["have", "has", "had", "is"], answer: 1 },
+            { id: 2, question: "I ___ just finished my exam.", options: ["am", "have", "was", "did"], answer: 1 },
+            { id: 3, question: "They have lived here ___ 10 years.", options: ["since", "for", "ago", "before"], answer: 1 },
+            { id: 4, question: "___ you ever tried Turkish food?", options: ["Did", "Do", "Have", "Are"], answer: 2 },
+            { id: 5, question: "He hasn't called me ___.", options: ["just", "already", "yet", "ever"], answer: 2 }
         ]
     },
     {
@@ -1914,19 +2086,43 @@ export const grammarData = [
         title: "Modal Verbs (can, must, should, might)",
         description: "Yetenek, zorunluluk, tavsiye ve olasılık ifadeleri.",
         content: `
-            <h3>Kullanım</h3>
-            <p><strong>can</strong>: yetenek/izin → She <strong>can</strong> swim.</p>
-            <p><strong>must</strong>: zorunluluk → You <strong>must</strong> wear a seatbelt.</p>
-            <p><strong>should</strong>: tavsiye → You <strong>should</strong> sleep early.</p>
-            <p><strong>might</strong>: olasılık → It <strong>might</strong> rain tomorrow.</p>
-            <br>
-            <h3>Yapı</h3>
-            <p>Özne + <strong>modal + fiil (yalın hali)</strong></p>
+            <table class="grammar-rule-table">
+                <tr><th>Modal</th><th>Anlam</th><th>Örnek</th></tr>
+                <tr><td><strong>can</strong></td><td>Yetenek / İzin</td><td>She can swim.</td></tr>
+                <tr><td><strong>could</strong></td><td>Geçmiş yetenek / Kibar istek</td><td>Could you help me?</td></tr>
+                <tr><td><strong>must</strong></td><td>Zorunluluk</td><td>You must wear a seatbelt.</td></tr>
+                <tr><td><strong>should</strong></td><td>Tavsiye</td><td>You should sleep early.</td></tr>
+                <tr><td><strong>might</strong></td><td>Olasılık</td><td>It might rain tomorrow.</td></tr>
+            </table>
+
+            <div class="grammar-formula">Özne + modal + Fiil (yalın hali)</div>
+
+            <div class="grammar-note">
+                <strong>Dikkat:</strong> Modal fiillerden sonra "to" gelmez! ❌ can to swim ✅ can swim. Ayrıca 3. tekil şahısta -s almaz: ❌ She cans ✅ She can
+            </div>
         `,
         exercises: [
             { id: 1, type: "fill-blank", question: "You ____ (should) exercise more.", answer: "should", hint: "Tavsiye için 'should' kullanılır." },
             { id: 2, type: "true-false", question: "She can to drive a car. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "Modal'dan sonra 'to' gelmez: 'can drive'." },
-            { id: 3, type: "writing",    question: "Write a sentence using 'must' or 'should'.", keywords: ["must","should"], answer: "check-keywords" }
+            { id: 3, type: "writing",    question: "Write a sentence using 'must' or 'should'.", keywords: ["must","should"], answer: "check-keywords" },
+            { id: 4, type: "multiple-choice", question: "You ___ see a doctor. You look sick.", options: ["should", "can", "might", "will"], answer: "should", hint: "Tavsiye → should" },
+            { id: 5, type: "fill-blank", question: "Students ____ not use phones in class.", answer: "must", hint: "Zorunluluk/yasak → must" },
+            { id: 6, type: "multiple-choice", question: "It ___ snow tomorrow. I'm not sure.", options: ["must", "should", "might", "can"], answer: "might", hint: "Belirsiz olasılık → might" },
+            { id: 7, type: "fill-blank", question: "____ I open the window?", answer: "Can", hint: "İzin isteme → Can" }
+        ],
+        examples: [
+            { sentence: "She can speak three languages.", translation: "Üç dil konuşabilir.", correct: true },
+            { sentence: "She can to speak three languages.", translation: "Üç dil konuşabilir.", correct: false, note: "Modal + to gelmez → can speak" },
+            { sentence: "You should eat more vegetables.", translation: "Daha fazla sebze yemelisin.", correct: true },
+            { sentence: "You must stop at a red light.", translation: "Kırmızı ışıkta durmalısın.", correct: true },
+            { sentence: "He mights come later.", translation: "Daha sonra gelebilir.", correct: false, note: "Modal fiil -s almaz → might come" }
+        ],
+        test: [
+            { id: 1, question: "You ___ wear a helmet when riding a bike.", options: ["can", "should", "might", "will"], answer: 1 },
+            { id: 2, question: "___ you swim?", options: ["Must", "Should", "Can", "Might"], answer: 2 },
+            { id: 3, question: "She ___ be at home. I'm not sure.", options: ["must", "might", "can", "should"], answer: 1 },
+            { id: 4, question: "You ___ not park here. It's illegal.", options: ["should", "might", "can", "must"], answer: 3 },
+            { id: 5, question: "I think you ___ try the local food.", options: ["must", "should", "might", "can"], answer: 1 }
         ]
     },
 
@@ -1937,19 +2133,42 @@ export const grammarData = [
         title: "Passive Voice (Edilgen Yapı)",
         description: "Eylemin faillini gizlemek veya vurguyu nesneye taşımak.",
         content: `
-            <h3>Yapı</h3>
-            <p>Özne + <strong>be (doğru zaman) + Past Participle</strong></p>
-            <br>
-            <h3>Zamanlarla Örnekler</h3>
-            <p>Present: The letter <strong>is written</strong> by him.</p>
-            <p>Past: The cake <strong>was eaten</strong>.</p>
-            <p>Future: The project <strong>will be completed</strong> tomorrow.</p>
-            <p>Perfect: The report <strong>has been submitted</strong>.</p>
+            <table class="grammar-rule-table">
+                <tr><th>Zaman</th><th>Aktif</th><th>Pasif</th></tr>
+                <tr><td>Present Simple</td><td>writes</td><td>is written</td></tr>
+                <tr><td>Past Simple</td><td>wrote</td><td>was written</td></tr>
+                <tr><td>Present Perfect</td><td>has written</td><td>has been written</td></tr>
+                <tr><td>Future (will)</td><td>will write</td><td>will be written</td></tr>
+            </table>
+
+            <div class="grammar-formula">Özne + be (zamana göre) + Past Participle (V3)</div>
+
+            <div class="grammar-note">
+                <strong>Ne zaman kullanılır?</strong> Yapan kişi bilinmediğinde, önemsiz olduğunda veya nesneyi vurgulamak istediğimizde. Fail belirtmek için "by" kullanılır.
+            </div>
         `,
         exercises: [
             { id: 1, type: "fill-blank", question: "The window ____ (break) by the storm.", answer: "was broken", hint: "Past passive: was + past participle." },
             { id: 2, type: "fill-blank", question: "English ____ (speak) all over the world.", answer: "is spoken", hint: "Present passive: is + past participle." },
-            { id: 3, type: "true-false", question: "The book was wrote by Orwell. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "'written' kullanılmalı." }
+            { id: 3, type: "true-false", question: "The book was wrote by Orwell. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "'written' kullanılmalı." },
+            { id: 4, type: "multiple-choice", question: "The cake ___ by my mother.", options: ["baked", "was baked", "is baking", "bakes"], answer: "was baked", hint: "Past passive → was + V3" },
+            { id: 5, type: "fill-blank", question: "The new hospital ____ (build) next year.", answer: "will be built", hint: "Future passive: will be + V3" },
+            { id: 6, type: "multiple-choice", question: "The letter ___ already ___.", options: ["has / sent", "has / been sent", "was / sent", "is / sending"], answer: "has / been sent", hint: "Present Perfect passive → has been + V3" },
+            { id: 7, type: "fill-blank", question: "Many languages ____ (speak) in India.", answer: "are spoken", hint: "Present passive: are + V3" }
+        ],
+        examples: [
+            { sentence: "The letter is written by him.", translation: "Mektup onun tarafından yazılır.", correct: true },
+            { sentence: "The cake was ate by the children.", translation: "Pasta çocuklar tarafından yendi.", correct: false, note: "ate → eaten (V3 kullanılmalı)" },
+            { sentence: "The project will be completed tomorrow.", translation: "Proje yarın tamamlanacak.", correct: true },
+            { sentence: "The report has been submitted.", translation: "Rapor gönderildi.", correct: true },
+            { sentence: "Coffee is grown in Brazil.", translation: "Kahve Brezilya'da yetiştirilir.", correct: true }
+        ],
+        test: [
+            { id: 1, question: "English ___ in many countries.", options: ["speak", "speaks", "is spoken", "speaking"], answer: 2 },
+            { id: 2, question: "The Mona Lisa ___ by Leonardo da Vinci.", options: ["painted", "was painted", "is painting", "paints"], answer: 1 },
+            { id: 3, question: "The bridge ___ next month.", options: ["will build", "will be built", "is building", "built"], answer: 1 },
+            { id: 4, question: "The homework ___ already ___ submitted.", options: ["has / been", "was / —", "is / being", "have / been"], answer: 0 },
+            { id: 5, question: "Rice ___ in Asia.", options: ["grows", "is grown", "growing", "grew"], answer: 1 }
         ]
     },
     {
@@ -1958,23 +2177,44 @@ export const grammarData = [
         title: "Conditionals (If Clauses)",
         description: "Koşul cümleleri: 0, 1, 2 ve 3. tip.",
         content: `
-            <h3>0. Tip — Genel Gerçekler</h3>
-            <p>If + Present Simple, Present Simple</p>
-            <p>If you <strong>heat</strong> water, it <strong>boils</strong>.</p>
-            <h3>1. Tip — Gerçek Olası</h3>
-            <p>If + Present Simple, will + Verb</p>
-            <p>If it <strong>rains</strong>, I <strong>will stay</strong> home.</p>
-            <h3>2. Tip — Gerçek Dışı</h3>
-            <p>If + Past Simple, would + Verb</p>
-            <p>If I <strong>had</strong> money, I <strong>would travel</strong>.</p>
-            <h3>3. Tip — Geçmişe Pişmanlık</h3>
-            <p>If + Past Perfect, would have + PP</p>
-            <p>If she <strong>had studied</strong>, she <strong>would have passed</strong>.</p>
+            <table class="grammar-rule-table">
+                <tr><th>Tip</th><th>If Cümlesi</th><th>Ana Cümle</th><th>Kullanım</th></tr>
+                <tr><td>0</td><td>If + Present Simple</td><td>Present Simple</td><td>Genel gerçekler</td></tr>
+                <tr><td>1</td><td>If + Present Simple</td><td>will + Verb</td><td>Gerçek olası</td></tr>
+                <tr><td>2</td><td>If + Past Simple</td><td>would + Verb</td><td>Hayal / gerçek dışı</td></tr>
+                <tr><td>3</td><td>If + Past Perfect</td><td>would have + V3</td><td>Geçmişe pişmanlık</td></tr>
+            </table>
+
+            <div class="grammar-formula">
+                0: If + V1, V1 &nbsp;|&nbsp; 1: If + V1, will + V &nbsp;|&nbsp; 2: If + V2, would + V &nbsp;|&nbsp; 3: If + had V3, would have V3
+            </div>
+
+            <div class="grammar-note">
+                <strong>Dikkat:</strong> 2. tip'te "If I was" yerine "If I <strong>were</strong>" tercih edilir (formal). 3. tip geçmiş değiştirilemez, pişmanlık ifade eder.
+            </div>
         `,
         exercises: [
             { id: 1, type: "fill-blank", question: "If it rains, she ____ (stay) home. (1st conditional)", answer: "will stay", hint: "1. tip: will + fiil" },
             { id: 2, type: "fill-blank", question: "If I ____ (be) rich, I would buy a yacht. (2nd conditional)", answer: "were", hint: "2. tip: were kullanılır (was yerine)." },
-            { id: 3, type: "writing",    question: "Write a 2nd conditional sentence starting with 'If I...'.", keywords: ["if","would"], answer: "check-keywords" }
+            { id: 3, type: "writing",    question: "Write a 2nd conditional sentence starting with 'If I...'.", keywords: ["if","would"], answer: "check-keywords" },
+            { id: 4, type: "multiple-choice", question: "If you heat ice, it ___. (0th)", options: ["melts", "will melt", "would melt", "melted"], answer: "melts", hint: "0. tip: Present Simple + Present Simple" },
+            { id: 5, type: "fill-blank", question: "If she ____ (study) harder, she would have passed. (3rd)", answer: "had studied", hint: "3. tip: If + had + V3" },
+            { id: 6, type: "multiple-choice", question: "If I ___ you, I would apologize. (2nd)", options: ["am", "was", "were", "be"], answer: "were", hint: "2. tip → were" },
+            { id: 7, type: "fill-blank", question: "If you come early, we ____ (go) together. (1st)", answer: "will go", hint: "1. tip: will + fiil" }
+        ],
+        examples: [
+            { sentence: "If you heat water, it boils.", translation: "Suyu ısıtırsan kaynar. (0. tip)", correct: true },
+            { sentence: "If it rains, I will stay home.", translation: "Yağmur yağarsa evde kalacağım. (1. tip)", correct: true },
+            { sentence: "If I had money, I would travel.", translation: "Param olsaydı seyahat ederdim. (2. tip)", correct: true },
+            { sentence: "If I would be rich, I would buy a car.", translation: "Zengin olsam araba alırdım.", correct: false, note: "If + would olmaz → If I were rich" },
+            { sentence: "If she had studied, she would have passed.", translation: "Çalışsaydı geçerdi. (3. tip)", correct: true }
+        ],
+        test: [
+            { id: 1, question: "If you ___ water, it boils. (0th)", options: ["heat", "will heat", "heated", "would heat"], answer: 0 },
+            { id: 2, question: "If it rains, I ___ at home. (1st)", options: ["stay", "will stay", "would stay", "stayed"], answer: 1 },
+            { id: 3, question: "If I ___ a bird, I would fly. (2nd)", options: ["am", "was", "were", "be"], answer: 2 },
+            { id: 4, question: "If he ___ earlier, he wouldn't have been late. (3rd)", options: ["leaves", "left", "had left", "would leave"], answer: 2 },
+            { id: 5, question: "Which sentence is 2nd conditional?", options: ["If it rains, I'll stay home.", "If I were you, I'd study.", "If he comes, tell him.", "If you heat ice, it melts."], answer: 1 }
         ]
     },
 
@@ -1986,19 +2226,47 @@ export const grammarData = [
         description: "Vurgu ve resmiyet için cümle yapısını tersine çevirme.",
         content: `
             <h3>Negatif Zarflarla Devrik Yapı</h3>
-            <p><strong>Never</strong> have I seen such beauty.</p>
-            <p><strong>Rarely</strong> does she make mistakes.</p>
-            <p><strong>Not only</strong> did he win, but he also broke a record.</p>
-            <br>
+            <table class="grammar-rule-table">
+                <tr><th>Zarf</th><th>Devrik Yapı</th><th>Normal Yapı</th></tr>
+                <tr><td>Never</td><td>Never <strong>have I</strong> seen...</td><td>I have never seen...</td></tr>
+                <tr><td>Rarely</td><td>Rarely <strong>does she</strong> make...</td><td>She rarely makes...</td></tr>
+                <tr><td>Not only</td><td>Not only <strong>did he</strong> win...</td><td>He not only won...</td></tr>
+                <tr><td>Hardly</td><td>Hardly <strong>had I</strong> arrived...</td><td>I had hardly arrived...</td></tr>
+            </table>
+
+            <div class="grammar-formula">Negatif zarf + yardımcı fiil + özne + ana fiil</div>
+
             <h3>Koşul Cümlelerinde Devrik Yapı</h3>
-            <p>Should you need help → (If you should need help)</p>
-            <p>Were I you → (If I were you)</p>
-            <p>Had she known → (If she had known)</p>
+            <p><strong>Should</strong> you need help → (If you should need help)</p>
+            <p><strong>Were</strong> I you → (If I were you)</p>
+            <p><strong>Had</strong> she known → (If she had known)</p>
+
+            <div class="grammar-note">
+                <strong>Dikkat:</strong> Devrik yapı formal yazımda ve edebiyatta kullanılır. Günlük konuşmada nadir görülür.
+            </div>
         `,
         exercises: [
             { id: 1, type: "fill-blank", question: "Never ____ I seen such a beautiful view. (inversion)", answer: "have", hint: "Never + have + subject + PP." },
             { id: 2, type: "fill-blank", question: "____ he known the truth, he would have acted differently.", answer: "Had", hint: "Had + subject = If he had." },
-            { id: 3, type: "writing",    question: "Rewrite using inversion: 'If you need help, call me.'", keywords: ["should","you"], answer: "check-keywords" }
+            { id: 3, type: "writing",    question: "Rewrite using inversion: 'If you need help, call me.'", keywords: ["should","you"], answer: "check-keywords" },
+            { id: 4, type: "multiple-choice", question: "Rarely ___ she make mistakes.", options: ["do", "does", "did", "has"], answer: "does", hint: "Present → does" },
+            { id: 5, type: "fill-blank", question: "Not only ____ he pass the exam, but he also got the highest mark.", answer: "did", hint: "Not only + did + subject" },
+            { id: 6, type: "multiple-choice", question: "___ I you, I would accept the offer.", options: ["Was", "Were", "Am", "Had"], answer: "Were", hint: "If I were you → Were I you" },
+            { id: 7, type: "fill-blank", question: "Hardly ____ she finished speaking when everyone applauded.", answer: "had", hint: "Hardly + had + subject" }
+        ],
+        examples: [
+            { sentence: "Never have I seen such beauty.", translation: "Böyle bir güzellik hiç görmedim.", correct: true },
+            { sentence: "Rarely does she make mistakes.", translation: "Nadiren hata yapar.", correct: true },
+            { sentence: "Never I have seen such beauty.", translation: "Böyle bir güzellik hiç görmedim.", correct: false, note: "Devrik yapı: Never have I (yardımcı fiil özneden önce)" },
+            { sentence: "Should you need anything, call me.", translation: "Bir şeye ihtiyacın olursa ara.", correct: true },
+            { sentence: "Not only did he win, but he also broke a record.", translation: "Sadece kazanmadı, ayrıca rekor kırdı.", correct: true }
+        ],
+        test: [
+            { id: 1, question: "Never ___ I experienced such kindness.", options: ["have", "has", "did", "do"], answer: 0 },
+            { id: 2, question: "___ he known earlier, he would have helped.", options: ["If", "Had", "Would", "Did"], answer: 1 },
+            { id: 3, question: "Rarely ___ we see such talent.", options: ["do", "does", "did", "have"], answer: 0 },
+            { id: 4, question: "Not only ___ she sing, but she also dances.", options: ["do", "does", "did", "can"], answer: 1 },
+            { id: 5, question: "___ I you, I'd take the job.", options: ["Was", "Am", "Were", "If"], answer: 2 }
         ]
     },
     {
@@ -2008,18 +2276,41 @@ export const grammarData = [
         description: "Resmi öneri, dilek ve zorunluluk ifadelerinde kullanılır.",
         content: `
             <h3>Yapı</h3>
-            <p>It is essential/vital/important that + Özne + <strong>Fiil (yalın)</strong></p>
-            <p>I suggest/recommend/demand that + Özne + <strong>Fiil (yalın)</strong></p>
-            <br>
-            <h3>Örnekler</h3>
-            <p>It is vital that he <strong>be</strong> present. (not 'is')</p>
-            <p>The committee demands that she <strong>resign</strong>. (not 'resigns')</p>
-            <p>I suggest that we <strong>leave</strong> early.</p>
+            <table class="grammar-rule-table">
+                <tr><th>Kalıp</th><th>Örnek</th></tr>
+                <tr><td>It is essential/vital that + S + <strong>V (yalın)</strong></td><td>It is vital that he <strong>be</strong> present.</td></tr>
+                <tr><td>I suggest/recommend that + S + <strong>V (yalın)</strong></td><td>I suggest that she <strong>leave</strong> early.</td></tr>
+                <tr><td>The committee demands that + S + <strong>V (yalın)</strong></td><td>...that she <strong>resign</strong>.</td></tr>
+            </table>
+
+            <div class="grammar-formula">...that + Özne + Fiil (yalın — 3. şahıs -s ALMAZ)</div>
+
+            <div class="grammar-note">
+                <strong>Dikkat:</strong> Subjunctive'de "be" her zaman "be"dir → "It is vital that he <strong>be</strong> present" (not "is"). Olumsuzda: "...that he <strong>not go</strong>" (not "doesn't go")
+            </div>
         `,
         exercises: [
             { id: 1, type: "fill-blank", question: "It is essential that every student ____ (submit) the form.", answer: "submit", hint: "Subjunctive: 3. şahıs -s almaz." },
             { id: 2, type: "true-false", question: "The doctor recommended that she rests more. (Doğru mu?)", options: ["True","False"], answer: "False", hint: "'rest' (yalın hal) kullanılmalı." },
-            { id: 3, type: "writing",    question: "Write a sentence: 'It is vital that...'", keywords: ["vital","that"], answer: "check-keywords" }
+            { id: 3, type: "writing",    question: "Write a sentence: 'It is vital that...'", keywords: ["vital","that"], answer: "check-keywords" },
+            { id: 4, type: "multiple-choice", question: "I suggest that he ___ on time.", options: ["comes", "come", "came", "coming"], answer: "come", hint: "Subjunctive: yalın fiil" },
+            { id: 5, type: "fill-blank", question: "It is important that she ____ (be) there by noon.", answer: "be", hint: "Subjunctive: be (not is)" },
+            { id: 6, type: "multiple-choice", question: "The board demands that the CEO ___.", options: ["resigns", "resign", "resigned", "resigning"], answer: "resign", hint: "Subjunctive: yalın fiil" },
+            { id: 7, type: "fill-blank", question: "I recommend that he ____ (not/go) alone.", answer: "not go", hint: "Olumsuz: not + yalın fiil" }
+        ],
+        examples: [
+            { sentence: "It is vital that he be present.", translation: "Orada bulunması hayati önem taşır.", correct: true },
+            { sentence: "It is vital that he is present.", translation: "Orada bulunması hayati önem taşır.", correct: false, note: "Subjunctive → 'be' kullanılır, 'is' değil" },
+            { sentence: "The committee demands that she resign.", translation: "Komite istifa etmesini talep ediyor.", correct: true },
+            { sentence: "I suggest that we leave early.", translation: "Erken ayrılmamızı öneririm.", correct: true },
+            { sentence: "It is crucial that he not be late.", translation: "Geç kalmaması çok önemli.", correct: true }
+        ],
+        test: [
+            { id: 1, question: "It is essential that she ___ the report.", options: ["submits", "submit", "submitted", "submitting"], answer: 1 },
+            { id: 2, question: "I suggest that he ___ a doctor.", options: ["sees", "see", "saw", "seeing"], answer: 1 },
+            { id: 3, question: "It is vital that the meeting ___ on time.", options: ["starts", "start", "started", "starting"], answer: 1 },
+            { id: 4, question: "The manager insists that everyone ___ present.", options: ["is", "be", "are", "being"], answer: 1 },
+            { id: 5, question: "I recommend that she ___ not go alone.", options: ["do", "does", "—", "did"], answer: 2 }
         ]
     },
 
@@ -2031,20 +2322,46 @@ export const grammarData = [
         description: "Bir unsuru vurgulamak için cümleyi yeniden yapılandırma.",
         content: `
             <h3>It-cleft</h3>
-            <p>It was <strong>John</strong> who broke the window. (Kim kırdı?)</p>
-            <p>It was <strong>yesterday</strong> that she called. (Ne zaman?)</p>
-            <br>
+            <table class="grammar-rule-table">
+                <tr><th>Yapı</th><th>Örnek</th><th>Vurgulanan</th></tr>
+                <tr><td>It was/is + X + who/that ...</td><td>It was <strong>John</strong> who broke the window.</td><td>Kişi</td></tr>
+                <tr><td>It was/is + X + that ...</td><td>It was <strong>yesterday</strong> that she called.</td><td>Zaman</td></tr>
+            </table>
+
             <h3>Wh-cleft (Pseudo-cleft)</h3>
+            <div class="grammar-formula">What + cümle + is/was + vurgulanan öğe</div>
             <p><strong>What I need</strong> is a long holiday.</p>
             <p><strong>What surprised me</strong> was his calmness.</p>
-            <br>
+
             <h3>Reversed Wh-cleft</h3>
             <p>A long holiday is <strong>what I need</strong>.</p>
+
+            <div class="grammar-note">
+                <strong>Ne zaman kullanılır?</strong> Akademik yazımda, edebiyatta ve belirli bir öğeyi vurgulamak istediğinizde.
+            </div>
         `,
         exercises: [
             { id: 1, type: "fill-blank", question: "It was the noise ____ woke me up.", answer: "that", hint: "It-cleft: It was ... that ..." },
             { id: 2, type: "fill-blank", question: "____ I love most about England is the weather.", answer: "What", hint: "Wh-cleft: What + clause + is ..." },
-            { id: 3, type: "writing",    question: "Rewrite emphasising 'the music': 'The music made her cry.'", keywords: ["it","that"], answer: "check-keywords" }
+            { id: 3, type: "writing",    question: "Rewrite emphasising 'the music': 'The music made her cry.'", keywords: ["it","that"], answer: "check-keywords" },
+            { id: 4, type: "multiple-choice", question: "It ___ Mary who found the answer.", options: ["is", "was", "were", "has"], answer: "was", hint: "It-cleft: It was + kişi + who" },
+            { id: 5, type: "fill-blank", question: "What surprised me ____ his reaction.", answer: "was", hint: "Wh-cleft: What + clause + was" },
+            { id: 6, type: "multiple-choice", question: "___ I want is some peace and quiet.", options: ["That", "Which", "What", "It"], answer: "What", hint: "Wh-cleft: What + I want + is" },
+            { id: 7, type: "fill-blank", question: "It was in Paris ____ they first met.", answer: "that", hint: "It-cleft: It was + yer + that" }
+        ],
+        examples: [
+            { sentence: "It was John who broke the window.", translation: "Pencereyi kıran John'du.", correct: true },
+            { sentence: "What I need is a long holiday.", translation: "İhtiyacım olan uzun bir tatil.", correct: true },
+            { sentence: "It was yesterday when she called.", translation: "Dün aradı.", correct: false, note: "It-cleft'te 'that' kullanılır → It was yesterday that she called." },
+            { sentence: "What surprised me was his calmness.", translation: "Beni şaşırtan şey sakinliğiydi.", correct: true },
+            { sentence: "A long holiday is what I need.", translation: "Uzun bir tatil tam ihtiyacım olan şey.", correct: true }
+        ],
+        test: [
+            { id: 1, question: "It was ___ who helped me.", options: ["she", "her", "hers", "herself"], answer: 0 },
+            { id: 2, question: "___ I really want is a cup of tea.", options: ["That", "Which", "What", "It"], answer: 2 },
+            { id: 3, question: "It was in London ___ the event took place.", options: ["where", "which", "that", "when"], answer: 2 },
+            { id: 4, question: "___ annoys me is the constant noise.", options: ["That", "It", "What", "Which"], answer: 2 },
+            { id: 5, question: "It ___ the children who ate the cake.", options: ["is", "was", "were", "has"], answer: 1 }
         ]
     },
     {
@@ -2053,18 +2370,43 @@ export const grammarData = [
         title: "Advanced Discourse Markers",
         description: "Akademik ve ileri yazımda bağlantı ifadeleri.",
         content: `
-            <h3>Contrast</h3>
-            <p><strong>Nevertheless, nonetheless</strong>: The evidence is weak; <strong>nevertheless</strong>, the jury convicted him.</p>
-            <p><strong>Notwithstanding</strong>: <strong>Notwithstanding</strong> the risks, she proceeded.</p>
-            <h3>Concession</h3>
-            <p><strong>Admittedly, granted</strong>: <strong>Admittedly</strong>, the plan has flaws.</p>
-            <h3>Result</h3>
-            <p><strong>Hence, thereby, consequently</strong>: Prices rose; <strong>hence</strong> demand fell.</p>
+            <table class="grammar-rule-table">
+                <tr><th>Kategori</th><th>Marker</th><th>Örnek</th></tr>
+                <tr><td>Zıtlık</td><td>nevertheless, nonetheless</td><td>The evidence is weak; <strong>nevertheless</strong>, the jury convicted him.</td></tr>
+                <tr><td>Zıtlık</td><td>notwithstanding</td><td><strong>Notwithstanding</strong> the risks, she proceeded.</td></tr>
+                <tr><td>Taviz</td><td>admittedly, granted</td><td><strong>Admittedly</strong>, the plan has flaws.</td></tr>
+                <tr><td>Sonuç</td><td>hence, thereby, consequently</td><td>Prices rose; <strong>hence</strong> demand fell.</td></tr>
+                <tr><td>Ekleme</td><td>furthermore, moreover</td><td><strong>Furthermore</strong>, the data supports our theory.</td></tr>
+            </table>
+
+            <div class="grammar-formula">Cümle 1; discourse marker, Cümle 2</div>
+
+            <div class="grammar-note">
+                <strong>Dikkat:</strong> Discourse markers genellikle virgülle ayrılır. Cümle başında veya iki cümle arasında (noktalı virgülden sonra) kullanılır.
+            </div>
         `,
         exercises: [
             { id: 1, type: "fill-blank", question: "The results were inconclusive; ____, the study was published.", answer: "nevertheless", hint: "Zıtlık için nevertheless." },
             { id: 2, type: "fill-blank", question: "He failed the test, ____ losing his scholarship.", answer: "thereby", hint: "Sonuç: thereby + -ing" },
-            { id: 3, type: "writing",    question: "Write two sentences connected with 'notwithstanding'.", keywords: ["notwithstanding"], answer: "check-keywords" }
+            { id: 3, type: "writing",    question: "Write two sentences connected with 'notwithstanding'.", keywords: ["notwithstanding"], answer: "check-keywords" },
+            { id: 4, type: "multiple-choice", question: "The plan has risks; ___, we should proceed.", options: ["nevertheless", "thereby", "hence", "admittedly"], answer: "nevertheless", hint: "Zıtlık → nevertheless" },
+            { id: 5, type: "fill-blank", question: "____, the theory is not perfect, but it is the best we have.", answer: "Admittedly", hint: "Taviz → Admittedly" },
+            { id: 6, type: "multiple-choice", question: "Costs increased; ___, profits fell.", options: ["nevertheless", "hence", "admittedly", "notwithstanding"], answer: "hence", hint: "Sonuç → hence" },
+            { id: 7, type: "fill-blank", question: "The experiment was a success; ____, it opened new research areas.", answer: "furthermore", hint: "Ekleme → furthermore" }
+        ],
+        examples: [
+            { sentence: "The evidence is weak; nevertheless, the jury convicted him.", translation: "Kanıtlar zayıf; yine de jüri onu mahkum etti.", correct: true },
+            { sentence: "Notwithstanding the risks, she proceeded.", translation: "Risklere rağmen devam etti.", correct: true },
+            { sentence: "Admittedly, the plan has flaws.", translation: "Kabul etmek gerekir ki, planın kusurları var.", correct: true },
+            { sentence: "Prices rose, hence demand fell.", translation: "Fiyatlar arttı, dolayısıyla talep düştü.", correct: true },
+            { sentence: "He failed the test, thereby losing his scholarship.", translation: "Sınavda başarısız oldu, böylece bursunu kaybetti.", correct: true }
+        ],
+        test: [
+            { id: 1, question: "The data is limited; ___, it provides useful insights.", options: ["hence", "thereby", "nevertheless", "admittedly"], answer: 2 },
+            { id: 2, question: "___ the difficulties, the team succeeded.", options: ["Nevertheless", "Hence", "Notwithstanding", "Thereby"], answer: 2 },
+            { id: 3, question: "She resigned, ___ ending her 20-year career.", options: ["nevertheless", "hence", "thereby", "admittedly"], answer: 2 },
+            { id: 4, question: "The method is flawed; ___, we need a new approach.", options: ["thereby", "hence", "notwithstanding", "admittedly"], answer: 1 },
+            { id: 5, question: "___, the results were disappointing.", options: ["Hence", "Thereby", "Notwithstanding", "Admittedly"], answer: 3 }
         ]
     }
 ];
