@@ -1,0 +1,1709 @@
+# İngilizce Öğrenme Uygulaması — Kapsamlı İçerik Geliştirme Planı
+
+Bu doküman, projenin mevcut durumunun analizi ve İngilizce öğrenme içeriğine yönelik kapsamlı bir geliştirme yol haritası sunmaktadır. Kullanıcının 3 temel önerisini genişletip, projenin toplam İngilizce öğretim kalitesini üst seviyeye taşıyacak ek önerilerle birlikte sunulmaktadır.
+
+---
+
+## 📊 Mevcut Durum Analizi
+
+| Modül | İçerik | Değerlendirme |
+|---|---|---|
+| **Kelime Havuzu** | 1000 kelime, 40+ kategori, A1–B2 CEFR | ✅ Zengin |
+| **Gramer** | 11 konu (A1–C2), fill-blank/true-false/writing | ✅ Kapsamlı |
+| **Okuma** | Sadece 2 kısa metin | ❌ Çok yetersiz |
+| **Dinleme** | 2 adet placeholder video (Google sample) | ❌ Gerçekçi değil |
+| **Cümle Sıralama** | 20 cümle, drag-drop | ⚠️ Yeterli ama genişletilebilir |
+| **Hız Testi** | 60 saniyelik 4 seçenekli quiz | ⚠️ Temel düzeyde |
+| **Sözlük** | Free Dictionary API + MyMemory çeviri | ✅ İyi |
+| **SRS** | SM-2 algoritması, localStorage | ✅ İyi |
+| **Kelime Oyunları** | Flashcard, eşleştirme, bulmaca (scramble) | ⚠️ Type gösterimi yok |
+
+---
+
+## 🎯 Geliştirme Planı
+
+---
+
+### 1. 🔤 Alfabe Doğrulama Sistemi — Input Validasyonu
+
+**Öneri kaynağı:** Kullanıcı önerisi
+
+**Problem:** Kullanıcılar İngilizce girdi alanlarına Türkçe karakter (ç, ş, ğ, ı, ö, ü, İ) girebiliyor.
+
+**Çözüm:**
+
+- Tüm İngilizce kelime input alanlarına gerçek zamanlı karakter filtresi eklenmeli
+- Türkçe karakter girildiğinde inline uyarı gösterilmeli (kırmızı border + tooltip)
+- Kabul edilen karakterler: `a-z A-Z 0-9 - ' . , ? ! " ; : ( )` ve boşluk
+- Uygulanacak modüller:
+  - [vocab.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/vocab.js) → Bulmaca (puzzle) cevap inputu
+  - [grammar.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/grammar.js) → Fill-blank ve writing egzersizleri
+  - [dictionary.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/dictionary.js) → Arama kutusu
+  - [sentence-order.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/sentence-order.js) → Varsa metin girişi
+- Yardımcı fonksiyon `core/utils.js` olarak global bir `validateEnglishInput(value)` fonksiyonu
+
+---
+
+### 2. 🏷️ Kelime Türü (Part of Speech) Gösterimi
+
+**Öneri kaynağı:** Kullanıcı önerisi
+
+**Problem:** Kelime türü (`type` field) data.js'te mevcut ama oyun arayüzlerinde gösterilmiyor.
+
+**Çözüm — Global badge sistemi:**
+
+Her kelimenin yanına renk kodlu bir etiket (badge) eklenmesi:
+
+| Tür | Renk | Etiket |
+|---|---|---|
+| `noun` | 🔵 Mavi | `n.` |
+| `verb` | 🔴 Kırmızı | `v.` |
+| `adjective` | 🟢 Yeşil | `adj.` |
+| `other` | 🟡 Sarı | `oth.` |
+
+**Uygulanacak yerler:**
+
+- **Flashcard** — Kartın ön yüzünde kelime yanında
+- **Eşleştirme oyunu** — Kart üzerinde küçük badge
+- **Puzzle/Bulmaca** — Scramble edilen kelimenin ipucu yanında
+- **Hız testi** — Soru kartında kelime yanında
+- **Kelime arama/browse** — Sonuç listesinde
+- **SRS tekrar kartları** — Kart başlığında
+
+Yardımcı: `getTypeLabel(type)` ve `getTypeBadgeHTML(type)` — `core/utils.js` içinde
+
+---
+
+### 3. 🔔 Seviye Atlama Bildirimi — Alert Yerine In-App Notification
+
+**Öneri kaynağı:** Kullanıcı önerisi
+
+**Problem:** [progress.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/progress.js) satır 118'de `alert()` kullanılıyor — tarayıcı native alert'i akışı kesiyor ve kullanıcıyı zorla durduruyor.
+
+**Çözüm:**
+
+- `alert()` kaldırılacak
+- Yerine sayfanın üst kısmında 4 saniye süreyle görünen, ardından kaybolacak bir toast notification componenti oluşturulacak
+- Sitenin renk paletiyle (CSS custom properties: `--accent`, `--bg`, vs.) uyumlu olacak
+- Confetti animasyonu zaten `celebrateLevelUp()` ile mevcut — onunla senkronize çalışacak
+- Component: `features/toast.js` → `showToast(message, type, duration)` — genel kullanım
+
+---
+
+### 4. 📖 Okuma Modülü — Kapsamlı Analiz ve Yeniden Yapılandırma
+
+---
+
+#### 📋 Mevcut Durum Raporu ([reading.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/reading.js) — 245 satır)
+
+**Dosya:** [reading.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/reading.js)
+
+| Özellik | Mevcut Durum |
+|---|---|
+| Metin sayısı | **Sadece 2** (ikisi de "Başlangıç" seviye) |
+| Metin başına cümle | 5 cümle |
+| Soru sayısı | Her metin için 3 çoktan seçmeli |
+| Kelime vurgulama | ✅ `vocabMap` ile eşleşen kelimeler mavi renkte |
+| Tooltip | ✅ Tıklayınca Türkçe anlam (fixed positioning) |
+| XP ödülü | Doğru cevap başına 10 XP |
+| Ses desteği | ❌ Yok |
+| İlerleme takibi | ❌ Yok (sonsuz XP kazanılabilir) |
+| CEFR seviye | ❌ Yok ("Başlangıç" etiketi var ama CEFR değil) |
+| Egzersiz çeşitliliği | ❌ Sadece çoktan seçmeli |
+
+---
+
+#### 🔍 Tespit Edilen Sorunlar (12 Madde)
+
+##### 🏗️ Mimari Sorunlar
+
+**1. Veri, Component İçinde Hardcoded**
+`readingTexts` dizisi doğrudan [reading.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/reading.js) dosyasının içinde tanımlı (satır 5–63). Diğer modüller (kelime, gramer, dinleme) verilerini [data.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/data.js)'ten import ederken, okuma modülü bu mimari kalıbı kırıyor. Bu durum:
+
+- Veri ekleme/güncellemeyi zorlaştırıyor
+- Metin sayısı arttığında dosyayı şişirecek
+- Metinlerin başka modüllerden (ör. dashboard istatistikleri) referans alınmasını engelliyor
+
+**2. `vocabMap` Sadece Tek Kelime Eşleştirir**
+
+```javascript
+// Satır 68-70
+vocabData.forEach(w => {
+    vocabMap[w.word.toLowerCase()] = w.meaning;
+});
+```
+
+`vocabMap` yalnızca `w.word.toLowerCase()` ile eşleşme yapar. `ice cream`, `wake up`, `go to bed` gibi çok kelimeli terimler eşleşemez. Ayrıca `w.type` bilgisi map'e eklenmemiş — kelime türü tooltip'te gösterilemiyor.
+
+**3. Tooltip Positioning Hatası**
+
+```javascript
+// Satır 159-161
+tooltip.style.left = `${rect.left + rect.width / 2}px`;
+tooltip.style.top = `${rect.top - 38}px`;
+```
+
+`getBoundingClientRect()` + `position: fixed` kullanılıyor. Sayfa scroll edildiğinde tooltip doğru konumda görünür, ama `top - 38` sabit bir offset — uzun kelimeler veya ekranın üst kenarına yakın kelimeler için tooltip ekranın dışına taşar.
+
+##### 📚 İçerik Sorunları
+
+**4. Sadece 2 Metin — Çok Yetersiz**
+Bir dil öğrenme uygulamasının okuma modülünde minimum 10-15 metin beklenir. 2 metin, ilk kullanımda tamamlanıp bir daha açılmayacak kadar yetersiz.
+
+**5. CEFR Seviye Uyumsuzluğu**
+Mevcut metinler `level: "Başlangıç"` etiketine sahip. Uygulamanın tamamı CEFR sistemi (A1–C2) kullanırken okuma modülü bu sisteme dahil değil. Kullanıcı kelime çalışmasında A2 seviyesindeyken, okuma modülü bu bilgiyi kullanamıyor.
+
+**6. Metin Kelime Zenginliği Düşük**
+Her iki metin de sadece en temel kelimeler kullanıyor (drinks, happy, beautiful, car, park). vocabData'daki 1000 kelimenin büyük çoğunluğu bu metinlerde hiç kullanılmıyor, dolayısıyla `vocabMap` vurgulama potansiyelinin çok azı gerçekleştiriliyor.
+
+##### 🎨 UX/Deneyim Sorunları
+
+**7. Sadece Çoktan Seçmeli Soru Tipi**
+Her metnin ardından yalnızca 4 seçenekli multiple-choice soruları var. Boşluk doldurma, doğru-yanlış, cümle eşleştirme gibi alternatif soru tipleri yok. Bu tekdüzelik kullanıcının sıkılmasına yol açar.
+
+**8. Tamamlanma/İlerleme Takibi Yok**
+Kullanıcı bir metni okudu mu, soruları doğru cevapladı mı — bu bilgi hiçbir yerde saklanmıyor. Aynı metni tekrar açıp tekrar 10 XP x 3 soru = 30 XP kazanabilir (sonsuz loop). `progressManager.completeActivity()` çağrılmıyor.
+
+**9. Kelime Sayısı / Okuma Süresi Yok**
+Metin kartlarında sadece başlık ve seviye var. Tahmini okuma süresi veya kelime sayısı gibi bilgiler güdüleyici olabilir ("45 kelime · ~1 dk okuma").
+
+**10. TTS (Text-to-Speech) Desteği Yok**
+Kullanıcı metni sadece gözle okuyor. Metnin sesli okunması (Web Speech API ile), dinleme becerisini de destekler ve okuma+dinleme entegrasyonu sağlar.
+
+##### 🎮 Gamification Sorunları
+
+**11. `celebrateLevelUp()` Orantısız Kullanım**
+
+```javascript
+// Satır 239
+if (correctCount === questions.length && window.celebrateLevelUp) window.celebrateLevelUp();
+```
+
+3/3 doğru yapınca confetti + level-up kutlaması tetikleniyor. Ama bu, gerçek bir seviye atlama değil — sadece 3 soru doğru yanıtlandı. `celebrateLevelUp`, `progressManager`'ın seviye atlama mekanizmasından bağımsız çağrılıyor. Bu, kullanıcı deneyiminde anlam karmaşası yaratır.
+
+**12. Kelime Gözden Geçirme / SRS Entegrasyonu Yok**
+Kullanıcı metindeki mavi kelimelere tıklayıp anlamını görebilir, ama bu kelimeleri "bilmiyorum" olarak işaretleyip SRS kuyruğuna ekleme imkanı yok. Okuma modülü kelime öğrenme döngüsünden tamamen kopuk.
+
+---
+
+#### 🛠️ Çözüm Planı — 4 Aşama
+
+##### Aşama 1: Mimari Düzeltme (Temel Refactoring)
+
+**1a. Veriyi [data.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/data.js)'e Taşıma**
+
+`readingTexts` dizisini [reading.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/reading.js)'ten çıkarıp [data.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/data.js)'e export olarak eklemek. Yeni veri yapısı:
+
+```javascript
+export const readingTexts = [
+  {
+    id: 1,
+    title: "A Good Morning",
+    level: "A1",                    // CEFR standardına geçiş
+    category: "daily-life",         // Yeni: kategori
+    wordCount: 45,                  // Yeni: kelime sayısı
+    readingTime: 1,                 // Yeni: dakika cinsinden tahmini okuma süresi
+    text: [
+      "Every morning, Tom wakes up early and drinks water before breakfast.",
+      "He is happy because the weather is beautiful and warm.",
+      // ...
+    ],
+    questions: [
+      {
+        q: "What does Tom drink before breakfast?",
+        type: "multiple-choice",    // Yeni: soru tipi (ileride genişletilebilir)
+        options: ["Coffee", "Water", "Juice", "Milk"],
+        answer: "Water"
+      }
+    ],
+    // Yeni alanlar:
+    clozeWords: ["drinks", "happy", "beautiful"],  // Boşluk doldurma için hangi kelimeler
+    keyVocab: ["wake", "drink", "happy", "beautiful", "warm", "write", "eat", "think"]
+  }
+];
+```
+
+**1b. `vocabMap` Zenginleştirme**
+
+```javascript
+// Mevcut: sadece meaning
+vocabMap[w.word.toLowerCase()] = w.meaning;
+
+// Yeni: type + meaning + id (SRS entegrasyonu için)
+vocabMap[w.word.toLowerCase()] = {
+  meaning: w.meaning,
+  type: w.type,
+  id: w.id
+};
+```
+
+**1c. Tooltip Pozisyon Düzeltme**
+
+`position: fixed` yerine `position: absolute` kullanarak tooltip'i `.reading-article` container'ına relative olarak konumlandırmak. Bu, scroll sorununu tamamen çözer.
+
+**1d. İlerleme Takibi Ekleme**
+
+```javascript
+// Metin tamamlandığında:
+progressManager.completeActivity(`reading-${text.id}`);
+// İlk kez tamamlamada XP ver, tekrarlarda verme:
+if (!progressManager.state.completedActivities.includes(`reading-${text.id}`)) {
+  progressManager.addXP(xpAmount);
+}
+```
+
+**1e. `celebrateLevelUp` Düzeltmesi**
+
+Satır 239'daki `celebrateLevelUp()` kaldırılacak. Onun yerine, tüm sorular doğruysa toast notification ile "Mükemmel! 🎉" mesajı gösterilecek.
+
+---
+
+##### Aşama 2: İçerik Genişletme (12 Yeni Metin)
+
+Toplam 14 metin hedefi (mevcut 2 + 12 yeni), CEFR seviyelerine göre dağılım:
+
+| Seviye | Metin Sayısı | Konular | Cümle/Metin | Soru/Metin |
+|---|---|---|---|---|
+| **A1** | 4 (2 mevcut + 2 yeni) | "My Family", "At the Supermarket" | 5-6 | 3 |
+| **A2** | 4 | "Travel to London", "Cooking Dinner", "My Best Friend", "A Weekend in the Park" | 6-8 | 4 |
+| **B1** | 3 | "Social Media and Young People", "Job Interview Tips", "Climate Change" | 8-10 | 4 |
+| **B2** | 3 | "The Future of AI", "Cultural Differences", "How Music Affects the Brain" | 10-12 | 5 |
+
+**İçerik yazım kuralları:**
+
+- Her metin, `vocabData`'daki en az 8-10 kelimeyi kullanmalı (vurgulama oranını yükseltmek için)
+- Her metnin seviyesine uygun gramer yapıları kullanılmalı (A1: present simple, A2: past simple, B1: present perfect, B2: passive voice + conditionals)
+- Türkçe karakter İngilizce kelimelerde kullanılmamalı
+
+---
+
+##### Aşama 3: Yeni Egzersiz Modları
+
+**3a. Cloze Test (Boşluk Doldurma)**
+
+Metin içindeki belirli kelimeler `____` ile değiştirilir, kullanıcı dropdown'dan veya yazarak doğru kelimeyi seçer:
+
+```
+Every morning, Tom wakes up early and ______ water before breakfast.
+                                        [drinks / eats / runs / reads]
+```
+
+- Hangi kelimelerin boşluk yapılacağı `clozeWords` field'ından gelir
+- Normal okuma modundan sonra "Boşluk Doldurma" butonu ile erişilir
+
+**3b. Doğru / Yanlış Soruları (True/False)**
+
+Metinle ilgili ifade verilir, kullanıcı doğru mu yanlış mı karar verir:
+
+```
+"Tom drinks coffee every morning." → False (Water içiyor)
+```
+
+**3c. Kelime Avı (Word Hunt)**
+
+Metnin altında bir görev belirir: "Bu metinde 3 sıfat (adjective) bul ve işaretle!"
+
+- Kullanıcı kelimelere tıklayarak seçer
+- Doğru seçimler yeşil, yanlışlar kırmızı olur
+- `vocabMap`'teki `type` bilgisi doğrulama için kullanılır
+
+**3d. Cümle Sıralama (Metnin cümleleri karıştırılır)**
+
+Metnin paragrafları veya cümleleri karıştırılarak doğru sıraya dizme:
+
+- Drag-drop ile sıralama (mevcut [sentence-order.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/sentence-order.js) altyapısı kullanılabilir)
+- "Correct order" butonu ile kontrol
+
+---
+
+##### Aşama 4: UX ve Entegrasyon İyileştirmeleri
+
+**4a. CEFR Seviye Filtresi**
+
+Metin listesinde seviye filtresi (mevcut gramer modülünde olduğu gibi):
+
+```
+[Tümü] [A1 🌱] [A2 🌿] [B1 🌟] [B2 🔥]
+```
+
+**4b. Metin Kartı Zenginleştirme**
+
+Metin seçim kartlarında:
+
+- CEFR badge (renk kodlu)
+- Kelime sayısı + tahmini okuma süresi
+- ✅ Tamamlandı işareti (ilerleme takibiyle)
+- Doğruluk oranı (%80 gibi)
+
+**4c. TTS (Metni Sesli Okuma)**
+
+"🔊 Metni Dinle" butonu — Web Speech API ile metnin tamamını veya paragraf paragraf sesli okuma:
+
+```javascript
+const utterance = new SpeechSynthesisUtterance(paragraph);
+utterance.lang = 'en-US';
+speechSynthesis.speak(utterance);
+```
+
+**4d. Kelime → SRS Entegrasyonu**
+
+Tooltip'te ek buton: "📌 Tekrar Kuyruğuna Ekle"
+
+- Tıklandığında [reviewWord(wordId, 0)](file:///Users/kursataknc/Documents/GitHub/english-projet/src/features/srs.js#80-88) çağrılır (0 = bilmiyorum)
+- Kelime SRS kuyruğuna düşer ve flashcard tekrarlarında karşısına çıkar
+
+**4e. Okuma Sonrası Özet ve Öğrenilen Kelimeler**
+
+Metin tamamlandığında:
+
+- Doğruluk özeti (mevcut)
+- - Metinde tıklanan kelimelerin listesi ("Bu metinde şu kelimelerin anlamına baktın: dog, happy, morning")
+- - Bu kelimeleri SRS'e toplu ekleme seçeneği
+
+---
+
+#### 📁 Okuma Modülü Dosya Değişiklikleri
+
+| Dosya | Değişiklik |
+|---|---|
+| [data.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/data.js) | `readingTexts` ekleme (12 yeni metin + yeni fieldlar) |
+| [reading.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/reading.js) | Refactor: veri → import, tooltip fix, progress tracking, cloze/hunt modları, TTS, SRS entegrasyonu |
+| [style.css](file:///Users/kursataknc/Documents/GitHub/english-projet/src/styles/style.css) | CEFR badge, tamamlanma işareti, cloze input, word-hunt stilleri |
+
+> [!IMPORTANT]
+> Aşama 1 (mimari düzeltme) ve Aşama 2 (içerik ekleme) birbirine bağımlıdır — önce veri yapısı taşınmalı, sonra yeni metinler eklenmelidir. Aşama 3 ve 4 bağımsız olarak uygulanabilir.
+
+---
+
+### 5. 🧠 Kelime Modülü — Kapsamlı Analiz ve İyileştirme
+
+---
+
+#### 📋 Mevcut Durum Raporu ([vocab.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/vocab.js) — 606 satır)
+
+**Dosya:** [vocab.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/vocab.js)
+
+Kelime modülü, uygulamanın en büyük ve en özellikli modülü. 4 alt özelliği, SRS entegrasyonu ve 3 external API kullanıyor:
+
+| Alt Özellik | Satır Aralığı | Açıklama |
+|---|---|---|
+| **Kelime Arama/Browse** | 14–93 | Text + type + level filtreleri ile 1000 kelimede arama |
+| **Flashcards + SRS** | 95–351 | Kart çevirme, Dictionary API (fonetik, tanım, örnek), Unsplash görsel, SM-2 spaced repetition |
+| **Eşleştirme Oyunu** | 353–468 | 5 çift (kelime ↔ anlam), seçme-eşleştirme mekaniği |
+| **Kelime Bulmaca (Scramble)** | 470–606 | Harfleri karıştır → doğru kelimeyi yaz |
+
+**Bağımlılıklar:**
+
+- [data.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/data.js) → `vocabData` (1000 kelime)
+- [services.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/services.js) → [fetchDictionary](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/services.js#16-67), [playPronunciation](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/services.js#99-112), [fetchUnsplashImage](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/services.js#119-147)
+- [srs.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/features/srs.js) → [reviewWord](file:///Users/kursataknc/Documents/GitHub/english-projet/src/features/srs.js#80-88), [getDueWords](file:///Users/kursataknc/Documents/GitHub/english-projet/src/features/srs.js#89-100), [getSRSStats](file:///Users/kursataknc/Documents/GitHub/english-projet/src/features/srs.js#107-129)
+
+---
+
+#### 🔍 Tespit Edilen Sorunlar (15 Madde)
+
+##### 🏗️ Mimari / Kod Kalitesi
+
+**1. Global Durum Değişkenleri (`currentIndex`, `isFlipped`, `srsQueue`, `selectedCards`, `matchedPairs`)**
+Modül seviyesinde [let](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/vocab.js#237-253) ile tanımlanan 7+ değişken, modüllerin aynı anda aktif olmasını engelliyor. Ayrıca cleanup yapılmadığı için bir alt özellikten diğerine geçişte stale state riski var.
+
+**2. Event Listener Sızıntısı**
+
+```javascript
+// Satır 209 — document seviyesinde listener
+document.addEventListener('click', (e) => {
+    if (!e.target.classList.contains('srs-btn')) return;
+    // ...
+});
+```
+
+SRS butonları için `document` seviyesinde bir click listener ekleniyor ve hiçbir zaman `removeEventListener` ile temizlenmiyor. Flashcard her açıldığında yeni bir listener eklenir → memory leak.
+
+**3. Eşleştirme Oyunu `restart` Listener Çoğaltması**
+
+```javascript
+// Satır 450
+document.getElementById('restart-match-btn').addEventListener('click', startMatchingGame);
+```
+
+"Tekrar Oyna" butonuna her oyun bitişinde yeni bir listener ekleniyor ama buton `innerHTML` ile yeniden oluşturulduğu için bu durumda sorun yaratmıyor — şu an "kaza eseri" çalışıyor, ama refactoring'de dikkat edilmeli.
+
+##### 📚 İçerik Sorunları
+
+**4. `vocabData`'da [example](file:///Users/kursataknc/Documents/GitHub/english-projet/.env.example) Alanı Yok**
+Kelime verisinde `word`, `meaning`, `synonyms`, `type`, `level`, `image` var ama örnek cümle ([example](file:///Users/kursataknc/Documents/GitHub/english-projet/.env.example)) yok. Flashcard'da örnek cümle [fetchDictionary()](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/services.js#16-67) API'sine bağımlı — API çalışmazsa kullanıcı hiç örnek göremez.
+
+**5. `image` Alanı Hep `null`**
+Tüm 1000 kelimede `image: null` var. Görsel, Unsplash API'den çekiliyor ama:
+
+- API key yoksa görsel hiç yüklenmez
+- Unsplash ücretsiz plan: 50 istek/saat — 1000 kelime için yetersiz
+- Kelime ile ilgisiz görseller gelebilir ("bank" için nehir kıyısı mı, banka mı?)
+
+**6. Kelime Türü Badge'i Stilsiz**
+
+```javascript
+// Satır 85 — search/browse'da type gösterimi
+<span class="badge">${w.type}</span>
+```
+
+Search/Browse'da `w.type` gösteriliyor (ham text: "noun", "verb"...) ama renk kodlaması yok. Flashcard'da satır 278'de `card-type` gösteriliyor ama yine renksiz.
+
+**7. Duplicate Kelimeler**
+`vocabData`'da duplicate ID'ler var:
+
+- `id: 781` "add" (eklemek) ve `id: 943` "add" (eklemek) — aynı kelime, aynı anlam, farklı ID
+- `id: 940` "check" (bakmak) ve `id: 932` "check" (kontrol etmek) — aynı kelime, farklı anlam
+- `id: 750` "warn" ve `id: 947` "warn" — aynı kelime, aynı anlam
+
+Bu, eşleştirme oyununda kafa karışıklığı yaratır ve SRS'te duplike tekrar oluşturabilir.
+
+##### 🃏 Flashcard Sorunları
+
+**8. API Bağımlılığı Kırılganlığı**
+Her kart değiştiğinde 2 API çağrısı yapılıyor:
+
+```javascript
+fetchDictionary(wordData.word)  // Dictionary API
+fetchUnsplashImage(wordData.word) // Unsplash API
+```
+
+İnternet kesildiğinde veya API rate limit'e ulaşıldığında:
+
+- Fonetik, tanım, örnek → boş kalır ("Tanım yükleniyor..." sonsuza kadar kalır)
+- Görsel → yüklenmez (ama `display:none` ile gizlenir — sorun değil)
+- Hata mesajı kullanıcıya gösterilmez
+
+**9. Flashcard'da CEFR Seviye Gösterimi Yok**
+Kart üzerinde kelimenin `level` bilgisi (A1, A2, B1...) gösterilmiyor. Kullanıcı çalıştığı kelimenin seviyesini bilemiyor.
+
+**10. Flashcard Filtreleme Yok**
+Normal modda 1000 kelimenin tamamı sırayla gösterilir. Kullanıcı belirli bir seviye (A1) veya tür (sadece fiiller) ile flashcard çalışamaz. SRS modu hariç filtreleme imkanı yok.
+
+##### 🧩 Eşleştirme Oyunu Sorunları
+
+**11. Sabit 5 Çift — Çok Az**
+Her oyun sadece 5 çift (word ↔ meaning) ile oynanıyor. Bu ~20 saniyede biter. Zorluk artışı, tur sistemi veya süre limiti yok.
+
+**12. Kelime Türü ve Seviye Karışımı**
+5 kelime `vocabData`'nın tamamından rastgele seçiliyor. A1 öğrencisi B2 kelimelerle eşleştirme yapmak zorunda kalabilir. Ayrıca doğru eşleşmede XP verilmiyor.
+
+**13. Eşleştirme Sadece Word ↔ Meaning**
+Tek bir eşleştirme türü var. Alternatifler yok:
+
+- Word ↔ Synonym eşleştirme
+- Word ↔ Örnek cümle eşleştirme
+- Türkçe ↔ İngilizce (ters yön)
+
+##### 🔍 Bulmaca (Scramble) Sorunları
+
+**14. Seviye Filtresi Yok**
+Bulmaca kelimeleri `vocabData`'nın tamamından rastgele seçilir. A1 öğrencisi "achievement" veya "furthermore" gibi B2 kelimelerle karşılaşabilir.
+
+**15. Kelime Türü İpucu Yok**
+İpucu olarak sadece Türkçe `meaning` gösteriliyor. Kelimenin noun/verb/adjective olduğu bilgisi verilmiyor — bu bilgi doğru cevaba ulaşmayı kolaylaştırır.
+
+---
+
+#### 🛠️ Çözüm Planı — 4 Aşama
+
+##### Aşama 1: Kod Kalitesi ve Bug Fix'ler
+
+**1a. Event Listener Temizliği**
+[initFlashcards()](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/vocab.js#95-169) çağrıldığında önceki listener'ları temizleyecek bir `cleanupFlashcards()` fonksiyonu eklenmeli. `AbortController` pattern'ı kullanılabilir:
+
+```javascript
+let abortController = null;
+function setupEventListeners() {
+    if (abortController) abortController.abort();
+    abortController = new AbortController();
+    const signal = abortController.signal;
+    document.addEventListener('click', handleSRSClick, { signal });
+}
+```
+
+**1b. API Fallback Mekanizması**
+[fetchDictionary](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/services.js#16-67) hata döndüğünde "Tanım yükleniyor..." yazısını "Çevirim dışı — tanım mevcut değil" ile değiştirmek. Zaman aşımı: 3 saniye.
+
+**1c. Duplicate Kelime Temizliği**
+[data.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/data.js)'teki tekrarlanan kelimeleri tespit edip kaldırmak veya birleştirmek:
+
+- [add](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/progress.js#98-104) (id: 781 ve 943) → birini sil
+- `warn` (id: 750 ve 947) → birini sil
+- [check](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/sentence-order.js#224-257) (id: 932 ve 940) → farklı anlamlarsa ikisini de tut ama meaning alanını netleştir
+
+---
+
+##### Aşama 2: Kelime Türü Badge Sistemi (Tüm Alt Özelliklerde)
+
+Renk kodlu badge'ler ve `getTypeBadgeHTML()` yardımcı fonksiyonu:
+
+```javascript
+// core/utils.js
+export function getTypeBadgeHTML(type) {
+    const config = {
+        noun:      { label: 'n.',   color: '#4a90e2' },
+        verb:      { label: 'v.',   color: '#e24a4a' },
+        adjective: { label: 'adj.', color: '#4aad5b' },
+        other:     { label: 'oth.', color: '#e2a74a' }
+    };
+    const c = config[type] || config.other;
+    return `<span class="type-badge" style="background:${c.color}">${c.label}</span>`;
+}
+```
+
+Uygulanacak yerler:
+
+| Konum | Mevcut | Sonrası |
+|---|---|---|
+| Flashcard ön yüz | `<span class="badge">${type}</span>` (renksiz) | `getTypeBadgeHTML(type)` |
+| Search/Browse kartı | `<span class="badge">${type}</span>` (renksiz) | `getTypeBadgeHTML(type)` |
+| Eşleştirme kart | Yok | Kartın köşesinde küçük badge |
+| Bulmaca ipucu | Yok | İpucu yanında badge |
+
+---
+
+##### Aşama 3: Flashcard İyileştirmeleri
+
+**3a. Flashcard Filtreleme**
+
+Normal modda (SRS olmayan) flashcard başlamadan önce bir filtre seçim ekranı:
+
+```
+[Tüm Seviyeler ▾]  [Tüm Türler ▾]  [Başla 🎴]
+```
+
+- Seçilen filtreye göre `vocabData` subset'i oluşturulur
+- Flashcard havuzu daraltılır
+
+**3b. CEFR Badge Flashcard Üzerinde**
+
+Kart ön yüzünde kelime başlığının yanında `A1 🌱` gibi küçük CEFR badge'i.
+
+**3c. [example](file:///Users/kursataknc/Documents/GitHub/english-projet/.env.example) Alanı — Statik Örnek Cümle**
+
+[data.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/data.js)'teki her kelimeye [example](file:///Users/kursataknc/Documents/GitHub/english-projet/.env.example) field'ı eklenmesi. API'den bağımsız olarak kart üzerinde gösterilir — API'den gelen örnek varsa onunla birleştirilir.
+
+**3d. Offline Mode İyileştirme**
+
+API çağrısı başarısızsa flashcard'ın yine de kullanılabilir olması:
+
+- Türkçe meaning → her zaman gösterilir (lokal veri)
+- Fonetik, tanım, örnek → "Çevirim dışı" placeholder
+- Ses → Web Speech API fallback (zaten [playPronunciation](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/services.js#99-112) içinde var ✅)
+
+---
+
+##### Aşama 4: Oyun Mekaniği İyileştirmeleri
+
+**4a. Eşleştirme Oyunu Yeniden Tasarım**
+
+| Özellik | Mevcut | Önerilen |
+|---|---|---|
+| Çift sayısı | 5 (sabit) | 5 / 8 / 10 (zorluk seçimi) |
+| Eşleştirme türü | Word ↔ Meaning | + Word ↔ Synonym, + TR ↔ EN |
+| Seviye filtresi | Yok | A1, A2, B1, B2 |
+| Süre | Yok | İsteğe bağlı geri sayım |
+| XP | Yok | Doğru eşleşme: 5 XP, tüm board: +20 bonus |
+| Tur sistemi | Yok | 3 tur, toplam skor |
+
+**4b. Bulmaca Geliştirmeleri**
+
+- CEFR seviye filtresi (test başlangıcında)
+- Kelime türü badge'i ipucu yanında
+- Harf tıklama mekaniği: Harf kutularına tıklayarak input'a ekleme (mobil uyumluluk)
+- "Cevabı Göster" butonu (3 yanlış denemeden sonra)
+- Geri sayım sayacı (isteğe bağlı hardcore mod)
+
+**4c. Yeni Oyun Modu: Ters Bulmaca (Reverse Scramble)**
+
+Türkçe anlam verilir → İngilizce kelimeyi yaz (scramble olmadan, direkt bilgi testi).
+
+**4d. Yeni Oyun Modu: Hızlı Eşleştirme (Speed Match)**
+
+Ekranda 1 kelime + 4 seçenek belirir, 3 saniyede doğru anlamı seç. Her doğruda süre 0.2s azalır.
+
+---
+
+#### 📁 Kelime Modülü Dosya Değişiklikleri
+
+| Dosya | Değişiklik |
+|---|---|
+| [data.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/data.js) | [example](file:///Users/kursataknc/Documents/GitHub/english-projet/.env.example) field ekleme, duplicate kelime temizliği |
+| [vocab.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/vocab.js) | Listener temizliği, flashcard filtre, type badge, eşleştirme/bulmaca geliştirmeleri, yeni oyun modları |
+| [utils.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/utils.js) | `getTypeBadgeHTML()`, `getTypeCSSClass()` yardımcı fonksiyonlar |
+| [services.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/services.js) | API timeout ekleme, hata mesajı iyileştirme |
+| [style.css](file:///Users/kursataknc/Documents/GitHub/english-projet/src/styles/style.css) | `.type-badge` stilleri, eşleştirme zorluk seçimi UI |
+
+> [!WARNING]
+> [data.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/data.js)'e [example](file:///Users/kursataknc/Documents/GitHub/english-projet/.env.example) field'ı eklemek 1000 kelime × 1 cümle = 1000 örnek cümle gerektirir. Bu büyük bir içerik çalışmasıdır ve aşamalı olarak yapılmalıdır (önce A1 kelimeleri, sonra A2, vb.).
+
+---
+
+### 6. 🎧 Dinleme Modülü Yeniden Tasarımı
+
+**Problem:** Dinleme verileri gerçek İngilizce içerik değil, Google'ın sample videoları kullanılıyor.
+
+**Çözüm — Diyalog Tabanlı Audio Sistemi:**
+
+- Videoları kaldırıp, **Web Speech API (SpeechSynthesis)** ile okunabilen diyalog parçalarına geçilmesi
+- Veya ücretsiz ve gerçekçi ses üreten bir TTS API kullanılması
+- Diyalog yapısı:
+
+```javascript
+{
+  id: 1,
+  title: "At the Coffee Shop",
+  level: "A1",
+  lines: [
+    { speaker: "Waitress", text: "Hi, can I help you?" },
+    { speaker: "Customer", text: "Yes, I'd like a medium latte, please." },
+    { speaker: "Waitress", text: "Anything else?" },
+    { speaker: "Customer", text: "No, that's all. Thanks." }
+  ],
+  questions: [
+    { q: "What does the customer order?", options: [...], answer: "..." }
+  ]
+}
+```
+
+- Her satır ayrı ayrı oynatılabilir (Web Speech API ile)
+- Transcript toggle ile metin göster/gizle
+- "Dikte" (dictation) modu: Ses dinlenip doğru yazılması beklenir
+
+> [!TIP]
+> Web Speech API ile `speechSynthesis.speak()` kullanılarak `en-US` veya `en-GB` aksanlarla ses üretilebilir. Bu hiçbir external API gerektirmez ve tamamen client-side çalışır.
+
+---
+
+### 7. 🧩 Phrasal Verbs Modülü (Yeni)
+
+**Problem:** 1000 kelimelik veri setinde phrasal verb yok (sadece "wake up" ve "go to bed" var).
+
+**Çözüm — Dedike phrasal verb bölümü:**
+
+En çok kullanılan 50 phrasal verb:
+
+```
+give up, look for, come back, turn on, turn off, pick up, put down,
+find out, get up, sit down, take off, put on, go on, come in,
+get out, look at, go back, take away, carry on, set up...
+```
+
+Her phrasal verb için:
+
+- Anlam (Türkçe)
+- Örnek cümle
+- Eşleştirme oyunu: phrasal verb ↔ anlam
+- Boşluk doldurma: "She decided to ___ her job." → `give up`
+
+---
+
+### 8. 💬 Deyimler ve İfadeler Modülü (Idioms & Expressions) (Yeni)
+
+**Problem:** [data.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/data.js)'te `idiom` kelimesi var ama gerçek deyim içeriği yok.
+
+**Çözüm — Günlük kullanılan 30+ İngilizce deyim:**
+
+Kategoriler:
+
+- **Günlük deyimler:** "break the ice", "a piece of cake", "hit the road"
+- **Duygular:** "over the moon", "under the weather", "on cloud nine"
+- **İş/okul:** "think outside the box", "go the extra mile"
+
+Her deyim için:
+
+- Literal anlam vs. gerçek anlam karşılaştırması (renkli UI)
+- Örnek cümle içinde kullanımı
+- Quiz: Cümle verilir, doğru deyim seçilir
+- Görsel ipucu: Deyimin literal anlamını çağrıştıran bir ikon/illüstrasyon
+
+---
+
+### 9. 📝 Düzensiz Fiiller Tablosu (Irregular Verbs) (Yeni)
+
+**Problem:** Gramer bölümünde past simple var ama düzensiz fiil tablosu yok.
+
+**Çözüm — İnteraktif düzensiz fiil çalışma modülü:**
+
+- 80+ temel düzensiz fiil (V1 → V2 → V3)
+- Tablo görünümü: aranabilir, filtrelenebilir (A1/A2/B1 seviye filtresi)
+- **Drill modu:** V1 gösterilir → V2 ve V3'ü yaz
+- **Ters drill:** V3 gösterilir → V1'i yaz
+
+Örnek veri yapısı:
+
+```javascript
+{ v1: "go", v2: "went", v3: "gone", meaning: "gitmek", level: "A1" }
+```
+
+- SRS entegrasyonu: Yanlış bilinenler tekrar kuyruğuna eklenir
+
+---
+
+### 10. ✍️ Yazma Pratiği Modülü (Writing Practice) (Yeni)
+
+**Problem:** Grammar modülünde sınırlı "writing" egzersizi var ama dedike bir yazma pratiği yok.
+
+**Çözüm — Kademeli yazma egzersizleri:**
+
+| Seviye | Egzersiz Türü |
+|---|---|
+| A1 | Resme bakarak 1 cümle yaz |
+| A2 | 3 kelime veriliyor, hepsini kullanarak cümle yaz |
+| B1 | Konu başlığı verilir, 3-5 cümlelik paragraf yaz |
+| B2 | Karşılaştırma yapısı: "Compare city life and village life" |
+
+Her egzersiz için:
+
+- Anahtar kelime kontrolü (keywords mevcutsa)
+- Kelime sayısı kontrolü (minimum/maksimum)
+- Cümle yapısı ipuçları
+- Örnek cevap (submit sonrası gösterilir)
+
+---
+
+### 11. 🗣️ Telaffuz Karşılaştırma (Pronunciation Practice) (Yeni)
+
+**Problem:** Sözlükte `🔊 Dinle` var ama kullanıcının kendi telaffuzunu değerlendiren bir sistem yok.
+
+**Çözüm — Web Speech Recognition API:**
+
+- Kullanıcı kelimeyi söyler → `SpeechRecognition API` ile yazıya döker
+- Orijinal kelime ile karşılaştırılır
+- Eşleşme skoru gösterilir (doğruluk yüzdesi)
+- "Tekrar dene" / "Doğru ✅" geri bildirimi
+
+> [!NOTE]
+> `SpeechRecognition` API'si Chrome, Edge ve Safari'de desteklenir. Firefox desteği sınırlıdır.
+
+---
+
+### 12. 🔄 Cümle Sıralama — Kapsamlı Analiz ve Genişletme
+
+---
+
+#### 📋 Mevcut Durum Raporu ([sentence-order.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/sentence-order.js) — 307 satır)
+
+**Dosya:** [sentence-order.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/sentence-order.js)
+
+| Özellik | Mevcut Durum |
+|---|---|
+| Cümle sayısı | **20** (hardcoded component içinde) |
+| Soru/tur | 5 soru |
+| Mekanik | Drag & drop (desktop) |
+| Seviye filtresi | ❌ Yok |
+| CEFR etiketi | ❌ Yok |
+| XP | Doğru cevap: 20 XP |
+| Mobil destek | ❌ Touch desteği yok |
+| İlerleme takibi | ❌ [completeActivity()](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/progress.js#124-130) çağrılmıyor |
+
+---
+
+#### 🔍 Tespit Edilen Sorunlar (9 Madde)
+
+**1. Veri Component İçinde Hardcoded**
+`sentences` dizisi (satır 7–28) doğrudan dosyanın içinde. Okuma ve dinleme ile aynı mimari sorun — [data.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/data.js)'e taşınmalı.
+
+**2. CEFR Seviye Yok**
+20 cümlenin tamamı karışık zorlukta. "I go to school" (A1) ile "He has been studying for two hours" (B1) aynı havuzda.
+
+**3. Sadece 20 Cümle — Tekrar Riski**
+5 soruluk bir tur başlatıldığında 20 cümleden 5'i seçilir. 4 tur sonra tüm cümleler tüketilir. Tekrar koruması sadece `currentSentence !== s` (son cümleyi hariç tutuyor — daha öncekiler tekrar gelebilir).
+
+**4. Mobil Touch Desteği Yok**
+`draggable="true"` ve `dragstart/drop` eventleri kullanılıyor. Bunlar masaüstü tarayıcılarda çalışır ama **mobil tarayıcılarda drag-drop desteklenmez**. Touch eventleri (`touchstart`, `touchmove`, `touchend`) implement edilmemiş.
+
+**5. [setupDragDrop()](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/sentence-order.js#113-216) Listener Çoğaltması**
+[resetSentence()](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/sentence-order.js#258-283) fonksiyonu (satır 258) çağrıldığında [setupDragDrop()](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/sentence-order.js#113-216) tekrar çağrılır → `dragstart`, `dragover`, `drop` listener'ları çift eklenir. Temizleme yok.
+
+**6. `Math.random()` ile Karıştırma Eğilimi**
+
+```javascript
+const scrambled = [...currentSentence.words].sort(() => 0.5 - Math.random());
+```
+
+Bu kalıp **düzgün dağılım üretmez** (Fisher-Yates olmadığı için). Bazı permütasyonlar diğerlerinden daha olası.
+
+**7. [completeActivity()](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/progress.js#124-130) Çağrılmıyor**
+Tüm turlar tamamlandığında [showFinalResult()](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/sentence-order.js#284-307) gösterilir ama ilerleme kaydedilmez. Kullanıcı modülü tekrar tekrar oynayıp sürekli 20 XP × 5 = 100 XP kazanabilir.
+
+**8. Cümle Kategorileri Yok**
+Tüm cümleler olumlu bildirim cümleleri. Soru cümleleri, olumsuz cümleler, pasif yapılar yok.
+
+**9. Alternatif Oyun Modu Yok**
+Sadece sürükle-bırak var. Kelime tıklama ile sıralama (tap-to-order) veya boşluk doldurarak cümle tamamlama gibi alternatifler yok.
+
+---
+
+#### 🛠️ Çözüm Planı
+
+**A. Veriyi [data.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/data.js)'e Taşıma + CEFR + Kategori:**
+
+```javascript
+{ id: 1, words: ["I","go","to","school","every","day"],
+  hint: "Her gün okula giderim.", level: "A1", category: "affirmative" }
+```
+
+**B. 50+ Yeni Cümle** (CEFR dağılımlı):
+
+| Seviye | Kategori | Örnekler |
+|---|---|---|
+| A1 (15) | Olumlu, soru | "Where do you live?", "She is my sister" |
+| A2 (15) | Olumsuz, geçmiş zaman | "She doesn't like pizza", "We visited Paris" |
+| B1 (15) | Present Perfect, pasif | "I have never been to Paris", "The book was written" |
+| B2 (5) | Koşullu, ileri yapılar | "If I had known, I would have come" |
+
+**C. Mobil Touch Desteği:** `touchstart/touchmove/touchend` eventleri ile drag-drop emülasyonu veya **tap-to-order** alternatif mod (kelimeye tıkla → sıraya ekle).
+
+**D. Fisher-Yates Shuffle:** Doğru karıştırma algoritması.
+
+**E. Listener Temizliği:** `AbortController` ile [setupDragDrop()](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/sentence-order.js#113-216) öncesi temizleme.
+
+---
+
+### 13. ⚡ Hız Testi — Kapsamlı Analiz ve Geliştirme
+
+---
+
+#### 📋 Mevcut Durum Raporu ([challenge.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/challenge.js) — 151 satır)
+
+**Dosya:** [challenge.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/challenge.js)
+
+| Özellik | Mevcut Durum |
+|---|---|
+| Süre | 60 saniye (sabit) |
+| Soru tipi | İngilizce → Türkçe, 4 seçenek |
+| Soru kaynağı | `vocabData` tamamından rastgele |
+| XP | Doğru: 5 XP |
+| Seviye filtresi | ❌ Yok |
+| Kelime türü filtresi | ❌ Yok |
+| Ters yön (TR→EN) | ❌ Yok |
+| Leaderboard | ❌ Yok |
+| Combo/streak | ❌ Yok |
+| Artan zorluk | ❌ Yok |
+
+---
+
+#### 🔍 Tespit Edilen Sorunlar (12 Madde)
+
+##### 🏗️ Mimari / Kod
+
+**1. `Math.random()` Biased Shuffle**
+
+```javascript
+// Satır 53-54
+.sort(() => 0.5 - Math.random())
+```
+
+Hem kelime seçimi hem de seçenek sıralamasında kullanılıyor. Fisher-Yates shuffle değil — dağılım eşit değil.
+
+**2. Aynı Kelime Tekrar Gelebilir**
+Soru seçimi tam rastgele:
+
+```javascript
+currentWord = vocabData[Math.floor(Math.random() * vocabData.length)];
+```
+
+60 saniyede ~15 soru sorulur. 1000 kelime havuzunda tekrar olasılığı düşük ama mümkün. Kullanılan kelimelerin takibi yok.
+
+**3. Seçenek Çakışması Riski**
+
+```javascript
+const distractors = vocabData
+    .filter(w => w.id !== currentWord.id)
+    .sort(() => 0.5 - Math.random())
+    .slice(0, 3)
+    .map(w => w.meaning);
+```
+
+Eğer `vocabData`'da aynı `meaning`'e sahip farklı kelimeler varsa (ör. "bakmak" — look, check, watch), seçeneklerde aynı Türkçe anlam birden fazla görünebilir. Kullanıcı doğru bir anlam seçer ama "yanlış" sayılır.
+
+**4. `celebrateLevelUp()` %80'de Tetikleniyor**
+
+```javascript
+// Satır 142
+if (window.celebrateLevelUp && accuracy >= 80) window.celebrateLevelUp();
+```
+
+Bu, gerçek bir seviye atlama değil. Confetti animasyonu, `progressManager`'ın seviye mekanizmasından bağımsız çalışıyor. Okuma modülündeki ile aynı sorun.
+
+##### 📚 İçerik / Oynanabilirlik
+
+**5. Tek Yönlü Test**
+Sadece EN→TR. Kullanıcı Türkçeyi görüp İngilizce kelimeyi seçme (ters yön) yapamıyor. Bu, aktif hatırlama (active recall) için kritik.
+
+**6. Seviye Filtresi Yok**
+A1 öğrencisi "furthermore", "acknowledge" gibi B2 kelimelerle karşılaşır. Motivasyon kırıcı.
+
+**7. Kelime Türü Filtresi Yok**
+"Sadece fiilleri test et" veya "sadece sıfatları test et" seçeneği yok.
+
+**8. Kelime Türü Badge'i Gösterilmiyor**
+Soru kartında kelimenin noun/verb/adjective olduğu bilgisi yok.
+
+**9. Combo/Streak Sistemi Yok**
+Ardışık doğru cevaplar için bonus XP yok. "5 ardışık doğru → 2x XP" gibi bir mekanik mevcut değil. Bu, engagement'ı düşürür.
+
+**10. Artan Zorluk Yok**
+Tüm 60 saniye boyunca zorluk aynı. Seçenek sayısı, süre baskısı veya kelime zorluğu artmıyor.
+
+**11. Leaderboard Yok**
+En iyi skorlar kaydedilmiyor. Kullanıcının kendi rekorlarını görmesi mümkün değil.
+
+**12. Sonuç Ekranı Zayıf**
+Sadece doğru/yanlış/doğruluk gösteriliyor. Hangi kelimeleri yanlış bildiğiniz listelenmez. Hatalı kelimeler SRS kuyruğuna eklenmez.
+
+---
+
+#### 🛠️ Çözüm Planı — 4 Aşama
+
+##### Aşama 1: Bug Fix'ler
+
+- **Fisher-Yates shuffle** implementasyonu (shuffle yardımcı fonksiyonu `utils.js`'e)
+- **Seçenek çakışması koruması:** `meaning` değerleri unique olan distractorlar seç
+- **`celebrateLevelUp()` kaldırma** → toast notification ile değiştir
+- **Kullanılan kelimeleri takip et** → `Set` ile tekrar engelleme
+
+##### Aşama 2: Filtreleme ve Konfigürasyon
+
+Test başlamadan önce bir konfigürasyon ekranı:
+
+```
+┌─────────────────────────────────┐
+│  ⚡ Hız Testi Ayarları          │
+│                                 │
+│  Yön:    [EN→TR ▾]              │
+│  Seviye: [Tümü ▾]              │
+│  Tür:    [Tümü ▾]              │
+│  Süre:   [60s ▾]               │
+│                                 │
+│  [🚀 Başla]                     │
+└─────────────────────────────────┘
+```
+
+- Çift yön: EN→TR / TR→EN / Karışık
+- CEFR: A1, A2, B1, B2, Tümü
+- Tür: Noun, Verb, Adjective, Tümü
+- Süre: 30s, 60s, 90s, 120s
+
+##### Aşama 3: Oyun Mekanikleri
+
+- **Combo sistemi:** 3 ardışık doğru → "🔥 Combo x3" XP çarpanı
+- **Streak efekti:** Ardışık doğrularda ekranda ateş emojileri + XP multiplier (x2, x3, x5)
+- **Artan zorluk:** Her 5 doğruda seçenek sayısı artabilir (4→5→6)
+- **Kelime türü badge:** Soru kartında kelime yanında renk kodlu badge
+
+##### Aşama 4: Sonuç ve Kayıt
+
+- **Detaylı sonuç ekranı:** Yanlış bilinen kelimelerin listesi (kelime + doğru anlam)
+- **Yanlışları SRS'e ekle:** "Bu kelimeleri tekrar kuyruğuna ekle" butonu
+- **Leaderboard:** localStorage'da son 10 skor (tarih + skor + doğruluk + süre)
+- **Pay butonu:** "Benim skorum: 15/18 (%83) — 60 saniyede!" mesajı kopyalama
+
+#### 📁 Hız Testi Dosya Değişiklikleri
+
+| Dosya | Değişiklik |
+|---|---|
+| [challenge.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/challenge.js) | Konfigürasyon ekranı, combo sistemi, detaylı sonuç, leaderboard |
+| [utils.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/utils.js) | `fisherYatesShuffle()` yardımcı fonksiyonu |
+| [style.css](file:///Users/kursataknc/Documents/GitHub/english-projet/src/styles/style.css) | Combo animasyonu, leaderboard tablosu, konfigürasyon ekranı stilleri |
+
+---
+
+### 13.5. 📖 Sözlük Modülü — Kapsamlı Analiz ve İyileştirme
+
+---
+
+#### 📋 Mevcut Durum Raporu ([dictionary.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/dictionary.js) — 162 satır)
+
+**Dosya:** [dictionary.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/dictionary.js)
+
+| Özellik | Mevcut Durum |
+|---|---|
+| API kaynağı | Free Dictionary API + MyMemory çeviri |
+| Gösterilen bilgi | Kelime, fonetik, İngilizce tanım, Türkçe çeviri |
+| Ses çalma | ✅ Dictionary API'den MP3 |
+| Web Speech fallback | ❌ Yok (ses yoksa buton gizlenir) |
+| Eş anlamlılar | ❌ Gösterilmiyor |
+| Örnek cümle | ❌ Gösterilmiyor |
+| Kelime türü | ❌ Gösterilmiyor |
+| Arama geçmişi | ❌ Yok |
+| SRS entegrasyonu | ❌ Yok |
+| vocabData bağlantısı | ❌ Yok |
+
+**Bağımlılıklar:**
+
+- Kendi [fetchDefinition()](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/dictionary.js#125-142) ve [fetchTurkish()](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/dictionary.js#143-156) fonksiyonları var — [services.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/services.js)'teki [fetchDictionary()](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/services.js#16-67)'dan **bağımsız** (duplicate logic)
+
+---
+
+#### 🔍 Tespit Edilen Sorunlar (10 Madde)
+
+##### 🏗️ Mimari / Kod
+
+**1. Duplicate API Mantığı**
+[dictionary.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/dictionary.js) kendi [fetchDefinition()](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/dictionary.js#125-142) fonksiyonunu tanımlıyor (satır 125–141), ama [services.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/services.js)'te zaten daha zengin bir [fetchDictionary()](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/services.js#16-67) mevcut. İki farklı yerde aynı API çağrılıyor — bakım zorluğu yaratır.
+
+**2. API Timeout Yok**
+
+```javascript
+const res = await fetch(`https://api.dictionaryapi.dev/...`);
+```
+
+Hem Dictionary hem MyMemory API çağrılarında timeout yok. Yavaş ağda kullanıcı "Aranıyor..." yazısını sonsuza kadar görür.
+
+**3. Türkçe Değişken İsimleri**
+
+```javascript
+let sesDosyasi = "";
+async function kartaYazdir(kelime) { ... }
+function sesCal() { ... }
+```
+
+Kodun geri kalanı İngilizce fonksiyon/değişken adları kullanırken, [dictionary.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/dictionary.js) Türkçe isimlendirme kullanıyor (inconsistency).
+
+**4. `sesDosyasi` Global State**
+Modül seviyesinde `let sesDosyasi` ile ses URL'si tutuluyor. Cleanup yok — modülden çıkıp geri dönünce eski değer kalabilir.
+
+##### 📚 İçerik Eksiklikleri
+
+**5. Sadece İlk Tanım Gösteriliyor**
+
+```javascript
+definition: ilk.meanings[0].definitions[0].definition
+```
+
+Dictionary API aslında birden fazla anlam ve tanım döndürür (ör. "run" — fiil olarak 15+ tanım, isim olarak 10+ tanım). Sadece ilk anlam alınıyor.
+
+**6. Eş Anlamlılar / Zıt Anlamlılar Gösterilmiyor**
+Dictionary API `synonyms` ve `antonyms` döndürür ama bunlar [fetchDefinition()](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/dictionary.js#125-142)'da alınmıyor.
+
+**7. Örnek Cümle Gösterilmiyor**
+API'den gelen [example](file:///Users/kursataknc/Documents/GitHub/english-projet/.env.example) field'ı da alınmıyor. Kelimenin cümle içinde nasıl kullanıldığını görmek öğrenme için kritik.
+
+**8. Kelime Türü (Part of Speech) Gösterilmiyor**
+API `meanings[].partOfSpeech` döndürür (noun, verb, adjective...). Bu bilgi kullanıcıya gösterilmiyor.
+
+##### 🎨 UX Eksiklikleri
+
+**9. Ses Butonu: Web Speech API Fallback Yok**
+Dictionary API'den ses URL'si gelmediyse buton tamamen gizleniyor. Oysa [services.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/services.js)'te [playPronunciation()](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/services.js#99-112) zaten Web Speech API fallback'i içeriyor.
+
+**10. Arama Geçmişi ve SRS Entegrasyonu Yok**
+
+- Kullanıcının daha önce aradığı kelimeler kaydedilmiyor
+- Aranan kelimeyi "🔖 Kaydet" / "📌 SRS'e Ekle" gibi bir butonla öğrenme kuyruğuna ekleme yok
+- vocabData'da varsa, kelimenin zaten bilinen bir kelime olduğunu gösterme yok
+
+---
+
+#### 🛠️ Çözüm Planı — 3 Aşama
+
+##### Aşama 1: Mimari Düzeltme
+
+**1a. [services.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/services.js)'i Kullan**
+[dictionary.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/dictionary.js)'teki [fetchDefinition()](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/dictionary.js#125-142) kaldırıp yerine [services.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/services.js)'teki [fetchDictionary()](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/services.js#16-67) ve [playPronunciation()](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/services.js#99-112) import edilerek kullanılmalı. Duplicate logic ortadan kalkar.
+
+**1b. API Timeout Ekleme**
+
+```javascript
+const controller = new AbortController();
+const timeout = setTimeout(() => controller.abort(), 5000);
+const res = await fetch(url, { signal: controller.signal });
+clearTimeout(timeout);
+```
+
+**1c. Değişken İsimleri İngilizceleştirme**
+`sesDosyasi` → `audioUrl`, [kartaYazdir](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/dictionary.js#62-124) → `displayResult`, [sesCal](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/dictionary.js#157-162) → `playAudio`
+
+##### Aşama 2: İçerik Zenginleştirme
+
+Sözlük kartını genişletme — tüm API verilerini gösterme:
+
+```
+┌─────────────────────────────────┐
+│  🔍 apple                       │
+│  /ˈæp.əl/  🔊 Dinle              │
+│  ─────────────────────────       │
+│  📝 noun                         │
+│  🇬🇧 A round fruit with red or  │
+│     green skin and white flesh   │
+│  🇹🇷 elma                       │
+│  ─────────────────────────       │
+│  💬 "I ate an apple for lunch"   │
+│  🔗 Eş anlamlı: fruit, crop     │
+│  ❌ Zıt anlamlı: —               │
+│  ─────────────────────────       │
+│  📝 Diğer anlamlar (2)   [göster]│
+│  ─────────────────────────       │
+│  [📌 SRS'e Ekle]  [📋 Geçmiş]   │
+└─────────────────────────────────┘
+```
+
+- Birden fazla tanım → "Diğer anlamlar" accordion
+- Part of speech badge (renk kodlu)
+- Eş anlamlılar + zıt anlamlılar
+- Örnek cümle
+- Web Speech API fallback (her zaman ses butonu göster)
+
+##### Aşama 3: SRS ve Geçmiş Entegrasyonu
+
+**3a. Arama Geçmişi**
+Son 20 aranan kelime `localStorage`'da tutulur. Sözlük sayfasında "📋 Son Aramalar" bölümü — kelimeye tıklayınca tekrar detay gösterilir.
+
+**3b. vocabData Bağlantısı**
+Aranan kelime `vocabData`'da varsa:
+
+- "✅ Bu kelime kelime havuzunda mevcut" mesajı
+- Kelimenin CEFR seviyesi ve Türkçe anlamı gösterilir
+- SRS durumu: "Öğrenildi ✅ / Öğreniliyor 📖 / Henüz başlanmadı ⭕"
+
+**3c. SRS'e Ekleme**
+"📌 Tekrar Kuyruğuna Ekle" butonu — `vocabData`'daki kelime ise [reviewWord(id, 0)](file:///Users/kursataknc/Documents/GitHub/english-projet/src/features/srs.js#80-88) ile SRS'e ekler. Eğer `vocabData`'da yoksa bilgilendirir.
+
+#### 📁 Sözlük Modülü Dosya Değişiklikleri
+
+| Dosya | Değişiklik |
+|---|---|
+| [dictionary.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/components/dictionary.js) | [services.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/services.js) import, timeout, zengin kart UI, arama geçmişi, SRS entegrasyonu |
+| [services.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/services.js) | [fetchDictionary()](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/services.js#16-67) — ek alanlar: antonyms, multiple meanings |
+| [style.css](file:///Users/kursataknc/Documents/GitHub/english-projet/src/styles/style.css) | Sözlük kartı genişletme stilleri, accordion, geçmiş listesi |
+
+---
+
+### 14. 📊 Detaylı İstatistik Paneli (Yeni)
+
+**Problem:** Dashboard'da temel XP ve seviye var ama derinlemesine analiz yok.
+
+**Çözüm:**
+
+- **Kelime türü dağılımı:** Noun %45, Verb %30, Adj %20, Other %5 — Pasta grafik
+- **CEFR seviye ilerleme:** A1: %90 öğrenildi, A2: %60, B1: %30 — Progress bar
+- **Günlük/haftalık çalışma süresi tahmini:** XP kazanımı üzerinden
+- **Zayıf kategoriler:** Hangi konuda en çok hata yapılıyor (errorAnalytics entegrasyonu)
+- **Kelime öğrenme hızı:** Son 7 günde kaç yeni kelime ezberlenmiş (SRS verisi)
+
+---
+
+### 15. 🧠 Bağlam İçinde Öğrenme (Context Learning) (Yeni)
+
+**Problem:** Kelimeler izole olarak öğreniliyor, cümle içinde kullanımı gösterilmiyor.
+
+**Çözüm — Her kelime için örnek cümle eklemek:**
+
+[data.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/data.js)'e [example](file:///Users/kursataknc/Documents/GitHub/english-projet/.env.example) field'ı eklenmesi:
+
+```javascript
+{ 
+  id: 1, word: "cat", meaning: "kedi", 
+  type: "noun", level: "A1",
+  example: "The cat is sleeping on the sofa."
+}
+```
+
+- Flashcard arka yüzünde örnek cümle gösterilir
+- Kelime arama sonuçlarında görünür
+- Eşleştirme oyununda ipucu olarak kullanılabilir
+
+---
+
+### 16. 🎮 Kelime Zinciri Oyunu (Word Chain) (Yeni)
+
+**Yeni oyun mekaniği:**
+
+- Bir kelime gösterilir (örn: "apple")
+- Kullanıcı, kelimenin **son harfi** ile başlayan yeni bir İngilizce kelime yazmalı (örn: "elephant")
+- Zincir ne kadar uzun olursa skor o kadar yüksek
+- vocabData'dan doğrulama yapılır
+- 10 saniye süre sınırı her kelime için
+
+---
+
+### 17. 🔀 Kelime Ailesi Egzersizi (Word Families) (Yeni)
+
+**Neden:** İngilizce'de bir kök kelimeden türeyen farklı formları bilmek önemlidir.
+
+Örnek:
+
+```
+act → action (n.) → active (adj.) → actively (adv.) → activate (v.)
+```
+
+- Kök kelime verilir → Türevlerini bulmak gerekir
+- Tür dönüşümünü (noun → verb → adjective) anlama
+- Boşluk doldurma: "She is a very ___ person." (act → active)
+
+---
+
+### 18. 📅 Günlük Kelime (Word of the Day) (Yeni)
+
+- Dashboard'da her gün farklı bir kelime öne çıkarılır
+- Kelime detayı: anlam, tür, örnek cümle, telaffuz, eşanlamlılar
+- Tarihe göre determinstik seçim (her kullanıcı aynı günün kelimesini görür)
+- "Biliyorum ✓ / Bilmiyorum ✗" ile SRS'e entegre olur
+
+---
+
+### 19. 🔁 Fiil Çekim Alıştırması (Verb Conjugation Drill) (Yeni)
+
+Fiil veriliyor → Doğru çekimini yaz:
+
+```
+go → Present: goes | Past: went | Past Participle: gone | Gerund: going
+```
+
+- Tense seçimi: Present Simple, Past Simple, Present Perfect
+- Kişi seçimi: He/She, They, I
+- Zamanlı drill modu
+
+---
+
+## 🏗️ Uygulama Önceliklendirme (Önem Sırası)
+
+| Öncelik | Modül | Zorluk | Etki |
+|---|---|---|---|
+| 🔴 P0 | Alfabe doğrulama | Kolay | Bug fix |
+| 🔴 P0 | Kelime türü badge'leri | Kolay | Tüm modüllerde görünür |
+| 🔴 P0 | Alert → Toast notification | Kolay | UX iyileştirmesi |
+| 🔴 P0 | Kelime modülü: event listener sızıntısı + duplicate kelime temizliği | Kolay | Bug fix |
+| 🔴 P0 | Hız testi: Fisher-Yates shuffle + seçenek çakışması + celebrateLevelUp fix | Kolay | Bug fix |
+| 🔴 P0 | Sözlük: duplicate API kaldır → [services.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/services.js) kullan + timeout ekle | Kolay | Mimari temizlik |
+| 🔴 P0 | Backend güvenlik: authMiddleware + rate limiting + CORS kısıtlama | Kolay | Güvenlik açığı |
+| 🟠 P1 | Backend: DB şeması genişletme (srs_cards, module_progress, error_log) | Orta | Veri kalıcılığı |
+| 🟠 P1 | Backend: SRS sync API endpoint'leri | Orta | Cihazlar arası ilerleme |
+| 🟠 P1 | Okuma modülü genişletme (+12 metin, 4 aşama) | Orta | İçerik çarpanı |
+| 🟠 P1 | Kelime modülü: flashcard filtreleme + CEFR badge | Orta | Kullanılabilirlik |
+| 🟠 P1 | Kelime modülü: type badge sistemi (tüm alt özellikler) | Kolay | Görsel öğrenme |
+| 🟠 P1 | Hız testi: konfigürasyon ekranı (yön, seviye, tür, süre filtresi) | Orta | Oynanabilirlik |
+| 🟠 P1 | Hız testi: combo/streak sistemi + detaylı sonuç ekranı | Orta | Engagement |
+| 🟠 P1 | Sözlük: zengin kart (çoklu tanım, örnek cümle, eş/zıt anlamlı, POS badge) | Orta | İçerik kalitesi |
+| 🟠 P1 | Cümle sıralama: +50 cümle, CEFR filtre, mobil touch desteği | Orta | İçerik + mobil |
+| 🟡 P2 | Backend: SyncManager + offline queue + misafir→kayıtlı geçiş | Zor | Senkronizasyon |
+| 🟡 P2 | Dinleme modülü yeniden tasarım | Zor | Büyük iyileştirme |
+| 🟡 P2 | Kelime modülü: eşleştirme/bulmaca oyun iyileştirmeleri | Orta | Oyun mekaniği |
+| 🟡 P2 | Kelimeler için örnek cümle ([example](file:///Users/kursataknc/Documents/GitHub/english-projet/.env.example) field) | Orta-Zor | Bağlamsal öğrenme |
+| 🟡 P2 | Sözlük: arama geçmişi + SRS entegrasyonu + vocabData bağlantısı | Orta | Entegrasyon |
+| 🟡 P2 | Hız testi: leaderboard (localStorage) | Kolay | Motivasyon |
+| 🟡 P2 | Düzensiz fiiller tablosu | Orta | Gramer desteği |
+| 🟡 P2 | Phrasal verbs modülü | Orta | İçerik boşluğu |
+| 🟢 P3 | Deyimler modülü | Orta | B1+ kullanıcılar |
+| 🟢 P3 | Yazma pratiği | Orta | Üretim becerisi |
+| 🟢 P3 | Detaylı istatistik paneli | Orta | Motivasyon |
+| 🟢 P3 | Günlük kelime | Kolay | Engagement |
+| 🔵 P4 | Telaffuz değerlendirme | Zor | Web Speech API bağımlı |
+| 🔵 P4 | Kelime zinciri oyunu | Orta | Eğlence |
+| 🔵 P4 | Word families | Orta | İleri seviye |
+| 🔵 P4 | Fiil çekim drill | Orta | Gramer desteği |
+
+---
+
+## 📁 Dosya Yapısı Değişiklikleri
+
+```
+src/
+├── core/
+│   ├── data.js              ← example field ekleme + phrasal verbs + idioms + irregular verbs
+│   └── utils.js             ← [NEW] validateEnglishInput(), getTypeBadgeHTML()
+├── components/
+│   ├── vocab.js             ← Type badge ekleme (flashcard, matching, puzzle)
+│   ├── challenge.js         ← Type badge + seviye/tür filtresi + çift yön
+│   ├── reading.js           ← 10+ yeni metin + cloze test modu
+│   ├── listening.js         ← Web Speech API ile diyalog sistemi
+│   ├── sentence-order.js    ← 30+ yeni cümle + CEFR filtresi
+│   ├── grammar.js           ← Alfabe validasyonu
+│   ├── dictionary.js        ← Alfabe validasyonu
+│   ├── phrasal-verbs.js     ← [NEW] Phrasal verb egzersizleri
+│   ├── idioms.js            ← [NEW] Deyimler modülü
+│   ├── irregular-verbs.js   ← [NEW] Düzensiz fiil drilli
+│   ├── writing.js           ← [NEW] Yazma pratiği
+│   └── pronunciation.js     ← [NEW] Telaffuz karşılaştırma
+├── features/
+│   └── toast.js             ← [NEW] In-app toast notification component
+└── styles/
+    └── index.css            ← Type badge ve toast stilleri
+```
+
+---
+
+## ✅ Doğrulama Planı
+
+### Tarayıcı ile Manuel Test
+
+1. Uygulamayı `npm run dev` ile başlat
+2. Her modülü sırayla aç ve yeni eklenen öğelerin görünürlüğünü kontrol et
+3. Alfabe doğrulama: Türkçe karakter girmeyi dene → uyarı geldiğini doğrula
+4. Kelime türü badge'lerinin flashcard, eşleştirme, bulmaca ve hız testinde gösterildiğini doğrula
+5. Seviye atlama tetikleyerek alert yerine toast notification geldiğini doğrula
+
+> [!IMPORTANT]
+> Bu plan, yalnızca içerik ve İngilizce öğretim kalitesine odaklanmaktadır. Tasarımsal değişiklikler minimumda tutulmuştur (yalnızca type badge renkleri ve toast bildirimi için gerekli CSS). İsteğinize göre öncelikleri değiştirebilir veya belirli modülleri çıkarabiliriz.
+
+---
+
+## 20. 🔐 Kullanıcı Girişi ve İlerleme Takibi — Backend Altyapısı
+
+---
+
+### 📋 Mevcut Durum Raporu
+
+#### Zaten Mevcut Olan Altyapı
+
+| Bileşen | Dosya | Durum |
+|---|---|---|
+| JWT Auth (Register/Login) | [server.js](file:///Users/kursataknc/Documents/GitHub/english-projet/server/server.js) | ✅ Çalışıyor |
+| bcrypt Şifre Hash | [server.js](file:///Users/kursataknc/Documents/GitHub/english-projet/server/server.js) | ✅ Var |
+| `users` Tablosu | SQLite ([progress.db](file:///Users/kursataknc/Documents/GitHub/english-projet/progress.db)) | ✅ email, password_hash, display_name |
+| `user_progress` Tablosu | SQLite ([progress.db](file:///Users/kursataknc/Documents/GitHub/english-projet/progress.db)) | ⚠️ Temel (xp, level, streak, completed_activities) |
+| Auth Modal UI | [auth.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/auth.js) | ✅ Login/Register/Misafir |
+| Token Management | [auth.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/auth.js) | ✅ localStorage + JWT expiry check |
+| Progress Server Sync | [progress.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/progress.js) | ⚠️ xp/level/streak sync var, SRS yok |
+| Auth Middleware | [server.js](file:///Users/kursataknc/Documents/GitHub/english-projet/server/server.js) | ✅ Bearer token doğrulama |
+
+#### Henüz Olmayan (Eksik) Kısımlar
+
+| Bileşen | Mevcut Durum |
+|---|---|
+| SRS Verisinin Server Sync'i | ❌ Tamamen localStorage (`srs_cards`) — cihaz değişince kaybolur |
+| Hata Analitiği (Error Analytics) Server Sync | ❌ Client-only |
+| Hız Testi Skor Geçmişi | ❌ Yok (henüz leaderboard yok) |
+| Modül Bazlı İlerleme Takibi | ❌ Sadece `completed_activities` listesi var |
+| Kullanıcı Tercihleri Sync | ❌ Tema/ses tercihleri localStorage'da |
+| Şifre Sıfırlama | ❌ Yok |
+| Email Doğrulama | ❌ Yok |
+| API Rate Limiting | ❌ Yok |
+| Güvenli Progress Endpoint'leri | ❌ [authMiddleware](file:///Users/kursataknc/Documents/GitHub/english-projet/server/server.js#171-186) uygulanmamış (herkes herkesin verisini okuyabilir) |
+
+---
+
+### 🔍 Tespit Edilen Sorunlar (14 Madde)
+
+#### 🔒 Auth / Güvenlik
+
+**1. Progress API'leri Korumasız**
+
+```javascript
+// server.js — satır 83
+app.get('/api/progress/:userId', (req, res) => { ... }
+app.post('/api/progress/:userId', (req, res) => { ... }
+```
+
+Bu endpoint'lerde [authMiddleware](file:///Users/kursataknc/Documents/GitHub/english-projet/server/server.js#171-186) kullanılmıyor. Herhangi biri `GET /api/progress/user_1` çağrısı yaparak başka bir kullanıcının verisini okuyabilir.
+
+**2. `userId` Tahmin Edilebilir**
+
+```javascript
+// auth.js — satır 217
+const userId = `user_${row[0]}`;  // user_1, user_2, user_3...
+```
+
+Auto-increment ID kullanımı, kullanıcı numaralandırmasını tahmin edilebilir yapıyor.
+
+**3. JWT Secret Hardcoded Fallback**
+
+```javascript
+const JWT_SECRET = process.env.JWT_SECRET || 'english-app-secret-key-change-in-production';
+```
+
+`.env` yoksa sabit bir değer kullanılıyor — güvenlik açığı.
+
+**4. CORS Tamamen Açık**
+
+```javascript
+app.use(cors());
+```
+
+Herhangi bir origin'den API'ye istek gönderilebilir.
+
+**5. Rate Limiting Yok**
+Login/register endpoint'lerinde brute-force koruması yok.
+
+#### 🗄️ Veritabanı / Şema
+
+**6. `user_progress` Tablosu Çok Basit**
+Sadece `xp`, `level`, `streak`, `completed_activities` tutuluyor. Modül bazlı ilerleme (okuma %60, kelime %40) yok.
+
+**7. SRS Verisi Tablo Yok**
+SM-2 algoritmasının ürettiği per-kelime verileri (interval, easeFactor, repetitions, dueDate) hiçbir tabloda saklanmıyor. Tamamen `localStorage.srs_cards`'a yazılıyor.
+
+**8. Error Analytics Tablo Yok**
+Hangi kelimelerde hata yapıldığı kaydedilmiyor (server-side).
+
+**9. `completed_activities` JSON String**
+
+```sql
+completed_activities TEXT  -- '["reading","vocab"]'
+```
+
+Filtreleme, sorgulama imkansız. Ayrı bir tablo olmalı.
+
+#### 🔄 Frontend-Backend Senkronizasyon
+
+**10. SRS: Sadece Client-Side**
+
+```javascript
+// srs.js — satır 26, 34
+localStorage.getItem(SRS_KEY)
+localStorage.setItem(SRS_KEY, JSON.stringify(cards))
+```
+
+1000 kelime × SRS verisi = ~50KB JSON. Cihaz değiştiğinde, tarayıcı temizlendiğinde veya misafir modundan kayıtlı moda geçince tüm SRS ilerlemesi kaybolur.
+
+**11. Progress Sync Tek Yönlü**
+[progress.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/progress.js) sadece server'a yazıyor (save). Server'dan okuma (login sonrası veri çekme) mevcut ama SRS verisini kapsamıyor.
+
+**12. Çakışma Çözümü (Conflict Resolution) Yok**
+Kullanıcı iki cihazda çalışırsa, son yazan kazanır — merge stratejisi yok.
+
+**13. Misafir → Kayıtlı Kullanıcı Geçişi Sorunlu**
+Misafir olarak biriken localStorage verisi (SRS, XP, completed activities) kayıt olduktan sonra server'a aktarılmıyor.
+
+**14. Offline Mode Stratejisi Yok**
+Server çöktüğünde localStorage fallback çalışıyor ama tekrar çevrimiçi olunca yerel değişiklikleri göndermek (sync queue) implement edilmemiş.
+
+---
+
+### 🛠️ Çözüm Planı — 4 Aşama
+
+#### Aşama 1: Güvenlik Düzeltmeleri (P0)
+
+**1a. Progress Endpoint'lerini Koruma**
+
+```javascript
+// server.js
+app.get('/api/progress/:userId', authMiddleware, (req, res) => {
+    // Kullanıcı sadece kendi verisine erişebilir
+    if (req.user.userId !== req.params.userId) {
+        return res.status(403).json({ error: 'Yetkisiz erişim' });
+    }
+    // ...
+});
+```
+
+**1b. Rate Limiting**
+
+```javascript
+import rateLimit from 'express-rate-limit';
+
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 dakika
+    max: 10, // max 10 istek
+    message: { error: 'Çok fazla istek, lütfen bekleyin' }
+});
+
+app.post('/api/auth/login', authLimiter, async (req, res) => { ... });
+app.post('/api/auth/register', authLimiter, async (req, res) => { ... });
+```
+
+**1c. CORS Kısıtlama**
+
+```javascript
+app.use(cors({
+    origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
+    credentials: true
+}));
+```
+
+**1d. UUID Kullanımı**
+`user_1`, `user_2` yerine `crypto.randomUUID()` ile tahmin edilemez ID'ler.
+
+---
+
+#### Aşama 2: Veritabanı Şeması Genişletme (P1)
+
+Mevcut 2 tablo → **5 tabloya** genişletme:
+
+```sql
+-- 1. MEVCUT — Kullanıcılar (güncelleme)
+CREATE TABLE users (
+    id TEXT PRIMARY KEY,              -- UUID (artık INTEGER değil)
+    email TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    display_name TEXT,
+    avatar_url TEXT,
+    preferred_level TEXT DEFAULT 'A1', -- CEFR tercih seviyesi
+    theme TEXT DEFAULT 'light',
+    sound_enabled INTEGER DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    last_login_at DATETIME
+);
+
+-- 2. MEVCUT — Genel İlerleme (güncelleme)
+CREATE TABLE user_progress (
+    user_id TEXT PRIMARY KEY REFERENCES users(id),
+    xp INTEGER DEFAULT 0,
+    level INTEGER DEFAULT 1,
+    streak INTEGER DEFAULT 0,
+    longest_streak INTEGER DEFAULT 0,
+    last_activity_date TEXT,
+    total_study_time_minutes INTEGER DEFAULT 0,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 3. YENİ — SRS Kartları (per-kullanıcı, per-kelime)
+CREATE TABLE srs_cards (
+    user_id TEXT NOT NULL REFERENCES users(id),
+    word_id TEXT NOT NULL,
+    interval_days INTEGER DEFAULT 1,
+    ease_factor REAL DEFAULT 2.5,
+    repetitions INTEGER DEFAULT 0,
+    due_date TEXT NOT NULL,
+    last_reviewed TEXT,
+    PRIMARY KEY (user_id, word_id)
+);
+
+-- 4. YENİ — Modül Bazlı İlerleme
+CREATE TABLE module_progress (
+    user_id TEXT NOT NULL REFERENCES users(id),
+    module TEXT NOT NULL,    -- 'reading', 'vocab', 'grammar', 'listening', 'challenge'
+    activity TEXT NOT NULL,  -- 'flashcard', 'matching', 'puzzle', 'cloze', 'speed_test'
+    score INTEGER,
+    accuracy REAL,           -- 0.0 - 1.0
+    duration_seconds INTEGER,
+    metadata TEXT,           -- JSON (yanlış kelimeler listesi vb.)
+    completed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, module, activity, completed_at)
+);
+
+-- 5. YENİ — Hata Analitiği
+CREATE TABLE error_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id TEXT NOT NULL REFERENCES users(id),
+    word_id TEXT NOT NULL,
+    module TEXT NOT NULL,
+    error_type TEXT,         -- 'wrong_answer', 'timeout', 'skip'
+    context TEXT,            -- JSON (hangi seçeneği seçti, doğru cevap ne idi)
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+**İndeksler:**
+
+```sql
+CREATE INDEX idx_srs_due ON srs_cards(user_id, due_date);
+CREATE INDEX idx_module_progress ON module_progress(user_id, module);
+CREATE INDEX idx_error_log ON error_log(user_id, word_id);
+```
+
+---
+
+#### Aşama 3: API Endpoint'leri (P1)
+
+##### SRS Sync API
+
+| Method | Endpoint | Açıklama |
+|---|---|---|
+| `GET` | `/api/srs/due` | Bugün tekrar edilecek kelimeleri getir |
+| `POST` | `/api/srs/review` | Bir kelimeyi tekrarla (SM-2 güncelle) |
+| `GET` | `/api/srs/stats` | SRS istatistikleri (due, learning, mastered) |
+| `PUT` | `/api/srs/bulk-sync` | Tüm SRS verisini toplu gönder (misafir → kayıtlı geçişi) |
+
+##### Modül İlerleme API
+
+| Method | Endpoint | Açıklama |
+|---|---|---|
+| `POST` | `/api/activity/complete` | Bir etkinlik tamamlamayı kaydet |
+| `GET` | `/api/stats/overview` | Genel istatistik paneli verisi |
+| `GET` | `/api/stats/module/:name` | Modül bazlı detay |
+| `GET` | `/api/stats/weak-words` | En çok hata yapılan kelimeler |
+| `GET` | `/api/leaderboard/challenge` | Hız testi skor tablosu |
+
+##### Auth Ek Endpoint'ler
+
+| Method | Endpoint | Açıklama |
+|---|---|---|
+| `PUT` | `/api/auth/profile` | Profil güncelle (displayName, avatar, tercihler) |
+| `PUT` | `/api/auth/password` | Şifre değiştir |
+| `DELETE` | `/api/auth/account` | Hesap sil |
+
+---
+
+#### Aşama 4: Frontend Sync Stratejisi (P2)
+
+**Sync Mimarisi:**
+
+```
+┌─────────────────┐     ┌──────────────┐     ┌─────────────┐
+│   SRS / Progress │────▶│  SyncManager │────▶│  Server API │
+│   (localStorage) │◀────│  (queue)     │◀────│  (SQLite)   │
+└─────────────────┘     └──────────────┘     └─────────────┘
+        │                       │
+        │  Offline Mode         │  Online: sync every 30s
+        │  localStorage'a       │  + on activity complete
+        │  yaz, queue'ya ekle   │  + on page unload
+        └───────────────────────┘
+```
+
+**`SyncManager` Sınıfı** (`sync.js` — YENİ dosya):
+
+```javascript
+class SyncManager {
+    constructor() {
+        this.queue = JSON.parse(localStorage.getItem('sync_queue') || '[]');
+        this.syncInterval = null;
+    }
+
+    // Olay kuyruğuna ekle (offline'da çalışır)
+    enqueue(action, data) {
+        this.queue.push({ action, data, timestamp: Date.now() });
+        localStorage.setItem('sync_queue', JSON.stringify(this.queue));
+    }
+
+    // Kuyruğu sunucuya gönder
+    async flush() {
+        if (!navigator.onLine || this.queue.length === 0) return;
+        const batch = [...this.queue];
+        try {
+            await apiRequest('POST', '/api/sync/batch', { events: batch });
+            this.queue = [];
+            localStorage.setItem('sync_queue', '[]');
+        } catch { /* retry next interval */ }
+    }
+
+    // Çakışma çözümü: son yazma tarihi kazanır
+    async pullAndMerge() {
+        const serverData = await apiRequest('GET', '/api/sync/pull');
+        // merge logic: server.updatedAt > local.updatedAt ? server : local
+    }
+
+    start() {
+        this.syncInterval = setInterval(() => this.flush(), 30000);
+        window.addEventListener('beforeunload', () => this.flush());
+        window.addEventListener('online', () => this.flush());
+    }
+}
+```
+
+**Misafir → Kayıtlı Kullanıcı Geçişi:**
+
+1. Misafir olarak biriken `localStorage` verileri (SRS, XP, completedActivities) toplanır
+2. Kayıt/giriş sonrası `PUT /api/srs/bulk-sync` ile tüm SRS kartları aktarılır
+3. `POST /api/progress/:userId` ile XP/level senkronize edilir
+4. localStorage temizlenir, artık server kaynak olur
+
+---
+
+### 📁 Dosya Değişiklikleri Özeti
+
+| Dosya | Değişiklik |
+|---|---|
+| [server.js](file:///Users/kursataknc/Documents/GitHub/english-projet/server/server.js) | Yeni tablolar, SRS/activity/stats endpoint'leri, authMiddleware uygulama, rate limiting, CORS kısıtlama |
+| [auth.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/auth.js) | UUID userId, profil güncelleme, misafir→kayıtlı geçiş sync |
+| [srs.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/features/srs.js) | `SyncManager` entegrasyonu: [saveCards()](file:///Users/kursataknc/Documents/GitHub/english-projet/src/features/srs.js#32-36) → server'a da yaz |
+| [progress.js](file:///Users/kursataknc/Documents/GitHub/english-projet/src/core/progress.js) | Modül bazlı ilerleme kaydetme, `SyncManager` kullanımı |
+| **[YENİ]** `src/core/sync.js` | `SyncManager` sınıfı — offline queue + batch sync |
+| [package.json](file:///Users/kursataknc/Documents/GitHub/english-projet/package.json) | `express-rate-limit` bağımlılığı |
+| [.env.example](file:///Users/kursataknc/Documents/GitHub/english-projet/.env.example) | `JWT_SECRET`, `ALLOWED_ORIGINS` belgelendirme |
+
+### 🔧 Gerekli npm Paketleri
+
+| Paket | Amaç | Mevcut? |
+|---|---|---|
+| `express` | HTTP server | ✅ Var |
+| `sql.js` | SQLite (WASM) | ✅ Var |
+| `bcryptjs` | Şifre hash | ✅ Var |
+| `jsonwebtoken` | JWT token | ✅ Var |
+| `cors` | CORS yönetimi | ✅ Var |
+| `dotenv` | Çevre değişkenleri | ✅ Var |
+| `express-rate-limit` | Brute-force koruması | ❌ **Eklenmeli** |
+| `uuid` (opsiyonel) | UUID üretimi | ❌ `crypto.randomUUID()` ile de yapılabilir |

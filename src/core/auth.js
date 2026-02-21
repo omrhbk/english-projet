@@ -6,7 +6,7 @@
 
 const AUTH_KEY = 'auth_token';
 const USER_KEY = 'auth_user';
-const API_BASE = 'http://localhost:3000';
+const API_BASE = '';
 
 // ── Token Yönetimi ───────────────────────────────────────────────────────────
 
@@ -116,7 +116,7 @@ export function showAuthModal(defaultTab = 'login') {
                     <input type="email" id="reg-email" placeholder="ornek@mail.com" required autocomplete="email"/>
                 </div>
                 <div class="auth-field">
-                    <label>Şifre (min. 6 karakter)</label>
+                    <label>Şifre (min. 8 karakter)</label>
                     <input type="password" id="reg-password" placeholder="Şifreniz" required autocomplete="new-password"/>
                 </div>
                 <p id="register-error" class="auth-error hidden"></p>

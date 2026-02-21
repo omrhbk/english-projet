@@ -32,7 +32,7 @@ export const progressManager = {
     async save() {
         try {
             // Try to save to server
-            const response = await fetch(`http://localhost:3000/api/progress/${this.getUserId()}`, {
+            const response = await fetch(`/api/progress/${this.getUserId()}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -160,7 +160,7 @@ async function loadState() {
     
     try {
         // Try to load from server
-        const response = await fetch(`http://localhost:3000/api/progress/${userId}`);
+        const response = await fetch(`/api/progress/${userId}`);
         if (response.ok) {
             const result = await response.json();
             if (result.success && result.data) {
@@ -185,8 +185,4 @@ async function loadState() {
     return { ...defaultState };
 }
 
-// Initialize with async load
-(async () => {
-    progressManager.state = await loadState();
-})();
 

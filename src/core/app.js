@@ -10,6 +10,10 @@ import { initPhrasalVerbs } from "../components/phrasal-verbs.js";
 import { initIdiomsModule } from "../components/idioms.js";
 import { initWritingPractice } from "../components/writing.js";
 import { initStatistics } from "../components/statistics.js";
+import { initPronunciation } from "../components/pronunciation.js";
+import { initWordChain } from "../components/word-chain.js";
+import { initWordFamilies } from "../components/word-families.js";
+import { initVerbConjugation } from "../components/verb-conjugation.js";
 import { renderWordOfTheDay, setupWordOfTheDayEvents } from "../features/word-of-the-day.js";
 import { progressManager, setAchievementManager } from "./progress.js";
 import { renderWeeklyChart, renderStreakHeatmap } from "../features/progress-chart.js";
@@ -39,8 +43,8 @@ const navLinksContainer = document.querySelector(".nav-links");
 const themeToggle     = document.getElementById("theme-toggle");
 
 // ── Init ────────────────────────────────────────────────────────────────────
-function init() {
-    progressManager.init();
+async function init() {
+    await progressManager.init();
     setupNavigation();
     setupUIControls();
     setupHashRouter();          // MED-1: hash router
@@ -71,9 +75,13 @@ function navigateTo(view) {
         case "irregular-verbs": initIrregularVerbs();   break;
         case "phrasal-verbs":   initPhrasalVerbs();     break;
         case "idioms":          initIdiomsModule();     break;
-        case "writing":         initWritingPractice();  break;
-        case "statistics":      initStatistics();       break;
-        default:                renderDashboard();      break;
+        case "writing":           initWritingPractice();  break;
+        case "pronunciation":    initPronunciation();    break;
+        case "word-chain":       initWordChain();        break;
+        case "word-families":    initWordFamilies();     break;
+        case "verb-conjugation": initVerbConjugation();  break;
+        case "statistics":       initStatistics();       break;
+        default:                 renderDashboard();      break;
     }
 }
 
@@ -202,6 +210,26 @@ function renderDashboard() {
                 <h3>Yazma Pratiği</h3>
                 <p>Paragraf ve cümle yazma</p>
             </div>
+            <div class="card" id="dash-pronunciation">
+                <div class="card-icon">🎤</div>
+                <h3>Telaffuz</h3>
+                <p>Konuşarak pratik yap</p>
+            </div>
+            <div class="card" id="dash-word-chain">
+                <div class="card-icon">🔗</div>
+                <h3>Kelime Zinciri</h3>
+                <p>Son harfle kelime bul</p>
+            </div>
+            <div class="card" id="dash-word-families">
+                <div class="card-icon">🌳</div>
+                <h3>Kelime Aileleri</h3>
+                <p>Kök ve türetilmiş kelimeler</p>
+            </div>
+            <div class="card" id="dash-verb-conjugation">
+                <div class="card-icon">📐</div>
+                <h3>Fiil Çekim</h3>
+                <p>Tense ve çekim egzersizleri</p>
+            </div>
             <div class="card" id="dash-statistics">
                 <div class="card-icon">📊</div>
                 <h3>İstatistikler</h3>
@@ -224,7 +252,11 @@ function renderDashboard() {
     document.getElementById('dash-phrasal').addEventListener('click',   () => navigateTo('phrasal-verbs'));
     document.getElementById('dash-idioms').addEventListener('click',    () => navigateTo('idioms'));
     document.getElementById('dash-writing').addEventListener('click',   () => navigateTo('writing'));
-    document.getElementById('dash-statistics').addEventListener('click',() => navigateTo('statistics'));
+    document.getElementById('dash-pronunciation').addEventListener('click',  () => navigateTo('pronunciation'));
+    document.getElementById('dash-word-chain').addEventListener('click',     () => navigateTo('word-chain'));
+    document.getElementById('dash-word-families').addEventListener('click',  () => navigateTo('word-families'));
+    document.getElementById('dash-verb-conjugation').addEventListener('click',() => navigateTo('verb-conjugation'));
+    document.getElementById('dash-statistics').addEventListener('click',     () => navigateTo('statistics'));
     document.getElementById('share-progress-btn').addEventListener('click', shareProgress);
     setupWordOfTheDayEvents();
 }

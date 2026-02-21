@@ -29,9 +29,9 @@ export function initStatistics() {
 
 function gatherStats() {
     const progress = window.progressManager?.state || {};
-    const srsData = JSON.parse(localStorage.getItem('srs_data') || '{}');
-    const errorData = JSON.parse(localStorage.getItem('error_analytics') || '{}');
-    const dailyXP = JSON.parse(localStorage.getItem('daily_xp_log') || '{}');
+    const srsData = JSON.parse(localStorage.getItem('srs_cards') || '{}');
+    const errorData = JSON.parse(localStorage.getItem('english_app_errors') || '{}');
+    const dailyXP = JSON.parse(localStorage.getItem('xp_daily_log') || '{}');
 
     // Learned words (reviewed at least once with quality >= 3)
     const learnedIds = new Set();

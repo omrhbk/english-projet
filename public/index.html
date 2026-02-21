@@ -3,10 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="İnteraktif İngilizce öğrenme uygulaması. Kelime kartları, gramer dersleri ve dinleme egzersizleriyle İngilizce öğren." />
+    <meta name="description" content="İnteraktif İngilizce öğrenme uygulaması. Kelime kartları, gramer dersleri, dinleme egzersizleri, yazma pratiği ve daha fazlasıyla İngilizce öğren." />
+    <meta name="keywords" content="İngilizce öğren, English learning, kelime kartları, gramer, dinleme, CEFR, A1, A2, B1, B2, vocabulary, flashcards" />
+    <meta name="author" content="English Master" />
     <meta name="theme-color" content="#4a90e2" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="English Master - İnteraktif İngilizce Öğrenme" />
+    <meta property="og:description" content="1000+ kelime, gramer dersleri, dinleme egzersizleri, yazma pratiği ve oyunlarla İngilizce öğren." />
+    <meta property="og:image" content="/icons/icon-512.png" />
+    <meta property="og:locale" content="tr_TR" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="English Master - İngilizce Öğreniyorum" />
+    <meta name="twitter:description" content="1000+ kelime, gramer, dinleme ve yazma ile İngilizce öğren." />
+    <meta name="twitter:image" content="/icons/icon-512.png" />
+
     <title>English Master - İngilizce Öğreniyorum</title>
     <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
     <link rel="stylesheet" href="/src/styles/style.css" />
     <!-- Google Fonts: Poppins for modern look -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -17,26 +36,33 @@
     />
   </head>
   <body>
-    <nav class="navbar">
-      <div class="logo">🇬🇧 English Master</div>
+    <!-- Skip Navigation (A11y) -->
+    <a href="#app" class="skip-link">Ana içeriğe atla</a>
 
-      <ul class="nav-links">
-        <li class="active" data-target="dashboard">Ana Sayfa</li>
-        <li data-target="vocabulary">Kelime Bilgisi</li>
-        <li data-target="listening">Duyduğunu Anlama</li>
-        <li data-target="grammar">Gramer</li>
-        <li data-target="reading">Okuma</li>
-        <li data-target="dictionary">Sözlük</li>
-        <li data-target="irregular-verbs">Düzensiz Fiiller</li>
-        <li data-target="phrasal-verbs">Phrasal Verbs</li>
-        <li data-target="idioms">Deyimler</li>
-        <li data-target="writing">Yazma</li>
-        <li data-target="statistics">İstatistikler</li>
+    <nav class="navbar" role="navigation" aria-label="Ana navigasyon">
+      <div class="logo" role="banner">English Master</div>
+
+      <ul class="nav-links" role="menubar">
+        <li class="active" data-target="dashboard" role="menuitem" tabindex="0">Ana Sayfa</li>
+        <li data-target="vocabulary" role="menuitem" tabindex="0">Kelime Bilgisi</li>
+        <li data-target="listening" role="menuitem" tabindex="0">Dinleme</li>
+        <li data-target="grammar" role="menuitem" tabindex="0">Gramer</li>
+        <li data-target="reading" role="menuitem" tabindex="0">Okuma</li>
+        <li data-target="dictionary" role="menuitem" tabindex="0">Sözlük</li>
+        <li data-target="irregular-verbs" role="menuitem" tabindex="0">Düzensiz Fiiller</li>
+        <li data-target="phrasal-verbs" role="menuitem" tabindex="0">Phrasal Verbs</li>
+        <li data-target="idioms" role="menuitem" tabindex="0">Deyimler</li>
+        <li data-target="writing" role="menuitem" tabindex="0">Yazma</li>
+        <li data-target="pronunciation" role="menuitem" tabindex="0">Telaffuz</li>
+        <li data-target="word-chain" role="menuitem" tabindex="0">Kelime Zinciri</li>
+        <li data-target="word-families" role="menuitem" tabindex="0">Kelime Aileleri</li>
+        <li data-target="verb-conjugation" role="menuitem" tabindex="0">Fiil Çekim</li>
+        <li data-target="statistics" role="menuitem" tabindex="0">İstatistikler</li>
       </ul>
 
       <div class="nav-controls">
         <button id="theme-toggle" class="btn-icon" aria-label="Karanlık Modu Aç/Kapat">🌙</button>
-        <div class="hamburger" aria-label="Menüyü Aç" role="button" tabindex="0">
+        <div class="hamburger" aria-label="Menüyü Aç/Kapat" role="button" tabindex="0" aria-expanded="false">
           <span></span>
           <span></span>
           <span></span>
@@ -44,7 +70,7 @@
       </div>
     </nav>
 
-    <main id="app" class="container">
+    <main id="app" class="container" role="main" aria-live="polite">
       <!-- İçerik JavaScript ile buraya yüklenir -->
     </main>
 

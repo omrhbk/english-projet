@@ -3,6 +3,11 @@ import { vocabData } from '../core/data.js';
 import { fisherYatesShuffle, getTypeBadgeHTML, getCEFRBadgeHTML } from '../core/utils.js';
 import { showToast } from '../features/toast.js';
 
+/** Escape HTML special characters to prevent XSS */
+function escapeHTML(str) {
+    return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
 const OPTIONS_COUNT = 4;
 const LEADERBOARD_KEY = 'challenge_leaderboard';
 
@@ -183,7 +188,7 @@ function startChallenge(config) {
                 </p>
                 <div class="challenge-options">
                     ${options.map(opt => `
-                        <button class="challenge-opt-btn" data-value="${opt}">${opt}</button>
+                        <button class="challenge-opt-btn" data-value="${escapeHTML(opt)}">${escapeHTML(opt)}</button>
                     `).join('')}
                 </div>
             </div>

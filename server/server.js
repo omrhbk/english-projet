@@ -62,6 +62,21 @@ async function initDatabase() {
     )
   `);
   
+  // SRS cards table
+  db.run(`
+    CREATE TABLE IF NOT EXISTS srs_cards (
+      user_id TEXT NOT NULL,
+      word_id INTEGER NOT NULL,
+      easiness REAL DEFAULT 2.5,
+      interval INTEGER DEFAULT 0,
+      repetitions INTEGER DEFAULT 0,
+      next_review TEXT,
+      last_review TEXT,
+      quality INTEGER DEFAULT 0,
+      PRIMARY KEY (user_id, word_id)
+    )
+  `);
+
   // Save database to file
   saveDatabase();
 }
@@ -71,13 +86,78 @@ function saveDatabase() {
   writeFileSync(DB_PATH, data);
 }
 
+// ── Rate Limiting (basit in-memory) ──────────────────────────────────────────
+const rateLimitMap = new Map();
+function rateLimit(windowMs, maxRequests) {
+  return (req, res, next) => {
+    const ip = req.ip || req.connection.remoteAddress;
+    const now = Date.now();
+    const key = `${ip}:${req.route?.path || req.path}`;
+    const entry = rateLimitMap.get(key) || { count: 0, resetTime: now + windowMs };
+    if (now > entry.resetTime) {
+      entry.count = 0;
+      entry.resetTime = now + windowMs;
+    }
+    entry.count++;
+    rateLimitMap.set(key, entry);
+    if (entry.count > maxRequests) {
+      return res.status(429).json({ success: false, error: 'Çok fazla istek. Lütfen bekleyin.' });
+    }
+    next();
+  };
+}
+// Her 10 dakikada rate limit map temizle
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, entry] of rateLimitMap) {
+    if (now > entry.resetTime) rateLimitMap.delete(key);
+  }
+}, 10 * 60 * 1000);
+
 // Middleware
-app.use(cors());
-app.use(express.json());
-// Serve static files from parent directory (where public/ and src/ folders are)
-app.use(express.static(join(__dirname, '..')));
-// Also serve public/ folder at root so index.html loads at /
-app.use(express.static(join(__dirname, '..', 'public')));
+const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',')
+  : ['http://localhost:3000', 'http://localhost:3001'];
+app.use(cors({
+  origin: (origin, callback) => {
+    // Tarayıcıdan olmayan istekler (Postman, curl vb.) origin=undefined olur
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS policy violation'));
+    }
+  },
+  credentials: true
+}));
+app.use(express.json({ limit: '1mb' }));
+
+// Security headers (CSP, HSTS, X-Frame, etc.)
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Content-Security-Policy', [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline'",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' https://fonts.gstatic.com",
+    "img-src 'self' data: https://images.unsplash.com https://*.unsplash.com",
+    "connect-src 'self' https://api.dictionaryapi.dev https://api.mymemory.translated.net https://api.unsplash.com",
+    "media-src 'self' https://*.dictionaryapi.dev",
+    "frame-ancestors 'none'"
+  ].join('; '));
+  next();
+});
+
+// Serve static files with cache headers
+const staticOptions = {
+  maxAge: process.env.NODE_ENV === 'production' ? '7d' : 0,
+  etag: true,
+  lastModified: true
+};
+app.use(express.static(join(__dirname, '..'), staticOptions));
+app.use(express.static(join(__dirname, '..', 'public'), staticOptions));
 
 // API Routes
 
@@ -188,16 +268,21 @@ function authMiddleware(req, res, next) {
 
 // ── Auth Endpoints ──────────────────────────────────────────────────────────
 
-// Kayıt
-app.post('/api/auth/register', async (req, res) => {
+// Kayıt — 15 dakikada max 10 istek
+app.post('/api/auth/register', rateLimit(15 * 60 * 1000, 10), async (req, res) => {
   try {
     const { email, password, displayName } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ success: false, error: 'Email ve şifre zorunlu' });
     }
-    if (password.length < 6) {
-      return res.status(400).json({ success: false, error: 'Şifre en az 6 karakter olmalı' });
+    // Email format kontrolü
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ success: false, error: 'Geçerli bir email adresi girin' });
+    }
+    if (password.length < 8) {
+      return res.status(400).json({ success: false, error: 'Şifre en az 8 karakter olmalı' });
     }
 
     // Email zaten var mı?
@@ -231,8 +316,8 @@ app.post('/api/auth/register', async (req, res) => {
   }
 });
 
-// Giriş
-app.post('/api/auth/login', async (req, res) => {
+// Giriş — 15 dakikada max 15 istek
+app.post('/api/auth/login', rateLimit(15 * 60 * 1000, 15), async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -271,9 +356,143 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
+// Şifre değiştir
+app.post('/api/auth/change-password', authMiddleware, rateLimit(15 * 60 * 1000, 5), async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ success: false, error: 'Mevcut ve yeni şifre zorunlu' });
+    }
+    if (newPassword.length < 8) {
+      return res.status(400).json({ success: false, error: 'Yeni şifre en az 8 karakter olmalı' });
+    }
+
+    const userId = req.user.userId;
+    const dbId = parseInt(userId.replace('user_', ''));
+    const result = db.exec('SELECT password_hash FROM users WHERE id = ?', [dbId]);
+    if (result.length === 0 || result[0].values.length === 0) {
+      return res.status(404).json({ success: false, error: 'Kullanıcı bulunamadı' });
+    }
+
+    const match = await bcrypt.compare(currentPassword, result[0].values[0][0]);
+    if (!match) {
+      return res.status(401).json({ success: false, error: 'Mevcut şifre hatalı' });
+    }
+
+    const newHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
+    db.run('UPDATE users SET password_hash = ? WHERE id = ?', [newHash, dbId]);
+    saveDatabase();
+
+    res.json({ success: true, message: 'Şifre başarıyla değiştirildi' });
+  } catch (error) {
+    console.error('Change password error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Profil güncelle
+app.put('/api/auth/profile', authMiddleware, async (req, res) => {
+  try {
+    const { displayName } = req.body;
+    const userId = req.user.userId;
+    const dbId = parseInt(userId.replace('user_', ''));
+
+    if (displayName) {
+      db.run('UPDATE users SET display_name = ? WHERE id = ?', [displayName, dbId]);
+      saveDatabase();
+    }
+
+    res.json({ success: true, message: 'Profil güncellendi' });
+  } catch (error) {
+    console.error('Profile update error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // Token doğrula (frontend'de sayfa yenilemede kullanılır)
 app.get('/api/auth/me', authMiddleware, (req, res) => {
   res.json({ success: true, user: req.user });
+});
+
+// ── SRS Sync Endpoints ────────────────────────────────────────────────────────
+
+// SRS kartlarını getir
+app.get('/api/srs/:userId', authMiddleware, (req, res) => {
+  try {
+    const { userId } = req.params;
+    const result = db.exec('SELECT * FROM srs_cards WHERE user_id = ?', [userId]);
+    const cards = {};
+    if (result.length > 0) {
+      const columns = result[0].columns;
+      result[0].values.forEach(row => {
+        const card = {};
+        columns.forEach((col, idx) => { card[col] = row[idx]; });
+        cards[card.word_id] = {
+          easiness: card.easiness,
+          interval: card.interval,
+          repetitions: card.repetitions,
+          nextReview: card.next_review,
+          lastReview: card.last_review,
+          quality: card.quality
+        };
+      });
+    }
+    res.json({ success: true, data: cards });
+  } catch (error) {
+    console.error('SRS load error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// SRS kartlarını kaydet (tüm kartları toplu güncelle)
+app.post('/api/srs/:userId', authMiddleware, (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { cards } = req.body;
+    if (!cards || typeof cards !== 'object') {
+      return res.status(400).json({ success: false, error: 'Geçerli kart verisi gerekli' });
+    }
+
+    Object.entries(cards).forEach(([wordId, card]) => {
+      const existing = db.exec('SELECT word_id FROM srs_cards WHERE user_id = ? AND word_id = ?', [userId, parseInt(wordId)]);
+      if (existing.length > 0 && existing[0].values.length > 0) {
+        db.run(`UPDATE srs_cards SET easiness = ?, interval = ?, repetitions = ?, next_review = ?, last_review = ?, quality = ? WHERE user_id = ? AND word_id = ?`,
+          [card.easiness, card.interval, card.repetitions, card.nextReview, card.lastReview, card.quality, userId, parseInt(wordId)]);
+      } else {
+        db.run(`INSERT INTO srs_cards (user_id, word_id, easiness, interval, repetitions, next_review, last_review, quality) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          [userId, parseInt(wordId), card.easiness, card.interval, card.repetitions, card.nextReview, card.lastReview, card.quality]);
+      }
+    });
+
+    saveDatabase();
+    res.json({ success: true, message: `${Object.keys(cards).length} kart senkronize edildi` });
+  } catch (error) {
+    console.error('SRS save error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Tek bir SRS kartını güncelle
+app.put('/api/srs/:userId/:wordId', authMiddleware, (req, res) => {
+  try {
+    const { userId, wordId } = req.params;
+    const card = req.body;
+
+    const existing = db.exec('SELECT word_id FROM srs_cards WHERE user_id = ? AND word_id = ?', [userId, parseInt(wordId)]);
+    if (existing.length > 0 && existing[0].values.length > 0) {
+      db.run(`UPDATE srs_cards SET easiness = ?, interval = ?, repetitions = ?, next_review = ?, last_review = ?, quality = ? WHERE user_id = ? AND word_id = ?`,
+        [card.easiness, card.interval, card.repetitions, card.nextReview, card.lastReview, card.quality, userId, parseInt(wordId)]);
+    } else {
+      db.run(`INSERT INTO srs_cards (user_id, word_id, easiness, interval, repetitions, next_review, last_review, quality) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [userId, parseInt(wordId), card.easiness, card.interval, card.repetitions, card.nextReview, card.lastReview, card.quality]);
+    }
+
+    saveDatabase();
+    res.json({ success: true });
+  } catch (error) {
+    console.error('SRS update error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 // Health check
