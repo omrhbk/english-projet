@@ -240,6 +240,7 @@ export function initAuth() {
     if (isLoggedIn()) {
         const user = getUser();
         if (user) showUserBadge(user.displayName);
+    } else {
+        showAuthModal();
     }
-    // Giriş yapmamışsa modal göster (misafir seçeneği de var)
 }
